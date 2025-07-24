@@ -63,7 +63,6 @@ const checkAdmin =(req, res, next) => {
     }
 }
 
-// Test
 
 // Routes
 app.get('/', (req, res) => {
