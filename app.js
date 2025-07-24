@@ -1,6 +1,7 @@
 //After making changes for any of the files, go to source control then, 
 //then type ur name and number (like Eleanor#01), then press the button 'Commit'. That way we can track the codes. 
 // Testing
+// Test
 //Base Template taken from Lesson 20's RegisterApp's app.js//
 const express = require('express');
 const mysql = require('mysql2');
