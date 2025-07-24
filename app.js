@@ -14,7 +14,8 @@ const db = mysql.createConnection({
     host: 'oowidc.h.filess.io',
     user: 'Team34C237_gradecutgo',
     password: 'd26e4e85de269129b7c4eacb96801d1bcea66855',
-    database: 'Team34C237_gradecutgo'
+    database: 'Team34C237_gradecutgo',
+    port: 3307 // Used the Port Number Provided by Filess.io
 });
 
 db.connect((err) => {
