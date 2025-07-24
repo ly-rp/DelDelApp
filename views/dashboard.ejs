@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">
-          <img src="/images/DelDel_Icon1.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
+          <img src="/images/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,47 +111,6 @@
       </button>
     </div>
  
- 
-    <!-- HARDCODED: Bad Practice: I will refactor these codes soon, I'm experimenting with the layout - Le Ying -->
-    <div class="container my-5" style="text-align: center;">
-      <h1><b>Food Categories</b></h1>
-   
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 20px;">
-   
-        <!-- Circle Image Displays -->
-        <div style="text-align: center; width: 200px;">
-          <img src="https://i.pinimg.com/736x/0c/1d/38/0c1d38bdfdf26612f22e6700b12a944c.jpg" class="rounded-circle"
-            alt="circle1" style="width: 200px; height: 200px; object-fit: cover;">
-          <p><a href="#"><b>Desserts</b></a></p>
-        </div>
-   
-        <div style="text-align: center; width: 200px;">
-          <img src="https://i.pinimg.com/1200x/83/df/fd/83dffd677057eb837bbae05dd2d209aa.jpg" class="rounded-circle"
-            alt="circle2" style="width: 200px; height: 200px; object-fit: cover;">
-          <p><a href="#"><b>Soups</b></a></p>
-        </div>
-   
-        <div style="text-align: center; width: 200px;">
-          <img src="https://i.pinimg.com/1200x/9f/aa/b6/9faab6f2433ffca63434f6238cb7f66b.jpg" class="rounded-circle"
-            alt="circle3" style="width: 200px; height: 200px; object-fit: cover;">
-          <p><a href="#"><b>Breakfast</b></a></p>
-        </div>
-   
-        <div style="text-align: center; width: 200px;">
-          <img src="https://i.pinimg.com/736x/d7/ad/31/d7ad31ecf53962cd1067748e22ee2231.jpg" class="rounded-circle"
-            alt="circle4" style="width: 200px; height: 200px; object-fit: cover;">
-          <p><a href="#"><b>Salads</b></a></p>
-        </div>
-   
-        <div style="text-align: center; width: 200px;">
-          <img src="https://i.pinimg.com/736x/e1/11/d9/e111d9b18dd5e30ab5facd51aa2bb491.jpg" class="rounded-circle"
-            alt="circle5" style="width: 200px; height: 200px; object-fit: cover;">
-          <p><a href="#"><b>Breakfast</b></a></p>
-        </div>
-   
-      </div>
-    </div>
-
     <!-- Refactored UPDATE - Le Ying -->
     <div class="container my-5" style="text-align: center;">
       <h1><b>Food Categories</b></h1>
@@ -169,7 +128,6 @@
       </div>
     </div>
 
-
     <div class="container mt-4">
       <div class="row">
         <% recipes.forEach(recipe=> { %>
@@ -185,7 +143,6 @@
                 <p class="card-text"><%= recipe.description %></p>
                 <a href="#" class="btn btn-yellow">Rate</a>
                 <a href="#" class="btn btn-orange">Review</a>
-                <a href="#" class="btn btn-pink">💗</a>
               </div>
             </div>
           </div>
