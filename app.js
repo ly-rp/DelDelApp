@@ -60,15 +60,120 @@ const checkAdmin =(req, res, next) => {
         req.flash('error', 'Access denied');
         res.redirect('/dashboard');
     }
-};
+}
+
+// Test
 
 // Routes
 app.get('/', (req, res) => {
-    res.render('index', { user: req.session.user, messages: req.flash('success')});
+    const sql = 'SELECT * FROM student';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Database query error:', error.message);
+            return res.status(500).send('Error Retrieving student data');
+        }
+        res.render('index', { student: results });
+    });
 });
 
-app.get('/register', (req, res) => {
-    res.render('register', { messages: req.flash('error'), formData: req.flash('formData')[0] });
+app.get('/student/:id', (req, res) => {
+    const studentId = req.params.id;
+    const sql = 'SELECT * FROM student WHERE studentId = ?';
+    connection.query(sql, [studentId], (error, results) => {
+        if (error) {
+            console.error('Database query error:', error.message);
+            return res.status(500).send('Error retrieving student by ID');
+        }
+        if (results.length > 0) {
+            res.render('student', { student: results[0] });
+        } else {
+            res.status(404).send('student not found');
+        }
+    });
+});
+
+app.get('/addStudent', (req, res) => {
+    res.render('addStudent');
+});
+
+
+app.post('/addStudent',upload.single('image'), (req, res) => {
+    // Extract student data from the request body
+    const {name, dob, contact} = req.body;
+    let image;
+    if (req.file) {
+        image = req.file.filename; // Save only the filename
+    } else {
+        image = 'noImage.png'; // Use noImage.png if none uploaded
+    }
+
+    const sql = 'INSERT INTO student (name, dob, contact, image) VALUES (?, ?, ?, ?)';
+    connection.query(sql , [name, dob, contact, image], (error, results) => { 
+        if (error) {
+            console.error("Error adding student:", error);
+            res.status(500).send('Error adding student');
+        } else {
+            res.redirect('/');
+        }
+    });
+});
+
+app.get('/editStudent/:id', (req, res) => {
+    const studentId = req.params.id;
+    const sql = 'SELECT * FROM student WHERE studentId = ?';
+    connection.query(sql, [studentId], (error, results) => {
+        if (error) {
+            console.error('Database query error:', error.message);
+            return res.status(500).send('Error retrieving student for editing');
+        }
+        if (results.length > 0) {
+            res.render('editStudent', { student: results[0] });
+        } else {
+            res.status(404).send('student not found');
+        }
+    });
+});
+
+app.post('/editStudent/:id',upload.single('image'), (req, res) => {
+    const studentId = req.params.id;
+    
+    const { name, dob, contact} = req.body;
+    let image = req.body.currentImage; // retrieve current image filename
+    if (req.file) { // if new image is uploaded
+        image = req.file.filename; // set image to be new image filename
+    } else if (!image) {
+        image = 'noImage.png'; // Use noImage.png only if there is no current image
+    }
+
+
+    const sql = 'UPDATE student SET name = ?, dob = ?, contact = ?, image = ? WHERE studentId = ?';
+
+    //insert the new student into the database
+    connection.query( sql, [name, dob, contact, image, studentId], (error, results) => {
+        if (error) {
+            //Handle any error that occurs during the database operation
+            console.error("Error updating student:", error);
+            res.status(500).send('Error updating student');
+        } else {
+            //Send a success response
+            res.redirect('/');
+        }
+    });
+});
+
+app.get('/deletestudent/:id', (req, res) => {
+    const studentId = req.params.id;
+    const sql = 'DELETE FROM student WHERE studentId = ?';
+    connection.query(sql, [studentId], (error, results) => {
+        if (error) {
+            //Handle any error that occurs during the database operation
+            console.error("Error deleting student:", error);
+            res.status(500).send('Error deleting student');
+        } else {
+            //send a success response
+            res.redirect('/');
+        }
+    });
 });
 
 
