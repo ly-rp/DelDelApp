@@ -259,7 +259,15 @@ app.post('/login', (req,res) => {
 });
 
 //******** TODO: Insert code for dashboard route to render dashboard page for users. ********//
+// Updated to include Food Categories - Le Ying
 app.get('/dashboard', checkAuthenticated, (req, res) => {
+    const foodCategories = [
+        { name: 'Desserts', image: '/images/categories/desserts.jpg' },
+        { name: 'Soups', image: '/images/categories/soups.jpg' },
+        { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
+        { name: 'Salads', image: '/images/categories/salads.jpg' },
+        { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
+    ];
     res.render('dashboard', {user:req.session.user}); 
 }); 
 

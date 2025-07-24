@@ -112,6 +112,7 @@
     </div>
  
  
+    <!-- HARDCODED: Bad Practice: I will refactor these codes soon, I'm experimenting with the layout - Le Ying -->
     <div class="container my-5" style="text-align: center;">
       <h1><b>Food Categories</b></h1>
    
@@ -150,6 +151,24 @@
    
       </div>
     </div>
+
+    <!-- Refactored UPDATE - Le Ying -->
+    <div class="container my-5" style="text-align: center;">
+      <h1><b>Food Categories</b></h1>
+    
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 20px;">
+        <% categories.forEach(category=> { %>
+          <div style="text-align: center; width: 200px;">
+            <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
+              style="width: 200px; height: 200px; object-fit: cover;">
+            <p><a href="#"><b>
+                  <%= category.name %>
+                </b></a></p>
+          </div>
+          <% }) %>
+      </div>
+    </div>
+
 
     <div class="container mt-4">
       <div class="row">
