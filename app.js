@@ -1,8 +1,6 @@
 //After making changes for any of the files, go to source control then, 
 //then type ur name and number (like Eleanor#01), then press the button 'Commit'. That way we can track the codes. 
-// Testing
-// Test yo mama
-// Testing 123
+
 //Base Template taken from Lesson 20's RegisterApp's app.js//
 const express = require('express');
 const mysql = require('mysql2');
@@ -11,7 +9,7 @@ const flash = require('connect-flash');
 const app = express();
 
 
-// Database connection, change it?????//
+// Database connection
 const db = mysql.createConnection({
     host: 'oowidc.h.filess.io',
     user: 'Team34C237_gradecutgo',
