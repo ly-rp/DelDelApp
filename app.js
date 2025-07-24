@@ -91,6 +91,20 @@ app.get('/student/:id', (req, res) => {
     });
 });
 
+app.get('/recipe/:id', checkAuthenticated, (req, res) => {
+  const recipeId = req.params.id;
+
+  connection.query('SELECT * FROM recipes WHERE recipeId = ?', [recipeId], (error, results) => {
+      if (error) throw error;
+
+      if (results.length > 0) {
+          res.render('recipe', { recipe: results[0], user: req.session.user });
+      } else {
+          res.status(404).send('Recipe not found');
+      }
+  });
+});
+
 app.get('/addStudent', (req, res) => {
     res.render('addStudent');
 });
