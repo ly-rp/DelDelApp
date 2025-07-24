@@ -2,6 +2,7 @@
 //then type ur name and number (like Eleanor#01), then press the button 'Commit'. That way we can track the codes. 
 // Testing
 // Test yo mama
+// Testing 123
 //Base Template taken from Lesson 20's RegisterApp's app.js//
 const express = require('express');
 const mysql = require('mysql2');
