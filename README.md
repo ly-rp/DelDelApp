@@ -1,1 +1,1 @@
-OH MA GAWD
+oh lord
