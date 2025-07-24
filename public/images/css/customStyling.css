@@ -1,0 +1,33 @@
+/* customStyling.css */
+.btn-orange {
+  background-color: #f09902;
+  color: white;
+  border: none;
+}
+
+.btn-orange:hover {
+    background-color: #e76e3c;
+    color: white;
+}
+
+.btn-red {
+  background-color: #640F05;
+  color: white;
+  border: none;
+}
+
+.btn-red:hover {
+    background-color: #640F05;
+    color: white;
+}
+
+.btn-pink {
+  background-color: white;
+  color: white;
+  border: none;
+}
+
+.btn-pink:hover {
+    background-color: white;
+    color: white;
+}
