@@ -66,13 +66,13 @@ const checkAdmin =(req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-    const sql = 'SELECT * FROM student';
+    const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
     connection.query(sql, (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
-            return res.status(500).send('Error Retrieving student data');
+            return res.status(500).send('Error Retrieving recipe data');
         }
-        res.render('index', { student: results });
+        res.render('index', { recipe: results });
     });
 });
 
