@@ -10,7 +10,6 @@ const flash = require('connect-flash');
 const app = express();
 
 
-//gyatty
 // Database connection, change it?????//
 const db = mysql.createConnection({
     host: 'oowidc.h.filess.io',
