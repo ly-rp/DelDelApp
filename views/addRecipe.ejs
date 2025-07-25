@@ -174,5 +174,92 @@
 
     </form>
   </div>
+
+  <div class="container mt-4">
+    <!-- Card with form embedded -->
+    <div class="card p-4" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+      <h2 class="text-center mb-4">Add New Recipe</h2>
+        <form action="/addRecipe" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
+          <div class="row align-items-start">
+            <!-- Left side -->
+            <div class="col-md-6">
+
+              <div class="mb-3">
+                <label for="name" class="form-label label-header">Recipe Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+              </div>
+  
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"
+                  required><%= product.description %></textarea>
+              </div>
+
+              <!-- Category -->
+              <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                  <option value="" disabled>Select Category</option>
+                  <option value="Fruits" <%= product.category === 'Fruits' ? 'selected' : '' %>>Fruits</option>
+                  <option value="Vegetables" <%= product.category === 'Vegetables' ? 'selected' : '' %>>Vegetables</option>
+                  <option value="Dairy" <%= product.category === 'Dairy' ? 'selected' : '' %>>Dairy</option>
+                  <option value="Bakery" <%= product.category === 'Bakery' ? 'selected' : '' %>>Bakery</option>
+                  <option value="Beverages" <%= product.category === 'Beverages' ? 'selected' : '' %>>Beverages</option>
+                </select>
+              </div>
+
+
+              <!-- Favourite -->
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="favourite" name="favourite"
+                  <%= product.favourite ? 'checked' : '' %>>
+                <label class="form-check-label" for="favourite">Favourite ❤️</label>
+              </div>
+
+              <!-- Ingredients -->
+              <div class="mb-3">
+                <label for="quantity" class="form-label">Ingredients</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1"
+                  value="<%= recipe.quantity %>" required>
+              </div>
+  
+              <!-- Servings -->
+              <div class="mb-3">
+                <label for="price" class="form-label">Servings</label>
+                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01"
+                  value="<%= product.price %>" required>
+              </div>
+  
+            </div>
+  
+            <!-- Right side image -->
+            <div class="col-md-6">
+              <img src="/images/<%= recipe.image %>" style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px; border: 2px solid #801408;">
+              <label class="form-label mt-3">Current Image</label>
+              <input type="text" class="form-control" name="currentImage" value="<%= product.image %>" readonly>
+
+              <label for="image" class="form-label mt-3">Upload New Image</label>
+              <input class="form-control" type="file" id="image" name="image" accept="image/*">
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-center mt-3">
+              <div class="d-inline-flex align-items-center gap-2">
+                <button type="submit" class="btn btn-primary">Update Recipe</button>
+                <a href="/inventory" class="btn btn-secondary">Back to My Recipes</a>
+              </div>
+            </div>
+
+          </div>
+        </form>
+        <% } else { %>
+          <p class="text-center">No Recipe was found.</p>
+          <% } %>
+  
+    </div>
+  </div>
 </body>
 </html>
