@@ -1,32 +1,30 @@
-//After making changes for any of the files, go to source control then, 
-//then type ur name and number (like Eleanor#01), then press the button 'Commit'. That way we can track the codes. 
-
-//Base Template taken from Lesson 20's RegisterApp's app.js//
 const express = require('express');
 const mysql = require('mysql2');
 const session = require('express-session');
 const flash = require('connect-flash');
 const multer = require('multer'); // Import multer for file uploads
 const app = express();
+const multer = require('multer');
 
+// STORAGE SETUP FOR MULTER //
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/images'); // Directory to save uploaded files
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); 
-    }
+  destination: function (req, file, cb) {
+    cb(null, 'public/images');
+  },
+  filename: (req, file, cb) =>{
+    cb(null, file.originalname);
+  }
 });
-
 const upload = multer({ storage: storage });
 
-// Database connection
+// DATABASE CONNECTION //
 const db = mysql.createConnection({
     host: 'oowidc.h.filess.io',
     user: 'Team34C237_gradecutgo',
     password: 'd26e4e85de269129b7c4eacb96801d1bcea66855',
     database: 'Team34C237_gradecutgo',
-    port: 3307 // Used the Port Number Provided by Filess.io
+    port: 3307 
+    // Information provided by Filess.io, Kaden is the owner of the database
 });
 
 db.connect((err) => {
@@ -39,26 +37,26 @@ db.connect((err) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-//Session Middleware//
+//SESSION MIDDLEWARE//
 app.use(session({
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
-    //Session expires after one week of inactivity
     cookie: {maxAge: 1000 * 60 * 60 * 24 * 7}
-}))
+}));
 
 app.use(flash());
 
-// Setting up EJS//
+// SETTING UP EJS//
 app.set('view engine', 'ejs');
 
-//Middleware to check if user is logged in//
+//MIDDLEWARE TO CHECK IF USER IS LOGGED IN//
+//****TO-DO: Include Authentication for Guest user.****//
 const checkAuthenticated =(req, res, next) => {
     if (req.session.user) {
         return next();
     } else {
-        req.flash('error', 'Please log in to view this resourse');
+        req.flash('error', 'Please log inor enter as a guest to view this app!');
         res.redirect('/login');
     }
 };
@@ -74,7 +72,8 @@ const checkAdmin =(req, res, next) => {
 }
 
 
-// Routes
+// ROUTES //
+// HOME ROUTE //
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
     connection.query(sql, (error, results) => {
