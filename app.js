@@ -105,14 +105,14 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   });
 });
 
-app.get('/addStudent', (req, res) => {
+app.get('/addRecipe', (req, res) => {
     res.render('addStudent');
 });
 
 
-app.post('/addStudent',upload.single('image'), (req, res) => {
+app.post('/addRecipe',upload.single('image'), (req, res) => {
     // Extract student data from the request body
-    const {name, dob, contact} = req.body;
+    const {recipeTitle, recipeDescription} = req.body;
     let image;
     if (req.file) {
         image = req.file.filename; // Save only the filename
