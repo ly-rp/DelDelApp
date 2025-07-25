@@ -21,6 +21,17 @@
     color: white;
 }
 
+.btn-blue {
+  background-color: #0a0564;
+  color: white;
+  border: none;
+}
+
+.btn-blue:hover {
+    background-color: #0a0564;
+    color: white;
+}
+
 .btn-pink {
   background-color: white;
   color: white;
