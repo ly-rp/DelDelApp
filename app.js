@@ -91,12 +91,12 @@ app.get('/recipe/:id', (req, res) => {
     connection.query(sql, [studentId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
-            return res.status(500).send('Error retrieving student by ID');
+            return res.status(500).send('Error retrieving recipe by ID');
         }
         if (results.length > 0) {
-            res.render('student', { student: results[0] });
+            res.render('recipe', { recipe: results[0] });
         } else {
-            res.status(404).send('student not found');
+            res.status(404).send('recipe not found');
         }
     });
 });
@@ -110,7 +110,7 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
       if (results.length > 0) {
           res.render('recipe', { recipe: results[0], user: req.session.user });
       } else {
-          res.status(404).send('Recipe not found');
+          res.status(404).send('recipe not found');
       }
   });
 });
@@ -131,7 +131,7 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
     }
 
     const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, image) VALUES (?, ?, ?, ?)';
-    connection.query(sql , [name, dob, contact, image], (error, results) => { 
+    connection.query(sql , [name, image], (error, results) => { 
         if (error) {
             console.error("Error adding recipe:", error);
             res.status(500).send('Error adding recipe');
