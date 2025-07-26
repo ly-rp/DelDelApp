@@ -67,45 +67,15 @@
     <div class="card p-4" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
   
       <% if (product) { %>
-        <form action="/updateProduct/<%= product.productId %>" method="POST" enctype="multipart/form-data">
+        <form action="/editRecipe/<%= recipe.recipeId %>" method="POST" enctype="multipart/form-data">
           <div class="row align-items-start">
             <!-- Left side -->
             <div class="col-md-6">
   
               <div class="mb-3">
                 <label for="name" class="form-label label-header">Recipe Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="<%= product.productName %>" required>
+                <input type="text" class="form-control" id="recipeTitle" name="recipeTitle" value="<%= recipe.recipeTitle %>" required>
               </div>
-  
-              <label class="mb-3" style="cursor: pointer; user-select: none;">
-                Favourite:
-                <input type="checkbox" id="favourite" name="favourite" <%=product.favourite ? 'checked' : '' %>
-                onchange="this.nextElementSibling.textContent = this.checked ? '❤️' : '🤍';">
-                <span style="font-size: 24px; margin-left: 8px;">
-                  <%= product.favourite ? '❤️' : '🤍' %>
-                </span>
-              </label>
-  
-              <!-- Description -->
-              <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3"
-                  required><%= product.description %></textarea>
-              </div>
-  
-              <!-- Category -->
-              <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select class="form-select" id="category" name="category" required>
-                  <option value="" disabled>Select Category</option>
-                  <option value="Fruits" <%=product.category==='Fruits' ? 'selected' : '' %>>Fruits</option>
-                  <option value="Vegetables" <%=product.category==='Vegetables' ? 'selected' : '' %>>Vegetables</option>
-                  <option value="Dairy" <%=product.category==='Dairy' ? 'selected' : '' %>>Dairy</option>
-                  <option value="Bakery" <%=product.category==='Bakery' ? 'selected' : '' %>>Bakery</option>
-                  <option value="Beverages" <%=product.category==='Beverages' ? 'selected' : '' %>>Beverages</option>
-                </select>
-              </div>
-  
   
               <!-- Favourite -->
               <div class="mb-3 form-check">
@@ -113,21 +83,38 @@
                   ? 'checked' : '' %>>
                 <label class="form-check-label" for="favourite">Favourite</label>
               </div>
-  
-              <!-- Quantity -->
+
+              <!-- Category -->
               <div class="mb-3">
-                <label for="quantity" class="form-label">Quantity</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1"
-                  value="<%= product.quantity %>" required>
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                  <option value="" disabled>Select Category</option>
+                  <option value="Breakfast" <%=product.category==='Breakfast' ? 'selected' : '' %>>Breakfast</option>
+                  <option value="Side Dishes" <%=product.category==='Side Dishes' ? 'selected' : '' %>>Side Dishes</option>
+                  <option value="Salads" <%=product.category==='Salads' ? 'selected' : '' %>>Salads</option>
+                  <option value="Soups" <%=product.category==='Soups' ? 'selected' : '' %>>Soups</option>
+                  <option value="Desserts" <%=product.category==='Desserts' ? 'selected' : '' %>>Desserts</option>
+                </select>
+              </div>
+
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="recipeDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="recipeDescription" name="recipeDescription" rows="3" value="<%= recipe.description %>" required></textarea>
+              </div>
+
+              <!-- Ingredients -->
+              <div class="mb-3">
+                <label for="ingredients" class="form-label">Ingredients</label>
+                <textarea class="form-control" id="ingredients" name="ingredients" rows="3" value="<%= recipe.Ingredients %>" required></textarea>
               </div>
   
-              <!-- Price -->
+              <!-- Instructions -->
               <div class="mb-3">
-                <label for="price" class="form-label">Price</label>
-                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01"
-                  value="<%= product.price %>" required>
+                <label for="ingredients" class="form-label">Instructions</label>
+                <textarea class="form-control" id="instructions" name="instructions" rows="3" value="<%= recipe.instructions %>" required></textarea>
               </div>
-  
+
             </div>
   
             <!-- Right side image -->
@@ -145,8 +132,8 @@
             <!-- Buttons -->
             <div class="text-center mt-3">
               <div class="d-inline-flex align-items-center gap-2">
-                <button type="submit" class="btn btn-blue">Update Product</button>
-                <a href="/inventory" class="btn btn-secondary">Back to Inventory</a>
+                <button type="submit" class="btn btn-blue">Update Recipe</button>
+                <a href="/inventory" class="btn btn-secondary">Back to My Recipes</a>
               </div>
             </div>
   
