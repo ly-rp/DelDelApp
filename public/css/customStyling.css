@@ -1,23 +1,56 @@
 /* customStyling.css */
-.btn-orange {
-  background-color: #f09902;
+.btn-red1 {
+  background-color: #a31604;
   color: white;
   border: none;
 }
 
-.btn-orange:hover {
-    background-color: #e76e3c;
+.btn-red1:hover {
+    background-color: #a31604;
     color: white;
 }
 
-.btn-red {
+.btn-red2 {
   background-color: #640F05;
   color: white;
   border: none;
 }
 
-.btn-red:hover {
+.btn-red2:hover {
     background-color: #640F05;
+    color: white;
+}
+
+.btn-orange1 {
+  background-color: #f09902;
+  color: white;
+  border: none;
+}
+
+.btn-orange1:hover {
+    background-color: #e76e3c;
+    color: white;
+}
+
+.btn-orange2 {
+  background-color: #c14c12;
+  color: white;
+  border: none;
+}
+
+.btn-orange2:hover {
+    background-color: #c14c12;
+    color: white;
+}
+
+.btn-yellow {
+  background-color: #f0c518;
+  color: white;
+  border: none;
+}
+
+.btn-yellow:hover {
+    background-color: #d4ae14;
     color: white;
 }
 
@@ -42,3 +75,16 @@
     background-color: white;
     color: white;
 }
+
+.btn-brown {
+  background-color: #440801;
+  color: white;
+  border: none;
+}
+
+.btn-brown:hover {
+    background-color: #440801;
+    color: white;
+}
+
+/* style="color: #801408" */
