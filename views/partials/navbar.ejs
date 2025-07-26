@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img src="/images/deldel_folder/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <% if (!user || user.role == 'guest') { %>
+          <!-- Guest Links -->
+          <li class="nav-item">
+            <a class="nav-link" href="/login">login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">register</a>
+          </li>
+        <% } else if (user.role === 'user') { %>
+          <!-- Logged-in User Links -->
+          <li class="nav-item">
+            <a class="nav-link" href="/favourites">favourites</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/addRecipe">add recipe</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
+        <% } else if (user.role === 'admin') { %>
+          <!-- Admin Links -->
+          <li class="nav-item">
+            <a class="nav-link" href="/recipesDB">recipes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
+        <% } %>
+
+      </ul>
+
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="search" aria-label="search">
+        <button class="btn btn-outline-light" type="submit">
+          <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search" style="width:20px; height:20px;">
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>

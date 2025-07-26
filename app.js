@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
             console.error('Database query error:', error.message);
             return res.status(500).send('Error retrieving recipe data');
         }
-        res.render('welcome', { recipe: results });
+        res.render('welcome', { recipe: results, user: req.session.user });
     });
 });
 
@@ -264,9 +264,19 @@ app.post('/login', (req,res) => {
 });
 
 
+
 app.get('/guest', (req, res) => {
-  // Fetch recipes from DB (or dummy data if not ready)
+  req.session.user = { role: 'guest' };
+
   const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+
+  const foodCategories = [
+    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+  ];
 
   db.query(sql, (error, results) => {
     if (error) {
@@ -274,8 +284,11 @@ app.get('/guest', (req, res) => {
       return res.status(500).send('Error loading recipes');
     }
 
-    // Render a view showing recipes but no user info (guest)
-    res.render('guest', { recipes: results });
+    res.render('guest', {
+      recipes: results,
+      categories: foodCategories,
+      user: req.session.user
+    });
   });
 });
 
