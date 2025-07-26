@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="/css/customStyling.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <title>DelDel</title>
+  <style>
+    .card-img-top {
+      height: 320px;
+      object-fit: cover;
+    }
+  </style>
 </head>
 
 <body>
@@ -15,7 +21,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
-        <img src="/images/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
+        <img src="https://i.postimg.cc/9MfSJZ7s/Del-Del-Icon1.png" alt="DelDel Logo" height="20px">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,10 +31,10 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="/favourites">favourites</a>
+            <a class="nav-link" href="/addProduct">favourites</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/addRecipe">add recipe</a>
+            <a class="nav-link" href="/addProduct">add recipe</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">logout</a>
@@ -57,209 +63,116 @@
             <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search"
               style="width:20px; height:20px;">
           </button>
-  <title>Add Route Page</title>
-  <style>
-    .card-img-top {
-      height: 320px;
-      object-fit: cover;
-    }
-  </style>
-</head>
-
-<body>
-  <!--Navigation Bar, Copy Finalized one LY made after shes done-->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-          <img src="/images/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
- 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="/addProduct">favourites</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/addProduct">add recipe</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">logout</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                dropdown
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">disabled</a>
-            </li>
-          </ul>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="search" aria-label="search">
-            <button class="btn btn-outline-light" type="submit">
-              <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search" style="width:20px; height:20px;">
-            </button>
-          </form>
-        </div>
-      </div>
-    </nav>
-
-  <div class="container">
-    <br>
-    <div class="text-center"><h2>Add New Recipe:</h2></div>
-    <br>
-    <div class="text-center">
-        <form action="/addProduct" method="POST" enctype="multipart/form-data">
-            <label for="name">Recipe Name:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
-            <label for="quantity">Category:</label><br>
-            <input type="number" id="quantity" name="quantity" min="0" step="1"required><br><br>
-
-            <label for="price">Ingredients:</label><br>
-            <input type="number" id="price" name="price" min="0" step="0.01" required><br><br>
-
-            <label for="price">Description:</label><br>
-            <input type="number" id="price" name="price" min="0" step="0.01" required><br><br>
-
-            <label for="image">Image</label><br>
-            <input type="file" id="image" name ="image" accept="image/*" required> <br><br>
-
-            <button type="submit">Add Recipe</button>
         </form>
       </div>
     </div>
   </nav>
 
   <!-- Main Content -->
-  <div class="container mt-4">
-    <h2 class="text-center mb-4">Add New Product</h2>
-    <form action="/addProduct" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
-
-      <div class="mb-3">
-        <label for="name" class="form-label">Product Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="quantity" class="form-label">Quantity</label>
-        <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="price" class="form-label">Price ($)</label>
-        <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required>
-      </div>
-
-      <div class="mb-4">
-        <label for="image" class="form-label">Product Image</label>
-        <input class="form-control" type="file" id="image" name="image" accept="image/*" required>
-      </div>
-
-      <div class="d-grid">
-        <button type="submit" class="btn btn-primary">Add Product</button>
-      </div>
-
-    </form>
-  </div>
 
   <div class="container mt-4">
     <!-- Card with form embedded -->
-    <div class="card p-4" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-
-      <h2 class="text-center mb-4">Add New Recipe</h2>
-        <form action="/addRecipe" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
-          <div class="row align-items-start">
-            <!-- Left side -->
-            <div class="col-md-6">
-
-              <div class="mb-3">
-                <label for="name" class="form-label label-header">Recipe Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
-              </div>
-  
-              <!-- Description -->
-              <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3"
-                  required><%= product.description %></textarea>
-              </div>
-
-              <!-- Category -->
-              <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select class="form-select" id="category" name="category" required>
-                  <option value="" disabled>Select Category</option>
-                  <option value="Fruits" <%= product.category === 'Fruits' ? 'selected' : '' %>>Fruits</option>
-                  <option value="Vegetables" <%= product.category === 'Vegetables' ? 'selected' : '' %>>Vegetables</option>
-                  <option value="Dairy" <%= product.category === 'Dairy' ? 'selected' : '' %>>Dairy</option>
-                  <option value="Bakery" <%= product.category === 'Bakery' ? 'selected' : '' %>>Bakery</option>
-                  <option value="Beverages" <%= product.category === 'Beverages' ? 'selected' : '' %>>Beverages</option>
-                </select>
-              </div>
-
-
-              <!-- Favourite -->
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="favourite" name="favourite"
-                  <%= product.favourite ? 'checked' : '' %>>
-                <label class="form-check-label" for="favourite">Favourite ❤️</label>
-              </div>
-
-              <!-- Ingredients -->
-              <div class="mb-3">
-                <label for="quantity" class="form-label">Ingredients</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1"
-                  value="<%= recipe.quantity %>" required>
-              </div>
-  
-              <!-- Servings -->
-              <div class="mb-3">
-                <label for="price" class="form-label">Servings</label>
-                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01"
-                  value="<%= product.price %>" required>
-              </div>
-  
+     <div class="card p-4 mx-auto" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 1000px;">
+      <h2 class="text-center mb-4" style="color: #801408">Add New Recipe</h2>
+      <form action="/addRecipe" method="POST" enctype="multipart/form-data">
+        <div class="row">
+          <!-- Left Side of the Column-->
+          <div class="col-md-6">
+          
+            <div class="mb-3">
+              <label for="recipeTitle" class="form-label">Recipe Title</label>
+              <input type="text" class="form-control" id="recipeTitle" name="recipeTitle" required>
             </div>
-  
-            <!-- Right side image -->
-            <div class="col-md-6">
-              <img src="/images/<%= recipe.image %>" style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px; border: 2px solid #801408;">
-              <label class="form-label mt-3">Current Image</label>
-              <input type="text" class="form-control" name="currentImage" value="<%= product.image %>" readonly>
+          
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="favourite" name="favourite">
+              <label class="form-check-label" for="favourite">Favourite ❤️</label>
+            </div>
+          
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category" name="category" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Side Dishes">Side Dishes</option>
+                <option value="Salads">Salads</option>
+                <option value="Soups">Soups</option>
+                <option value="Desserts">Desserts</option>
+              </select>
+            </div>
+          
+            <div class="mb-3">
+              <label for="recipeDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="recipeDescription" name="recipeDescription" rows="3" required></textarea>
+            </div>
+          
+            <div class="mb-3">
+              <label for="ingredients" class="form-label">Ingredients</label>
+              <textarea class="form-control" id="ingredients" name="ingredients" rows="3" required></textarea>
+            </div>
+          
+            <div class="mb-3">
+              <label for="instructions" class="form-label">Instructions</label>
+              <textarea class="form-control" id="instructions" name="instructions" rows="3" required></textarea>
+            </div>
+          
+          </div> <!-- End of Left Side Column -->
+          
+          <!-- Right Side of the Column-->
+          <div class="col-md-6 d-flex flex-column justify-content-between">
 
-              <label for="image" class="form-label mt-3">Upload New Image</label>
-              <input class="form-control" type="file" id="image" name="image" accept="image/*">
-
+            <div class="mb-3">
+              <label for="recipeImage" class="form-label">Recipe Image</label>
+              <input class="form-control" type="file" id="recipeImage" name="recipeImage" accept="image/*" required>
             </div>
 
-            <!-- Buttons -->
-            <div class="text-center mt-3">
-              <div class="d-inline-flex align-items-center gap-2">
-                <button type="submit" class="btn btn-primary">Update Recipe</button>
-                <a href="/inventory" class="btn btn-secondary">Back to My Recipes</a>
-              </div>
+            <div style="width: 100%; height: 250px; border: 2px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+              <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; max-height: 240px; display: none;" />
+              <span id="placeholderText" style="color: #aaa;">Image preview</span>
             </div>
+
+            <div class="mb-3">
+              <label for="prep_time" class="form-label">Prep Time (Minutes)</label>
+              <input type="number" class="form-control" id="prep_time" name="prep_time" min="0" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="cook_time" class="form-label">Cook Time (Minutes)</label>
+              <input type="number" class="form-control" id="cook_time" name="cook_time" min="0" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="servings" class="form-label">Servings</label>
+              <input type="number" class="form-control" id="servings" name="servings" min="1" required>
+            </div>
+
+          </div> <!-- End of Right Side Column -->
+          
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Add Recipe</button>
+          </div>
 
           </div>
-        </form>
-        <% } else { %>
-          <p class="text-center">No Recipe was found.</p>
-          <% } %>
-  
-    </div>
+      </form>
+     </div>
   </div>
+  <script>
+    const fileInput = document.getElementById('recipeImage');
+    const previewImg = document.getElementById('imagePreview');
+    const placeholder = document.getElementById('placeholderText');
+    fileInput.addEventListener('change', function (event) {
+      const [file] = event.target.files;
+      if (file) {
+        previewImg.src = URL.createObjectURL(file);
+        previewImg.style.display = 'block';
+        placeholder.style.display = 'none';
+      } else {
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+        placeholder.style.display = 'block';
+      }
+    });
+  </script>
+
 </body>
 </html>
