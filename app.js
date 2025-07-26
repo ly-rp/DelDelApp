@@ -79,15 +79,15 @@ app.get('/', (req, res) => {
     connection.query(sql, (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
-            return res.status(500).send('Error Retrieving recipe data');
+            return res.status(500).send('Error retrieving recipe data');
         }
         res.render('index', { recipe: results });
     });
 });
 
-app.get('/student/:id', (req, res) => {
+app.get('/recipe/:id', (req, res) => {
     const studentId = req.params.id;
-    const sql = 'SELECT * FROM student WHERE studentId = ?';
+    const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     connection.query(sql, [studentId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
@@ -104,7 +104,7 @@ app.get('/student/:id', (req, res) => {
 app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   const recipeId = req.params.id;
 
-  connection.query('SELECT * FROM recipes WHERE recipeId = ?', [recipeId], (error, results) => {
+  connection.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, results) => {
       if (error) throw error;
 
       if (results.length > 0) {
@@ -116,12 +116,12 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
 });
 
 app.get('/addRecipe', (req, res) => {
-    res.render('addStudent');
+    res.render('addRecipe');
 });
 
 
 app.post('/addRecipe',upload.single('image'), (req, res) => {
-    // Extract student data from the request body
+    // Extract recipe data from the request body
     const {recipeTitle, recipeDescription} = req.body;
     let image;
     if (req.file) {
@@ -130,34 +130,34 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png if none uploaded
     }
 
-    const sql = 'INSERT INTO student (name, dob, contact, image) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, image) VALUES (?, ?, ?, ?)';
     connection.query(sql , [name, dob, contact, image], (error, results) => { 
         if (error) {
-            console.error("Error adding student:", error);
-            res.status(500).send('Error adding student');
+            console.error("Error adding recipe:", error);
+            res.status(500).send('Error adding recipe');
         } else {
             res.redirect('/');
         }
     });
 });
 
-app.get('/editStudent/:id', (req, res) => {
+app.get('/editRecipe/:id', (req, res) => {
     const studentId = req.params.id;
-    const sql = 'SELECT * FROM student WHERE studentId = ?';
+    const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     connection.query(sql, [studentId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
-            return res.status(500).send('Error retrieving student for editing');
+            return res.status(500).send('Error retrieving recipe for editing');
         }
         if (results.length > 0) {
-            res.render('editStudent', { student: results[0] });
+            res.render('editRecipe', { recipe: results[0] });
         } else {
-            res.status(404).send('student not found');
+            res.status(404).send('recipe not found');
         }
     });
 });
 
-app.post('/editStudent/:id',upload.single('image'), (req, res) => {
+app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
     const studentId = req.params.id;
     
     const { name, dob, contact} = req.body;
@@ -169,14 +169,14 @@ app.post('/editStudent/:id',upload.single('image'), (req, res) => {
     }
 
 
-    const sql = 'UPDATE student SET name = ?, dob = ?, contact = ?, image = ? WHERE studentId = ?';
+    const sql = 'UPDATE recipe SET name = ?, image = ? WHERE recipeId = ?';
 
-    //insert the new student into the database
-    connection.query( sql, [name, dob, contact, image, studentId], (error, results) => {
+    //insert the new recipe into the database
+    connection.query( sql, [name, image, recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
-            console.error("Error updating student:", error);
-            res.status(500).send('Error updating student');
+            console.error("Error updating recipe:", error);
+            res.status(500).send('Error updating recipe');
         } else {
             //Send a success response
             res.redirect('/');
@@ -184,14 +184,14 @@ app.post('/editStudent/:id',upload.single('image'), (req, res) => {
     });
 });
 
-app.get('/deletestudent/:id', (req, res) => {
+app.get('/deleterecipe/:id', (req, res) => {
     const studentId = req.params.id;
-    const sql = 'DELETE FROM student WHERE studentId = ?';
-    connection.query(sql, [studentId], (error, results) => {
+    const sql = 'DELETE FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
+    connection.query(sql, [recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
-            console.error("Error deleting student:", error);
-            res.status(500).send('Error deleting student');
+            console.error("Error deleting recipe:", error);
+            res.status(500).send('Error deleting recipe');
         } else {
             //send a success response
             res.redirect('/');
