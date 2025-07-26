@@ -70,24 +70,22 @@ const checkAdmin =(req, res, next) => {
     }
 }
 
-
-// ROUTES //
 // HOME ROUTE //
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-    connection.query(sql, (error, results) => {
+    db.query(sql, (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
             return res.status(500).send('Error retrieving recipe data');
         }
-        res.render('index', { recipe: results });
+        res.render('dashboard', { recipe: results });
     });
 });
 
 app.get('/recipe/:id', (req, res) => {
     const studentId = req.params.id;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
-    connection.query(sql, [studentId], (error, results) => {
+    db.query(sql, [studentId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
             return res.status(500).send('Error retrieving recipe by ID');
@@ -95,7 +93,7 @@ app.get('/recipe/:id', (req, res) => {
         if (results.length > 0) {
             res.render('recipe', { recipe: results[0] });
         } else {
-            res.status(404).send('recipe not found');
+            res.status(404).send('This recipe cannot found');
         }
     });
 });
@@ -103,9 +101,8 @@ app.get('/recipe/:id', (req, res) => {
 app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   const recipeId = req.params.id;
 
-  connection.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, results) => {
+  db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, results) => {
       if (error) throw error;
-
       if (results.length > 0) {
           res.render('recipe', { recipe: results[0], user: req.session.user });
       } else {
@@ -114,23 +111,23 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   });
 });
 
+// ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
     res.render('addRecipe');
 });
 
 
 app.post('/addRecipe',upload.single('image'), (req, res) => {
-    // Extract recipe data from the request body
     const {recipeTitle, recipeDescription} = req.body;
     let image;
     if (req.file) {
-        image = req.file.filename; // Save only the filename
+        image = req.file.filename;
     } else {
         image = 'noImage.png'; // Use noImage.png if none uploaded
     }
 
     const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, image) VALUES (?, ?, ?, ?)';
-    connection.query(sql , [name, image], (error, results) => { 
+    db.query(sql , [recipeTitle, recipeDescription, image], (error, results) => { 
         if (error) {
             console.error("Error adding recipe:", error);
             res.status(500).send('Error adding recipe');
@@ -140,10 +137,11 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
     });
 });
 
+// EDITING RECIPE ROUTE //
 app.get('/editRecipe/:id', (req, res) => {
-    const studentId = req.params.id;
+    const recipeId = req.params.id;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
-    connection.query(sql, [studentId], (error, results) => {
+    db.query(sql, [recipeId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
             return res.status(500).send('Error retrieving recipe for editing');
@@ -151,15 +149,14 @@ app.get('/editRecipe/:id', (req, res) => {
         if (results.length > 0) {
             res.render('editRecipe', { recipe: results[0] });
         } else {
-            res.status(404).send('recipe not found');
+            res.status(404).send('This recipe cannot be found');
         }
     });
 });
 
 app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
-    const studentId = req.params.id;
-    
-    const { name, dob, contact} = req.body;
+    const recipeId = req.params.id;
+    const { recipeTitle, recipeDescription} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
     if (req.file) { // if new image is uploaded
         image = req.file.filename; // set image to be new image filename
@@ -170,8 +167,8 @@ app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
 
     const sql = 'UPDATE recipe SET name = ?, image = ? WHERE recipeId = ?';
 
-    //insert the new recipe into the database
-    connection.query( sql, [name, image, recipeId], (error, results) => {
+    //Inserting the new recipe into the database
+    db.query( sql, [name, image, recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
             console.error("Error updating recipe:", error);
@@ -183,16 +180,16 @@ app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
     });
 });
 
+// DELETING RECIPE ROUTE //
 app.get('/deleterecipe/:id', (req, res) => {
     const studentId = req.params.id;
     const sql = 'DELETE FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
-    connection.query(sql, [recipeId], (error, results) => {
+    db.query(sql, [recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
             console.error("Error deleting recipe:", error);
             res.status(500).send('Error deleting recipe');
         } else {
-            //send a success response
             res.redirect('/');
         }
     });
