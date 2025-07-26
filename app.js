@@ -70,7 +70,7 @@ const checkAdmin =(req, res, next) => {
     }
 }
 
-// HOME ROUTE //
+// WELCOME PAGE ROUTE (?)//
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
     db.query(sql, (error, results) => {
@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
             console.error('Database query error:', error.message);
             return res.status(500).send('Error retrieving recipe data');
         }
-        res.render('dashboard', { recipe: results });
+        res.render('welcome', { recipe: results });
     });
 });
 
@@ -195,7 +195,6 @@ app.get('/deleterecipe/:id', (req, res) => {
     });
 });
 
-
 //******** TODO: Create a middleware function validateRegistration ********//
 const validateRegistration = (req, res,next) => {
     const {username, email, password, address, contact} = req.body; 
@@ -263,6 +262,23 @@ app.post('/login', (req,res) => {
         }
     });
 });
+
+
+app.get('/guest', (req, res) => {
+  // Fetch recipes from DB (or dummy data if not ready)
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error loading recipes');
+    }
+
+    // Render a view showing recipes but no user info (guest)
+    res.render('guest', { recipes: results });
+  });
+});
+
 
 //******** TODO: Insert code for dashboard route to render dashboard page for users. ********//
 // Updated to include Food Categories - Le Ying
