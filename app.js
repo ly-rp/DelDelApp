@@ -4,8 +4,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const multer = require('multer');
 const path = require('path');
-const crypto = require('crypto'); 
-const bodyParser = require('body-parser');  
+const crypto = require('crypto');  
 
 const app = express();
 
@@ -49,6 +48,7 @@ app.use(session({
 }));
 
 app.use(flash());
+
 
 // SETTING UP EJS//
 app.set('view engine', 'ejs');
