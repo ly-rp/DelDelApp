@@ -1,3 +1,4 @@
+// MODULE IMPORTS //
 const express = require('express');
 const mysql = require('mysql2');
 const session = require('express-session');
@@ -130,7 +131,7 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png if none uploaded
     }
 
-    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, image) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, description, image) VALUES (?, ?, ?, ?)';
     db.query(sql , [recipeTitle, recipeDescription, image], (error, results) => { 
         if (error) {
             console.error("Error adding recipe:", error);

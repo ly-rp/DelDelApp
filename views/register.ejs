@@ -1,1 +1,66 @@
 <!--Register, so the page where the 'log in as user or admin'. We thinking of like adding a guest too here fyi??????? Possible stuff??? Maybe??????-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - DelDel</title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- Optional -->
+</head>
+<body>
+
+  <h1>Register for Delectable Delights</h1>
+
+  <% if (errors && errors.length > 0) { %>
+    <div class="error-messages">
+      <% errors.forEach(error => { %>
+        <p><%= error %></p>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (messages && messages.length > 0) { %>
+    <div class="success-messages">
+      <% messages.forEach(msg => { %>
+        <p><%= msg %></p>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <form action="/register" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" name="username" id="username" required>
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="password">Password (min 6 characters):</label>
+    <input type="password" name="password" id="password" required>
+
+    <label for="contact">Contact Number:</label>
+    <input type="text" name="contact" id="contact" required pattern="\d{8,10}" title="Enter a valid contact number">
+
+    <!-- ROLE SELECTION -->
+    <label for="role">Register as:</label>
+    <select name="role" id="role" required>
+      <option value="" disabled selected>Select your role</option>
+      <option value="user">Registered User</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <br>
+
+  <p>Already have an account? <a href="/login">Login here</a></p>
+
+  <hr>
+
+  <!-- Optional guest access shortcut -->
+  <form action="/guest" method="GET">
+    <button type="submit">Continue as Guest</button>
+  </form>
+
+</body>
+</html>
