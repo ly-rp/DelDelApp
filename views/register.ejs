@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Register - DelDel</title>
-  <link rel="stylesheet" href="/css/style.css"> <!-- Optional -->
+  <link rel="stylesheet" href="/css/style.css"> <!-- Optional CSS -->
 </head>
 <body>
 
@@ -14,7 +14,7 @@
   <% if (errors && errors.length > 0) { %>
     <div class="error-messages">
       <% errors.forEach(error => { %>
-        <p><%= error %></p>
+        <p style="color: red;"><%= error %></p>
       <% }); %>
     </div>
   <% } %>
@@ -22,7 +22,7 @@
   <% if (messages && messages.length > 0) { %>
     <div class="success-messages">
       <% messages.forEach(msg => { %>
-        <p><%= msg %></p>
+        <p style="color: green;"><%= msg %></p>
       <% }); %>
     </div>
   <% } %>
@@ -40,18 +40,11 @@
     <label for="contact">Contact Number:</label>
     <input type="text" name="contact" id="contact" required pattern="\d{8,10}" title="Enter a valid contact number">
 
-    <!-- ROLE SELECTION -->
-    <label for="role">Register as:</label>
-    <select name="role" id="role" required>
-      <option value="" disabled selected>Select your role</option>
-      <option value="user">Registered User</option>
-      <option value="admin">Admin</option>
-    </select>
+    <!-- Hidden role input: Enforce only 'user' registration -->
+    <input type="hidden" name="role" value="user">
 
     <button type="submit">Register</button>
   </form>
-
-  <br>
 
   <p>Already have an account? <a href="/login">Login here</a></p>
 
