@@ -157,7 +157,7 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
 });
 
 // EDITING RECIPE ROUTE //
-app.get('/editRecipe/:id', (req, res) => {
+app.get('/editRecipe/:Id', (req, res) => {
     const recipeId = req.params.id;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
@@ -173,7 +173,7 @@ app.get('/editRecipe/:id', (req, res) => {
     });
 });
 
-app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
+app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
     const recipeId = req.params.id;
     const { recipeTitle, recipeDescription} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
@@ -184,10 +184,10 @@ app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
     }
 
 
-    const sql = 'UPDATE recipe SET name = ?, image = ? WHERE recipeId = ?';
+    const sql = 'UPDATE recipe SET recipeTitle = ?, recipeDescription = ?, image = ?, WHERE recipeId = ?';
 
     //Inserting the new recipe into the database
-    db.query( sql, [name, image, recipeId], (error, results) => {
+    db.query( sql, [recipeTitle, image, recipeDescription, recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
             console.error("Error updating recipe:", error);
