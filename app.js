@@ -214,6 +214,7 @@ app.get('/deleterecipe/:id', (req, res) => {
 });
 
 //******** TODO: Create a middleware function validateRegistration ********//
+// AUTH ROUTES (REGISTER/LOGIN/LOGOUT) //
 const validateRegistration = (req, res,next) => {
     const {username, email, password, address, contact} = req.body; 
 
@@ -227,6 +228,13 @@ const validateRegistration = (req, res,next) => {
     }
     next(); 
 };
+
+app.get('/register', (req, res) => {
+    res.render('register', {
+        errors: req.flash('error'),
+        messages: req.flash('success')
+    });
+});
 
 
 //******** TODO: Integrate validateRegistration into the register route. ********//
@@ -294,7 +302,10 @@ app.post('/login', (req,res) => {
     });
 });
 
-
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
 
 app.get('/guest', (req, res) => {
   req.session.user = { role: 'guest' };
@@ -347,6 +358,16 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 })
+
+//DASHBOARDS//
+app.get('/dashboard', checkAuthenticated, (req, res) => {
+    res.render('dashboard', { user: req.session.user });
+});
+
+app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
+    res.render('admin', { user: req.session.user });
+});
+
 
 // Starting the server
 const PORT = process.env.PORT || 3000;
