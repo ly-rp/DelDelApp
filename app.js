@@ -87,6 +87,8 @@ app.get('/', (req, res) => {
     });
 });
 
+
+// SINGLE RECIPE VIEW //
 app.get('/recipe/:id', (req, res) => {
     const studentId = req.params.id;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
@@ -126,7 +128,6 @@ app.get('/guest', (req, res) => {
     res.render('guest', { recipes: results, user: req.session.user });
   });
 });
-
 
 
 // ADDING RECIPE ROUTE //
@@ -240,18 +241,17 @@ app.get('/register', (req, res) => {
 //******** TODO: Integrate validateRegistration into the register route. ********//
 app.post('/register', validateRegistration, (req, res) => {
     //******** TODO: Update register route to include role. ********//
-    const { username, email, password, address, contact, role} = req.body;
-
+    const { username, email, password, address, contact, role } = req.body;
     const sql = 'INSERT INTO users (username, email, password, address, contact, role) VALUES (?, ?, SHA1(?), ?, ?, ?)';
-    db.query(sql, [username, email, password, address, contact, role], (err, result) => {
+    db.query(sql, [username, email, password, address, contact, role], (err) => {
         if (err) {
-            throw err;
-        }
-        console.log(result);
+            throw err
+            ;}
         req.flash('success', 'Registration successful! Please log in.');
         res.redirect('/login');
     });
 });
+
 
 //******** TODO: Insert code for login routes to render login page below ********//
 app.get('/login', (req, res) => {
@@ -302,13 +302,15 @@ app.post('/login', (req,res) => {
     });
 });
 
+
+// LOGOUT ROUTE //
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
 
 app.get('/guest', (req, res) => {
-  req.session.user = { role: 'guest' };
+  req.session.user = { role: 'guest', username: 'Guest' };
 
   const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
 
