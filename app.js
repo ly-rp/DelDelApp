@@ -244,22 +244,35 @@ app.get('/login', (req, res) => {
 //******** TODO: Insert code for login routes for form submission below ********//
 app.post('/login', (req,res) => {
     const{email, password} =req.body;
+
     //Validate email and password
     if (!email || !password) { //Basically if email is empty, or if pw is empty
         req.flash('error', 'All fields are required.');
         return res.redirect('/login');
     }
+
     const sql = 'SELECT * FROM users WHERE email = ? AND password =SHA1(?)';
     db.query(sql, [email, password], (err, results)=>{
         if(err){
             throw err;
         }
+
         if(results.length > 0) {
             //Successful login 
             req.session.user =results[0]; //Store user in session
             req.flash('success', 'Login successful');
-            //******** TODO: IUpdate to redirect users to /dashboard route upo successful log in ********//
-            res.redirect('/dashboard');
+
+
+            //******** TODO: IUpdate to redirect users to /dashboard route upo successful log in : done?**//
+            //Redirect based on user role//
+            if (results[0].role === 'admin') {
+                res.redirect('/admin');
+            } else if (results[0].role === 'user') {
+                res.redirect('/dashboard');
+            } else {
+                res.redirect('/'); // fallback, just in case
+            }
+            
         } else {
             //Invalid credentials
             req.flash('error', 'Invalid email or password');
