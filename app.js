@@ -359,16 +359,6 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 })
 
-//DASHBOARDS//
-app.get('/dashboard', checkAuthenticated, (req, res) => {
-    res.render('dashboard', { user: req.session.user });
-});
-
-app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
-    res.render('admin', { user: req.session.user });
-});
-
-
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
