@@ -4,8 +4,7 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const flash = require('connect-flash');
 const multer = require('multer');
-const path = require('path');
-const crypto = require('crypto');  
+const path = require('path'); 
 
 const app = express();
 
@@ -37,6 +36,7 @@ db.connect((err) => {
     console.log('Connected to database');
 });
 
+// MIDDLEWARE SETUP //
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
@@ -60,14 +60,14 @@ const checkAuthenticated =(req, res, next) => {
     if (req.session.user) {
         return next();
     } else {
-        req.flash('error', 'Please log inor enter as a guest to view this app!');
+        req.flash('error', 'Please login or enter as a guest to view this app!');
         res.redirect('/login');
     }
 };
 
 //******** TODO: Create a Middleware to check if user is admin. ********//
 const checkAdmin =(req, res, next) => {
-    if (req.session.user.role==='admin') {
+    if (req.session.user?.role==='admin') {
         return next();
     } else {
         req.flash('error', 'Access denied');
@@ -75,7 +75,7 @@ const checkAdmin =(req, res, next) => {
     }
 }
 
-// WELCOME PAGE ROUTE (?)//
+// WELCOME PAGE ROUTE (PUBLIC)//
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
     db.query(sql, (error, results) => {
@@ -96,7 +96,7 @@ app.get('/recipe/:id', (req, res) => {
             return res.status(500).send('Error retrieving recipe by ID');
         }
         if (results.length > 0) {
-            res.render('recipe', { recipe: results[0] });
+            res.render('recipe', { recipe: results[0], user: req.session.user });
         } else {
             res.status(404).send('This recipe cannot found');
         }
@@ -115,6 +115,19 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
       }
   });
 });
+
+
+// ROUTE FOR GUEST ENTRY //
+app.get('/guest', (req, res) => {
+  req.session.user = { role: 'guest', username: 'Guest' };
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+  db.query(sql, (error, results) => {
+    if (error) return res.status(500).send('Error loading recipes');
+    res.render('guest', { recipes: results, user: req.session.user });
+  });
+});
+
+
 
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
@@ -272,7 +285,7 @@ app.post('/login', (req,res) => {
             } else {
                 res.redirect('/'); // fallback, just in case
             }
-            
+
         } else {
             //Invalid credentials
             req.flash('error', 'Invalid email or password');
