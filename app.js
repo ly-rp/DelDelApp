@@ -216,18 +216,20 @@ app.get('/deleterecipe/:id', (req, res) => {
 
 //******** TODO: Create a middleware function validateRegistration ********//
 // AUTH ROUTES (REGISTER/LOGIN/LOGOUT) //
-const validateRegistration = (req, res,next) => {
-    const {username, email, password, address, contact} = req.body; 
+const validateRegistration = (req, res, next) => {
+    const { username, email, password, contact, role } = req.body; // remove address, add role
 
-    if (!username ||!email || !password || !address || !contact) {
-        return res.status(400).send('All fields are required.');
+    if (!username || !email || !password || !contact || !role) { // remove address, add role
+        req.flash('error', 'All fields are required.');
+        req.flash('formData', req.body);
+        return res.redirect('/register');
     }
-    if (password.length<6) {
+    if (password.length < 6) {
         req.flash('error', 'Password should be at least 6 or more characters long');
         req.flash('formData', req.body);
         return res.redirect('/register');
     }
-    next(); 
+    next();
 };
 
 app.get('/register', (req, res) => {
@@ -240,18 +242,16 @@ app.get('/register', (req, res) => {
 
 //******** TODO: Integrate validateRegistration into the register route. ********//
 app.post('/register', validateRegistration, (req, res) => {
-    //******** TODO: Update register route to include role. ********//
-    const { username, email, password, address, contact, role } = req.body;
-    const sql = 'INSERT INTO users (username, email, password, address, contact, role) VALUES (?, ?, SHA1(?), ?, ?, ?)';
-    db.query(sql, [username, email, password, address, contact, role], (err) => {
+    const { username, email, password, contact, role } = req.body; // remove address, add role
+    const sql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
+    db.query(sql, [username, email, password, contact, role], (err) => {
         if (err) {
-            throw err
-            ;}
+            throw err;
+        }
         req.flash('success', 'Registration successful! Please log in.');
         res.redirect('/login');
     });
 });
-
 
 //******** TODO: Insert code for login routes to render login page below ********//
 app.get('/login', (req, res) => {
