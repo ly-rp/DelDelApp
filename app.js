@@ -3,6 +3,10 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const flash = require('connect-flash');
 const multer = require('multer');
+const path = require('path');
+const crypto = require('crypto'); 
+const bodyParser = require('body-parser');  
+
 const app = express();
 
 // STORAGE SETUP FOR MULTER //
