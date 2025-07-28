@@ -151,7 +151,6 @@ app.get('/review/:id', (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 app.post('/reviews/add', (req, res) => {
   const { recipeId, rating, comment } = req.body;
   const userId = req.session.user?.id;  // get logged-in user id
@@ -171,11 +170,7 @@ app.post('/reviews/add', (req, res) => {
   });
 });
 
-
-
-=======
 //*****FAVOURITES ROUTES*****//
->>>>>>> 88f065463a2964a6301f1294a295f476fd1b63b4
 app.get('/favourites', (req, res) => {
     const query = `
         SELECT recipes.* FROM recipes
