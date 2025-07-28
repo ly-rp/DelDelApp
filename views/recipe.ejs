@@ -20,48 +20,58 @@
     <!-- Include dynamic navbar (with guest logic) -->
     <%- include('partials/navbar') %>
 
-    <div class="container mt-4"> 
-  <div class="card p-4" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    <div class="row align-items-start">
-      <!-- Left side: Title + Description + Buttons -->
-      <div class="col-md-6">
-        <h1 style="color: #801408;"><%= recipe.recipeTitle %></h1>
-        <div class="mb-3">
-          <a href="/review/<%= recipe.recipeId %>" class="btn btn-orange3 btn-sm">Review</a>
-          <a href="/rate/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Rate</a>
-          <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2 btn-sm">❤️</a>
+    <div class="container mt-4">
+        <div class="card p-4"
+            style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <div class="row align-items-start">
+                <!-- Left side: Title + Description + Buttons -->
+                <div class="col-md-6">
+                    <h1 style="color: #801408;">
+                        <%= recipe.recipeTitle %>
+                    </h1>
+                    <div class="mb-3">
+                        <a href="/review/<%= recipe.recipeId %>" class="btn btn-orange3 btn-sm">Review</a>
+                        <a href="/rate/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Rate</a>
+                        <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2 btn-sm">❤️</a>
+                    </div>
+    
+                    <div class="h5-red">
+                        <h5>Category:</h5>
+                        <p><%= recipe.category %></p>
+
+                        <h5>Description:</h5>
+                        <p><%= recipe.recipeDescription %></p>
+    
+                        <h5>Ingredients:</h5>
+                        <p><%= recipe.ingredients %></p>
+    
+                        <h5>Instructions:</h5>
+                        <p><%= recipe.instructions %></p>
+                    </div>
+                </div>
+    
+                <!-- Right side: Image -->
+                <div class="col-md-6">
+                    <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>"
+                        style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;">
+    
+                    <div class="h5-red mt-3">
+                        <h5>Prep Time (Minutes):</h5>
+                        <p><%= recipe.prep_time %></p>
+    
+                        <h5>Cook Time (Minutes):</h5>
+                        <p><%= recipe.cook_time %></p>
+    
+                        <h5>Servings:</h5>
+                        <p><%= recipe.servings %></p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="h5-red">
-            <h5>Description:</h5>
-            <p><%= recipe.recipeDescription %></p>
-
-            <h5>Instructions:</h5>
-            <p><%= recipe.instructions %></p>
-        </div>
-      </div>
-
-      <!-- Right side: Image -->
-      <div class="col-md-6">
-        <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>" 
-          style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;">
-
-        <h5 class="h5-red"></h5>
-      </div>
     </div>
-  </div>
-</div>
 
-
-
-
-        <div class="container mt-4">
-    <a href="/recipes">Back to All Recipes</a>
-  </div>
-
-        <div class="container mt-5">
-            <h2>Recipes</h2>
-            <a href="/">Back to Welcome</a>
-        </div>
+    <div class="container my-4">
+        <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
+    </div>
 </body>
 </html>
