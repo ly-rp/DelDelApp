@@ -96,9 +96,15 @@ app.get('/recipes', (req, res) => {
       return res.status(500).send('Error retrieving recipes');
     }
 
+    const user = req.session.user || null;
+    const isAdmin = user?.role === 'admin';
+    const userId = user?.userId || null;
+
     res.render('recipes', {
       recipes: results,
-      user: req.session.user
+      user,
+      isAdmin,
+      userId
     });
   });
 });
