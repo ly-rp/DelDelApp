@@ -123,6 +123,24 @@ app.get('/recipe/:id', (req, res) => {
   });
 });
 
+app.get('/review/:id', (req, res) => {
+    const reviewId = req.params.id;
+
+    db.query('SELECT * FROM Team34C237_gradecutgo.reviews WHERE reviewId = ?', [reviewId], (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length > 0) {
+            res.render('review', { review: results[0], user: req.session.user });
+        } else {
+            res.status(404).send('Review not found');
+        }
+    });
+});
+
+
 app.get('/favourites', (req, res) => {
     const query = `
         SELECT recipes.* FROM recipes
