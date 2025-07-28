@@ -379,8 +379,20 @@ app.get('/dashboard', checkAuthenticated, (req, res) => {
 
 //******** TODO: Insert code for admin route to render dashboard page for admin. ********//
 app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
-    res.render('admin', {user: req.session.user}); 
-}); 
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error('Database error:', error.message);
+      return res.status(500).send('Error retrieving recipes for admin');
+    }
+
+    res.render('admin', {
+      user: req.session.user,
+      recipes: results // ✅ this is what fixes the "recipes is not defined" error
+    });
+  });
+});
+
 
 //******** TODO: Insert code for logout route ********//
 app.get('/logout', (req, res) => {
