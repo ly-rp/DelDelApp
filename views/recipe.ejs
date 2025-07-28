@@ -25,7 +25,7 @@
           <!-- Buttons: Review, Rate, Favourite, Edit/Delete -->
           <div class="mb-3 d-flex gap-2">
             <!-- Review always visible -->
-            <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2">Reviews</a>
+            <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2">Review</a>
 
             <% if (user && user.role !== 'guest') { %>
               <!-- Favourite button -->
