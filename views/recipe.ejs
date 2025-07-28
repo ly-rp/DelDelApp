@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/customStyling.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Recipes</title>
+    <style>
+        .card-img-top {
+            height: 320px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Include dynamic navbar (with guest logic) -->
+    <%- include('partials/navbar') %>
+
+    <div class="container mt-4"> 
+  <div class="card p-4" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <div class="row align-items-start">
+      <!-- Left side: Title + Description + Buttons -->
+      <div class="col-md-6">
+        <h1 style="color: #801408;"><%= recipe.recipeTitle %></h1>
+        <div class="mb-3">
+          <a href="/review/<%= recipe.recipeId %>" class="btn btn-orange3 btn-sm">Review</a>
+          <a href="/rate/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Rate</a>
+          <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2 btn-sm">❤️</a>
+        </div>
+        
+        <div class="h5-red">
+            <h5>Description:</h5>
+            <p><%= recipe.recipeDescription %></p>
+
+            <h5>Instructions:</h5>
+            <p><%= recipe.instructions %></p>
+        </div>
+      </div>
+
+      <!-- Right side: Image -->
+      <div class="col-md-6">
+        <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>" 
+          style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;">
+
+        <h5 class="h5-red"></h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+        <div class="container mt-4">
+    <a href="/recipes">Back to All Recipes</a>
+  </div>
+
+        <div class="container mt-5">
+            <h2>Recipes</h2>
+            <a href="/">Back to Welcome</a>
+        </div>
+</body>
+</html>

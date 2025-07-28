@@ -30,16 +30,19 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <h5 class="card-title">
-                                        <%= recipe.recipeTitle %>
+                                        <a href="/recipe/<%= recipe.recipeId %>" style="text-decoration: none; color: inherit;">
+                                            <%= recipe.recipeTitle %>
+                                        </a>
                                     </h5>
-                                    <a href="/favourite/<%= recipe.id %>" style="text-decoration: none;">💗</a>
+
+                                    <a href="/favourite/<%= recipe.recipeId %>" style="text-decoration: none;">❤️</a>
                                 </div>
                                 <p class="card-text">
                                     <%= recipe.recipeDescription || 'No description provided.' %>
                                 </p>
                                 <a href="/rate/<%= recipe.id %>" class="btn btn-red1">Rate</a>
                                 <a href="/review/<%= recipe.id %>" class="btn btn-orange2">Review</a>
-                                <a href="/favourite/<%= recipe.id %>" class="btn btn-pink">💗</a>
+                                <a href="/favourite/<%= recipe.id %>" class="btn btn-outline-pink">❤️</a>
                             </div>
                         </div>
                     </div>

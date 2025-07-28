@@ -105,22 +105,6 @@ app.get('/recipes', (req, res) => {
 
 // SINGLE RECIPE VIEW //
 app.get('/recipe/:id', (req, res) => {
-    const studentId = req.params.id;
-    const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
-    db.query(sql, [studentId], (error, results) => {
-        if (error) {
-            console.error('Database query error:', error.message);
-            return res.status(500).send('Error retrieving recipe by ID');
-        }
-        if (results.length > 0) {
-            res.render('recipe', { recipe: results[0], user: req.session.user });
-        } else {
-            res.status(404).send('This recipe cannot found');
-        }
-    });
-});
-
-app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   const recipeId = req.params.id;
 
   db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, results) => {
