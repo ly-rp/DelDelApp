@@ -118,18 +118,6 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   });
 });
 
-
-// ROUTE FOR GUEST ENTRY //
-app.get('/guest', (req, res) => {
-  req.session.user = { role: 'guest', username: 'Guest' };
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-  db.query(sql, (error, results) => {
-    if (error) return res.status(500).send('Error loading recipes');
-    res.render('guest', { recipes: results, user: req.session.user });
-  });
-});
-
-
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
     res.render('addRecipe');
@@ -309,6 +297,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+// ROUTE FOR GUEST ENTRY //
 app.get('/guest', (req, res) => {
   req.session.user = { role: 'guest', username: 'Guest' };
 
