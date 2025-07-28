@@ -11,7 +11,6 @@
 </head>
 <body>
   <%- include('partials/navbar') %>
-  <h1>Login to DelDel</h1>
 
   <% if (errors && errors.length > 0) { %>
     <ul style="color:red;">
@@ -29,11 +28,13 @@
     </ul>
   <% } %>
 
+  <div class="container mt-4 text-center">
+    <h1 class="my-5">Login to DelDel</h1>
   <form action="/login" method="POST">
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br>
+    <label>Email:</label>
+    <input type="email" name="email" required><br><br>
 
-    <label>Password:</label><br>
+    <label>Password:</label>
     <input type="password" name="password" required><br><br>
 
     <button type="submit">Login</button>
@@ -41,5 +42,6 @@
 
   <p>Don’t have an account? <a href="/register">Register here</a></p>
   <p>Or <a href="/guest">Continue as Guest</a></p>
+  </div>
 </body>
 </html>
