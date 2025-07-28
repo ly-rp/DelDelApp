@@ -246,7 +246,7 @@ app.get('/deleterecipe/:id', (req, res) => {
 //******** TODO: Create a middleware function validateRegistration ********//
 // AUTH ROUTES (REGISTER/LOGIN/LOGOUT) //
 const validateRegistration = (req, res, next) => {
-    const { username, email, password, contact, role } = req.body; // remove address, add role
+    const { username, email, password, contact, role, adminPasskey } = req.body; // remove address, add role
 
     if (!username || !email || !password || !contact || !role) { // remove address, add role
         req.flash('error', 'All fields are required.');
@@ -255,6 +255,11 @@ const validateRegistration = (req, res, next) => {
     }
     if (password.length < 6) {
         req.flash('error', 'Password should be at least 6 or more characters long');
+        req.flash('formData', req.body);
+        return res.redirect('/register');
+    }
+    if (role === 'admin' && adminPasskey !== 'D4LD4L@P') {
+        req.flash('error', 'Invalid admin passkey.');
         req.flash('formData', req.body);
         return res.redirect('/register');
     }

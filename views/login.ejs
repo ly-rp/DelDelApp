@@ -12,36 +12,47 @@
 <body>
   <%- include('partials/navbar') %>
 
-  <% if (errors && errors.length > 0) { %>
-    <ul style="color:red;">
-      <% errors.forEach(error => { %>
-        <li><%= error %></li>
-      <% }) %>
-    </ul>
-  <% } %>
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Login to Delectable Delights</h1>
 
-  <% if (messages && messages.length > 0) { %>
-    <ul style="color:green;">
-      <% messages.forEach(msg => { %>
-        <li><%= msg %></li>
-      <% }) %>
-    </ul>
-  <% } %>
+    <% if (errors && errors.length > 0) { %>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <% errors.forEach(error => { %>
+            <li><%= error %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
 
-  <div class="container mt-4 text-center">
-    <h1 class="my-5">Login to DelDel</h1>
-  <form action="/login" method="POST">
-    <label>Email:</label>
-    <input type="email" name="email" required><br><br>
+    <% if (messages && messages.length > 0) { %>
+      <div class="alert alert-success">
+        <ul class="mb-0">
+          <% messages.forEach(msg => { %>
+            <li><%= msg %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
 
-    <label>Password:</label>
-    <input type="password" name="password" required><br><br>
+    <form action="/login" method="POST" class="w-50 mx-auto">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" name="email" id="email" class="form-control" required>
+      </div>
 
-    <button type="submit">Login</button>
-  </form>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+      </div>
 
-  <p>Don’t have an account? <a href="/register">Register here</a></p>
-  <p>Or <a href="/guest">Continue as Guest</a></p>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <div class="text-center mt-4">
+      <p>Don’t have an account? <a href="/register">Register here</a></p>
+      <p>Or <a href="/guest">Continue as Guest</a></p>
+    </div>
   </div>
 </body>
 </html>
