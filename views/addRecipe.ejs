@@ -18,55 +18,7 @@
 
 <body>
   <!--Navigation Bar-->
-  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-        <img src="https://i.postimg.cc/9MfSJZ7s/Del-Del-Icon1.png" alt="DelDel Logo" height="20px">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/favourites">favourites</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/addRecipe">add recipe</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">logout</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              dropdown
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">disabled</a>
-          </li>
-        </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="search" aria-label="search">
-          <button class="btn btn-outline-light" type="submit">
-            <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search"
-              style="width:20px; height:20px;">
-          </button>
-        </form>
-      </div>
-    </div>
-  </nav>
+  <%- include('partials/navbar') %>
 
   <!-- Main Content -->
 
@@ -80,7 +32,7 @@
           <div class="col-md-6">
           
             <div class="mb-3">
-              <label for="recipeTitle" class="form-label">Recipe Title</label>
+              <label for="recipeTitle" class="form-label">Recipe Title:</label>
               <input type="text" class="form-control" id="recipeTitle" name="recipeTitle" required>
             </div>
           
@@ -90,7 +42,7 @@
             </div>
           
             <div class="mb-3">
-              <label for="category" class="form-label">Category</label>
+              <label for="category" class="form-label">Category:</label>
               <select class="form-select" id="category" name="category" required>
                 <option value="" disabled selected>Select Category</option>
                 <option value="Breakfast">Breakfast</option>
@@ -102,17 +54,17 @@
             </div>
           
             <div class="mb-3">
-              <label for="recipeDescription" class="form-label">Description</label>
+              <label for="recipeDescription" class="form-label">Description:</label>
               <textarea class="form-control" id="recipeDescription" name="recipeDescription" rows="3" required></textarea>
             </div>
           
             <div class="mb-3">
-              <label for="ingredients" class="form-label">Ingredients</label>
+              <label for="ingredients" class="form-label">Ingredients:</label>
               <textarea class="form-control" id="ingredients" name="ingredients" rows="3" required></textarea>
             </div>
           
             <div class="mb-3">
-              <label for="instructions" class="form-label">Instructions</label>
+              <label for="instructions" class="form-label">Instructions:</label>
               <textarea class="form-control" id="instructions" name="instructions" rows="3" required></textarea>
             </div>
           
@@ -122,7 +74,7 @@
           <div class="col-md-6 d-flex flex-column justify-content-between">
 
             <div class="mb-3">
-              <label for="recipeImage" class="form-label">Recipe Image</label>
+              <label for="recipeImage" class="form-label">Recipe Image:</label>
               <input class="form-control" type="file" id="recipeImage" name="recipeImage" accept="image/*" required>
             </div>
 
@@ -132,17 +84,17 @@
             </div>
 
             <div class="mb-3">
-              <label for="prep_time" class="form-label">Prep Time (Minutes)</label>
+              <label for="prep_time" class="form-label">Prep Time (Minutes):</label>
               <input type="number" class="form-control" id="prep_time" name="prep_time" min="0" required>
             </div>
 
             <div class="mb-3">
-              <label for="cook_time" class="form-label">Cook Time (Minutes)</label>
+              <label for="cook_time" class="form-label">Cook Time (Minutes):</label>
               <input type="number" class="form-control" id="cook_time" name="cook_time" min="0" required>
             </div>
             
             <div class="mb-3">
-              <label for="servings" class="form-label">Servings</label>
+              <label for="servings" class="form-label">Servings:</label>
               <input type="number" class="form-control" id="servings" name="servings" min="1" required>
             </div>
 

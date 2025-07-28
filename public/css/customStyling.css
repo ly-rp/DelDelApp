@@ -43,14 +43,36 @@
     color: white;
 }
 
-.btn-yellow {
+.btn-orange3 {
+  background-color: #d46a2d;
+  color: white;
+  border: none;
+}
+
+.btn-orange3:hover {
+    background-color: #AE5624;
+    color: white;
+}
+
+.btn-yellow1 {
   background-color: #f0c518;
   color: white;
   border: none;
 }
 
-.btn-yellow:hover {
+.btn-yellow2:hover {
     background-color: #d4ae14;
+    color: white;
+}
+
+.btn-yellow2 {
+  background-color: #E5A41A;
+  color: white;
+  border: none;
+}
+
+.btn-yellow2:hover {
+    background-color: #CE9417;
     color: white;
 }
 
@@ -65,15 +87,38 @@
     color: white;
 }
 
-.btn-pink {
-  background-color: white;
+.btn-pink1 {
+  background-color: pink;
   color: white;
   border: none;
 }
 
-.btn-pink:hover {
-    background-color: white;
+.btn-pink2:hover {
+    background-color: pink;
     color: white;
+}
+
+.btn-pink2 {
+  background-color: rgb(252, 214, 214);
+  color: white;
+  border: none;
+}
+
+.btn-pink2:hover {
+    background-color: rgb(255, 191, 191);
+    color: white;
+}
+
+.btn-outline-pink {
+  color: #ff66b2;
+  border: 1px solid #ff66b2;
+  background-color: white;
+}
+
+.btn-outline-pink:hover {
+  color: #ff66b2;
+  border: 1px solid #ff66b2;
+  background-color: #ffcbe3;
 }
 
 .btn-brown {
@@ -87,4 +132,13 @@
     color: white;
 }
 
+.h5-red h5 {
+  color: #801408;
+  font-weight: bold;
+}
+
+.card-img-top {
+  height: 320px;
+  object-fit: cover;
+}
 /* style="color: #801408" */
