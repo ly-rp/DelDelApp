@@ -1,4 +1,4 @@
-// MODULE IMPORTS //
+//*****MODULE IMPORTS*****//
 const express = require('express');
 const mysql = require('mysql2');
 const session = require('express-session');
@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 
-// STORAGE SETUP FOR MULTER //
+//*****STORAGE SETUP FOR MULTER*****//
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/images');
@@ -19,14 +19,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// DATABASE CONNECTION //
+//*****DATABASE CONNECTION*****//
 const db = mysql.createConnection({
     host: 'oowidc.h.filess.io',
     user: 'Team34C237_gradecutgo',
     password: 'd26e4e85de269129b7c4eacb96801d1bcea66855',
     database: 'Team34C237_gradecutgo',
     port: 3307 
-    // Information provided by Filess.io, Kaden is the owner of the database
+    // Information provided by Filess.io, Kaden is the current owner of the database
 });
 
 db.connect((err) => {
@@ -36,11 +36,11 @@ db.connect((err) => {
     console.log('Connected to database');
 });
 
-// MIDDLEWARE SETUP //
+//*****MIDDLEWARE SETUP*****//
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-//SESSION MIDDLEWARE//
+//*****SESSION MIDDLEWARE*****//
 app.use(session({
     secret: 'secret',
     resave: false,
@@ -51,11 +51,11 @@ app.use(session({
 app.use(flash());
 
 
-// SETTING UP EJS//
+//*****SETTING UP EJS*****//
 app.set('view engine', 'ejs');
 
-//MIDDLEWARE TO CHECK IF USER IS LOGGED IN//
-//****TO-DO: Include Authentication for Guest user.****//
+//*****CHECK AUTHENTICATION/AUTHORISATION*****//
+//AUNTHENTICATION FOR...?//
 const checkAuthenticated =(req, res, next) => {
     if (req.session.user) {
         return next();
@@ -65,7 +65,7 @@ const checkAuthenticated =(req, res, next) => {
     }
 };
 
-//******** TODO: Create a Middleware to check if user is admin. ********//
+//AUTHENTICATION FOR ADMIN//
 const checkAdmin =(req, res, next) => {
     if (req.session.user?.role==='admin') {
         return next();
@@ -75,7 +75,7 @@ const checkAdmin =(req, res, next) => {
     }
 }
 
-// WELCOME PAGE ROUTE (PUBLIC)//
+//*****WELCOME PAGE (PUBLIC)*****//
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
     db.query(sql, (error, results) => {
@@ -109,7 +109,7 @@ app.get('/recipes', (req, res) => {
   });
 });
 
-// SINGLE RECIPE VIEW //
+//*****SINGLE RECIPE VIEW*****//
 app.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
 
@@ -140,7 +140,7 @@ app.get('/review/:id', (req, res) => {
     });
 });
 
-
+//*****FAVOURITES ROUTES*****//
 app.get('/favourites', (req, res) => {
     const query = `
         SELECT recipes.* FROM recipes
@@ -167,6 +167,8 @@ app.post('/favourites/add', (req, res) => {
     });
 });
 
+
+//*****CRUD OPERATIONS FOR RECIPES*****//
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
     res.render('addRecipe');
@@ -249,8 +251,8 @@ app.get('/deleterecipe/:id', (req, res) => {
     });
 });
 
-//******** TODO: Create a middleware function validateRegistration ********//
-// AUTH ROUTES (REGISTER/LOGIN/LOGOUT) //
+//*****AUTHENTICATION ROUTES*****//
+// VALIDATING REGISTERATION //
 const validateRegistration = (req, res, next) => {
     const { username, email, password, contact, role, adminPasskey } = req.body; // remove address, add role
 
@@ -280,8 +282,6 @@ app.get('/register', (req, res) => {
     });
 });
 
-
-//******** TODO: Integrate validateRegistration into the register route. ********//
 app.post('/register', validateRegistration, (req, res) => {
     const { username, email, password, contact, role } = req.body; // remove address, add role
     const sql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
@@ -294,7 +294,7 @@ app.post('/register', validateRegistration, (req, res) => {
     });
 });
 
-//******** TODO: Insert code for login routes to render login page below ********//
+//VALIDATING LOGGING IN//
 app.get('/login', (req, res) => {
 
     res.render('login', {
@@ -304,7 +304,6 @@ app.get('/login', (req, res) => {
     });
 });
 
-//******** TODO: Insert code for login routes for form submission below ********//
 app.post('/login', (req,res) => {
     const{email, password} =req.body;
 
@@ -325,8 +324,6 @@ app.post('/login', (req,res) => {
             req.session.user =results[0]; //Store user in session
             req.flash('success', 'Login successful');
 
-
-            //******** TODO: IUpdate to redirect users to /dashboard route upo successful log in : done?**//
             //Redirect based on user role//
             if (results[0].role === 'admin') {
                 res.redirect('/admin');
@@ -344,8 +341,7 @@ app.post('/login', (req,res) => {
     });
 });
 
-
-// LOGOUT ROUTE //
+// LOGGING OUT //
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
@@ -380,7 +376,7 @@ app.get('/guest', (req, res) => {
 });
 
 
-//******** TODO: Insert code for dashboard route to render dashboard page for users. ********//
+//*****DASHBOARDS*****//
 // Updated to include Food Categories - Le Ying
 app.get('/dashboard', checkAuthenticated, (req, res) => {
     const foodCategories = [
@@ -393,7 +389,7 @@ app.get('/dashboard', checkAuthenticated, (req, res) => {
     res.render('dashboard', {user:req.session.user}); 
 }); 
 
-//******** TODO: Insert code for admin route to render dashboard page for admin. ********//
+//ADMIN DASHBOARD//
 app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
   const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
   db.query(sql, (error, results) => {
@@ -408,13 +404,6 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
     });
   });
 });
-
-
-//******** TODO: Insert code for logout route ********//
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-})
 
 // DISPLAYING ALL RECIPES, THE MAIN LIST //
 app.get('/recipesList', (req, res) => {
@@ -439,6 +428,6 @@ app.get('/reviews', (req, res) => {
 });
 
 
-// Starting the server
+//*****STARTING THE SERVER*****//
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
+app.listen(PORT, () => console.log(`This server is running on 'http://localhost:${PORT}'`)); 
