@@ -154,7 +154,6 @@ app.get('/addRecipe', (req, res) => {
     res.render('addRecipe');
 });
 
-
 app.post('/addRecipe',upload.single('image'), (req, res) => {
     const {recipeTitle, recipeDescription} = req.body;
     let image;
@@ -201,7 +200,6 @@ app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
     } else if (!image) {
         image = 'noImage.png'; // Use noImage.png only if there is no current image
     }
-
 
     const sql = 'UPDATE recipe SET recipeTitle = ?, recipeDescription = ?, image = ?, WHERE recipeId = ?';
 
@@ -403,6 +401,11 @@ app.get('/recipesList', (req, res) => {
       user: req.session.user
     });
   });
+});
+
+//RATINGS AND COMMENTS ROUTES //
+app.get('/reviews', (req, res) => {
+  res.render('reviews', { user: req.session.user });
 });
 
 
