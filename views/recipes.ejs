@@ -20,14 +20,34 @@
   
     <!-- Include dynamic navbar (with guest logic) -->
   <%- include('partials/navbar') %>
+    <div class="container mt-4">
+        <div class="row">
+            <% recipes.forEach(recipe=> { %>
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top" alt="Recipe Image">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">
+                                    <%= recipe.recipeTitle %>
+                                </h5>
+                                <a href="/favourite/<%= recipe.id %>" style="text-decoration: none;">💗</a>
+                            </div>
+                            <p class="card-text">
+                                <%= recipe.recipeDescription || 'No description provided.' %>
+                            </p>
+                            <a href="/rate/<%= recipe.id %>" class="btn btn-red1">Rate</a>
+                            <a href="/review/<%= recipe.id %>" class="btn btn-orange2">Review</a>
+                            <a href="/favourite/<%= recipe.id %>" class="btn btn-pink">💗</a>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+    </div>
 
   <div class="container mt-5">
     <h2>Recipes</h2>
-    <ul>
-      <% recipes.forEach(recipe => { %>
-        <li><%= recipe.name %> - <%= recipe.description %></li>
-      <% }) %>
-    </ul>
     <a href="/">Back to Welcome</a>
   </div>
 </body>
