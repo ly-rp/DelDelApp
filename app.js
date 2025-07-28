@@ -405,6 +405,12 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
   });
 });
 
+//RATINGS AND COMMENTS ROUTES //
+app.get('/reviews', (req, res) => {
+  res.render('reviews', { user: req.session.user });
+});
+
+// *****FOOD CATEGORIES AND THEIR LISTS***** //
 // DISPLAYING ALL RECIPES, THE MAIN LIST //
 app.get('/recipesList', (req, res) => {
   const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
@@ -422,10 +428,18 @@ app.get('/recipesList', (req, res) => {
   });
 });
 
-//RATINGS AND COMMENTS ROUTES //
-app.get('/reviews', (req, res) => {
-  res.render('reviews', { user: req.session.user });
+// DISPLAYING GOOD SOUP LIST //
+app.get('/soupsList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Soup"'; // Adjust column name if needed
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('soupsList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
 });
+
 
 
 //*****STARTING THE SERVER*****//
