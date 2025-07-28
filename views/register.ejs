@@ -1,5 +1,5 @@
 <!--Register, so the page where the 'log in as user or admin'. We thinking of like adding a guest too here fyi??????? Possible stuff??? Maybe??????-->
-<!--Added guest login thing too gyat??-->
+<!--Added guest login thing too gyat-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +64,7 @@
         </select>
       </div>
 
-      <!-- Admin Passkey Field (hidden unless 'admin' is selected) -->
+      <!-- Admin Passkey Field (hidden unless 'admin' is selected), aka the actual hidden box -->
       <div class="mb-3" id="adminPasskeyDiv" style="display: none;">
         <label for="adminPasskey" class="form-label">Admin Verification:</label>
         <input type="password" name="adminPasskey" id="adminPasskey" class="form-control" placeholder="Enter passkey">
@@ -80,6 +80,8 @@
 <!-- Guest Access -->
 <p class="mt-3">Or <a href="/guest">Continue as Guest</a></p>
 
+
+<!-- Function that controls when to show or hide -->
 <hr>
 
   </form>
@@ -90,6 +92,7 @@
       const passkeyDiv = document.getElementById('adminPasskeyDiv');
       const passkeyInput = document.getElementById('adminPasskey');
 
+      //If person picks admin show the dropdown box type beat 
       if (roleSelect.value === 'admin') {
         passkeyDiv.style.display = 'block';
         passkeyInput.required = true;
