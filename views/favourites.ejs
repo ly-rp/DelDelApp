@@ -1,0 +1,19 @@
+<!-- views/favourites.ejs -->
+<%- include('partials/navbar') %>
+
+<div class="container mt-4">
+  <h2>Your Favourites</h2>
+  <div class="row">
+    <% favourites.forEach(recipe => { %>
+      <div class="col-md-3 mb-4">
+        <div class="card">
+          <img src="/images/<%= recipe.image %>" class="card-img-top" alt="Recipe Image">
+          <div class="card-body">
+            <h5 class="card-title"><%= recipe.name %></h5>
+            <p class="card-text"><%= recipe.description %></p>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>

@@ -133,6 +133,32 @@ app.get('/recipe/:id', checkAuthenticated, (req, res) => {
   });
 });
 
+app.get('/favourites', (req, res) => {
+    const query = `
+        SELECT recipes.* FROM recipes
+        JOIN favourites ON recipes.id = favourites.recipe_id
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching favourites:', err);
+            return res.status(500).send('Database error');
+        }
+        res.render('favourites', { favourites: results });
+    });
+});
+
+app.post('/favourites/add', (req, res) => {
+    const recipeId = req.body.recipeId;
+
+    db.query('INSERT INTO favourites (recipe_id) VALUES (?)', [recipeId], (err, result) => {
+        if (err) {
+            console.error('Error adding to favourites:', err);
+            return res.status(500).send('Failed to add favourite');
+        }
+        res.redirect('/favourites');
+    });
+});
+
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
     res.render('addRecipe');
