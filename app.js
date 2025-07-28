@@ -87,6 +87,21 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/recipes', (req, res) => {
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error("Database error:", error.message);
+      return res.status(500).send('Error retrieving recipes');
+    }
+
+    res.render('recipes', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
 
 // SINGLE RECIPE VIEW //
 app.get('/recipe/:id', (req, res) => {
@@ -222,6 +237,7 @@ const validateRegistration = (req, res, next) => {
 
 app.get('/register', (req, res) => {
     res.render('register', {
+        user: req.session.user || null,
         errors: req.flash('error'),
         messages: req.flash('success')
     });
@@ -245,6 +261,7 @@ app.post('/register', validateRegistration, (req, res) => {
 app.get('/login', (req, res) => {
 
     res.render('login', {
+        user: req.session.user || null, //Pass user session to the view
         messages: req.flash('success'), //Retrieve success messages from session
         errors: req.flash('error') //Retrieve error messages
     });
