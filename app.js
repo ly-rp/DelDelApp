@@ -201,8 +201,9 @@ app.post('/favourites/add', (req, res) => {
 //*****CRUD OPERATIONS FOR RECIPES*****//
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
-    res.render('addRecipe');
+    res.render('addRecipe', { user: req.session.user || null });
 });
+
 
 app.post('/addRecipe',upload.single('image'), (req, res) => {
     const {recipeTitle, recipeDescription} = req.body;
@@ -358,7 +359,7 @@ app.post('/login', (req,res) => {
             if (results[0].role === 'admin') {
                 res.redirect('/admin');
             } else if (results[0].role === 'user') {
-                res.redirect('/dashboard');
+                res.redirect('/user');
             } else {
                 res.redirect('/'); // fallback, just in case
             }
@@ -409,15 +410,31 @@ app.get('/guest', (req, res) => {
 //*****DASHBOARDS*****//
 // Updated to include Food Categories - Le Ying
 app.get('/dashboard', checkAuthenticated, (req, res) => {
-    const foodCategories = [
-        { name: 'Desserts', image: '/images/categories/desserts.jpg' },
-        { name: 'Soups', image: '/images/categories/soups.jpg' },
-        { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
-        { name: 'Salads', image: '/images/categories/salads.jpg' },
-        { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
-    ];
-    res.render('dashboard', {user:req.session.user}); 
+    const categories = [
+    { name: 'Desserts', image: '/images/categories/desserts.jpg' },
+    { name: 'Soups', image: '/images/categories/soups.jpg' },
+    { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
+    { name: 'Salads', image: '/images/categories/salads.jpg' },
+    { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
+];
+res.render('dashboard', { user: req.session.user, categories });
+
 }); 
+
+app.get('/dashboard', (req, res) => {
+  const user = req.session.user;
+
+  // Fetch categories (assuming you have a categories table)
+  db.query('SELECT * FROM categories', (err, results) => {
+    if (err) throw err;
+
+    res.render('dashboard', {
+      user: user,
+      categories: results // <<== this is what you were missing
+    });
+  });
+});
+
 
 //ADMIN DASHBOARD//
 app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
@@ -430,10 +447,35 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
 
     res.render('admin', {
       user: req.session.user,
-      recipes: results // ✅ this is what fixes the "recipes is not defined" error
+      recipes: results 
     });
   });
 });
+
+app.get('/user', checkAuthenticated, (req, res) => {
+    const user = req.session.user;
+
+    const recipesSql = 'SELECT * FROM recipes'; // or add WHERE user_id = ? if needed
+    const categoriesSql = 'SELECT * FROM category'; // your table is called `category`
+
+    db.query(recipesSql, (err, recipes) => {
+        if (err) {
+            console.error('Error fetching recipes:', err);
+            return res.status(500).send('Internal Server Error');
+        }
+
+        db.query(categoriesSql, (err, categories) => {
+            if (err) {
+                console.error('Error fetching categories:', err);
+                return res.status(500).send('Internal Server Error');
+            }
+
+            // Make sure your EJS file is named `user.ejs`
+            res.render('user', { user, recipes, categories });
+        });
+    });
+});
+
 
 //RATINGS AND COMMENTS ROUTES //
 app.get('/reviews', (req, res) => {
