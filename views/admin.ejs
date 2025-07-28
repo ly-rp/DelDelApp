@@ -42,7 +42,9 @@
                     <% recipes.forEach(function(recipe, index) { %>
                         <tr>
                             <th scope="row"><%= index + 1 %></th>
-                            <td><%= recipe.name %></td>
+                            <td>
+                                <a href="/recipe/<%= recipe.id %>" class="text-primary"><%= recipe.recipeTitle %></a>
+                            </td>
                             <td><%= recipe.category %></td>
                             <td>
                                 <a href="/admin/edit/<%= recipe.id %>" class="btn btn-warning btn-sm">Edit</a>
