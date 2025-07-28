@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">
+    <a class="navbar-brand" href="<%= user && user.role === 'admin' ? '/admin' : user && user.role === 'user' ? '/dashboard' : '/guest' %>">
       <img src="/images/deldel_folder/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -19,6 +19,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/register">register</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/recipes">recipes</a>
+          </li>
         <% } else if (user.role === 'user') { %>
           <!-- Logged-in User Links -->
           <li class="nav-item">
@@ -28,12 +31,15 @@
             <a class="nav-link" href="/addRecipe">add recipe</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/recipes">recipes</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/logout">logout</a>
           </li>
         <% } else if (user.role === 'admin') { %>
           <!-- Admin Links -->
           <li class="nav-item">
-            <a class="nav-link" href="/recipesDB">recipes</a>
+            <a class="nav-link" href="/recipes">recipes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">logout</a>
