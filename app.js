@@ -111,16 +111,27 @@ app.get('/recipes', (req, res) => {
 
 // SINGLE RECIPE VIEW //
 app.get('/recipe/:id', (req, res) => {
-  const recipeId = req.params.id;
+    const recipeId = req.params.id;
 
-  db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, results) => {
-      if (error) throw error;
-      if (results.length > 0) {
-          res.render('recipe', { recipe: results[0], user: req.session.user });
-      } else {
-          res.status(404).send('recipe not found');
-      }
-  });
+    db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, recipeResults) => {
+        if (error) return res.status(500).send('Database error');
+        if (recipeResults.length === 0) {
+            return res.status(404).send('Recipe not found');
+        }
+        // Now get all reviews for this recipe
+        db.query(
+            'SELECT r.*, u.username FROM reviews r JOIN users u ON r.userId = u.id WHERE r.recipeId = ?',
+            [recipeId],
+            (err, reviewResults) => {
+                if (err) return res.status(500).send('Database error');
+                res.render('recipe', {
+                    recipe: recipeResults[0],
+                    reviews: reviewResults,
+                    user: req.session.user,
+                });
+            }
+        );
+    });
 });
 
 app.get('/review/:id', (req, res) => {
@@ -139,6 +150,26 @@ app.get('/review/:id', (req, res) => {
         }
     });
 });
+
+app.post('/reviews/add', (req, res) => {
+  const { recipeId, rating, comment } = req.body;
+  const userId = req.session.user?.id;  // get logged-in user id
+
+  if (!userId) {
+    req.flash('error', 'You must be logged in to add a review.');
+    return res.redirect('/login');
+  }
+
+  const sql = 'INSERT INTO reviews (recipeId, userId, rating, comment) VALUES (?, ?, ?, ?)';
+  db.query(sql, [recipeId, userId, rating, comment], (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error adding review');
+    }
+    res.redirect(`/recipe/${recipeId}`);
+  });
+});
+
 
 
 app.get('/favourites', (req, res) => {
@@ -441,4 +472,4 @@ app.get('/reviews', (req, res) => {
 
 // Starting the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));

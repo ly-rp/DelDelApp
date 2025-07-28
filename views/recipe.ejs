@@ -24,8 +24,8 @@
 
           <!-- Buttons: Review, Rate, Favourite, Edit/Delete -->
           <div class="mb-3 d-flex gap-2">
-            <!-- Review always visible -->
-            <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2">Review</a>
+            <!-- Add Review button scrolls to form -->
+            <a href="#review-form" class="btn btn-yellow2">Add Review</a>
 
             <% if (user && user.role !== 'guest') { %>
               <!-- Favourite button -->
@@ -81,6 +81,41 @@
       </div>
     </div>
   </div>
+
+  <!-- Example for recipe.ejs -->
+<h3>Reviews</h3>
+<% if (reviews && reviews.length > 0) { %>
+  <ul>
+    <% reviews.forEach(function(review) { %>
+      <li>
+        <strong><%= review.username %></strong>:
+        <%= review.rating %>/5 -
+        <%= review.comment %>
+        <!-- Link to single review page -->
+        <a href="/review/<%= review.reviewId %>" class="btn btn-sm btn-outline-secondary ms-2">View</a>
+      </li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>No reviews yet.</p>
+<% } %>
+
+<!-- Add review form -->
+<% if (user) { %>
+  <form id="review-form" action="/reviews/add" method="POST">
+    <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+    <label for="rating">Rating (1-5):</label>
+    <input type="number" name="rating" min="1" max="5" required>
+    <br>
+    <label for="comment">Comment:</label>
+    <textarea name="comment" required></textarea>
+    <br>
+    <button type="submit">Submit Review</button>
+  </form>
+<% } else { %>
+  <p>Please <a href="/login">login</a> to add a review.</p>
+<% } %>
+<a href="#review-form" class="btn btn-yellow2">Add Review</a>
 
   <div class="container my-4">
     <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
