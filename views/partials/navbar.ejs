@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #640F05;">
   <div class="container-fluid">
-    <a class="navbar-brand" href="<%= user && user.role === 'admin' ? '/admin' : user && user.role === 'user' ? '/dashboard' : '/guest' %>">
+    <a class="navbar-brand" href="<%= user && user.role === 'admin' ? '/admin' : user && user.role === 'user' ? '/user' : '/guest' %>">
       <img src="/images/deldel_folder/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

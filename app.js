@@ -452,28 +452,27 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
   });
 });
 
+
+
 app.get('/user', checkAuthenticated, (req, res) => {
-    const user = req.session.user;
+  const foodCategories = [
+    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+  ];
 
-    const recipesSql = 'SELECT * FROM recipes'; // or add WHERE user_id = ? if needed
-    const categoriesSql = 'SELECT * FROM category'; // your table is called `category`
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
 
-    db.query(recipesSql, (err, recipes) => {
-        if (err) {
-            console.error('Error fetching recipes:', err);
-            return res.status(500).send('Internal Server Error');
-        }
+  db.query(sql, (err, recipes) => {
+    if (err) {
+      console.error('Error fetching recipes:', err);
+      return res.status(500).send('Internal Server Error');
+    }
 
-        db.query(categoriesSql, (err, categories) => {
-            if (err) {
-                console.error('Error fetching categories:', err);
-                return res.status(500).send('Internal Server Error');
-            }
-
-            // Make sure your EJS file is named `user.ejs`
-            res.render('user', { user, recipes, categories });
-        });
-    });
+    res.render('user', { user: req.session.user, recipes, categories: foodCategories });
+  });
 });
 
 
