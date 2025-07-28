@@ -393,6 +393,24 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 })
 
+// DISPLAYING ALL RECIPES, THE MAIN LIST //
+app.get('/recipesList', (req, res) => {
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error("Database error:", error.message);
+      return res.status(500).send('Error retrieving recipes');
+    }
+
+    res.render('recipesList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
+
+
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
