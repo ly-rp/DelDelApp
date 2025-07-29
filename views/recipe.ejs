@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= recipe.recipeTitle %> | DelDel</title>
+  <title>
+    <%= recipe.recipeTitle %> | DelDel
+  </title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/customStyling.css" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -12,113 +14,140 @@
 
 <body>
   <!-- Navbar -->
-  <%- include('partials/navbar') %>
+  <%- include('partials/navbar', { user: user }) %>
 
-  <div class="container mt-4">
-    <div class="card p-4"
-      style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-      <div class="row align-items-start">
-        <!-- Left: Details -->
-        <div class="col-md-6">
-          <h1 class="mb-3" style="color: #801408;"><%= recipe.recipeTitle %></h1>
+    <div class="container mt-4">
+      <div class="card p-4"
+        style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <div class="row align-items-start">
+          <!-- Left: Details -->
+          <div class="col-md-6">
+            <h1 class="mb-3" style="color: #801408;">
+              <%= recipe.recipeTitle %>
+            </h1>
 
-          <!-- Buttons: Review, Rate, Favourite, Edit/Delete -->
-          <div class="mb-3 d-flex gap-2">
-            <!-- Add Review button scrolls to form -->
-            <a href="#review-form" class="btn btn-yellow2">Add Review</a>
+            <!-- Buttons: Review, Favourite, Edit/Delete -->
+            <div class="mb-3 d-flex gap-2">
+              <% if (user && user.role !=='guest' ) { %>
+                <!-- Review button for logged-in users -->
+                <a href="#review-form" class="btn btn-yellow2">Review</a>
 
-            <% if (user && user.role !== 'guest') { %>
-              <!-- Favourite button -->
-              <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-outline-danger" title="Add to favourite">
-                <% if (recipe.isFavourited) { %>❤️<% } else { %>🤍<% } %>
-              </a>
+                <% if (user.role==='user' ) { %>
+                  <!-- Heart for regular users -->
+                  <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2" title="Add to favourite">
+                    <% if (recipe.isFavourited) { %>❤️<% } else { %>🤍<% } %>
+                  </a>
+                  <% } %>
 
-              <% if (user.role === 'admin' || user.id === recipe.creatorId) { %>
-                <!-- Edit and Delete only for admin or creator -->
-                <a href="/editRecipe/<%= recipe.recipeId %>" class="btn btn-outline-primary">Edit</a>
-                <a href="/deleteRecipe/<%= recipe.recipeId %>" class="btn btn-outline-danger"
-                   onclick="return confirm('Are you sure you want to delete this recipe?');">Delete</a>
-              <% } %>
+                    <% if (user.role==='admin' || user.id===recipe.creatorId) { %>
+                      <!-- Edit/Delete for admin or recipe creator -->
+                      <a href="/editRecipe/<%= recipe.recipeId %>" class="btn btn-warning">Edit</a>
+                      <a href="/deleteRecipe/<%= recipe.recipeId %>" class="btn btn-danger"
+                        onclick="return confirm('Are you sure you want to delete this recipe?');">Delete</a>
+                      <% } %>
 
-            <% } else { %>
-              <!-- Guests or not logged in: rate & favourite link to register -->
-              <a href="/register" class="btn btn-pink2" title="Login to Favourite">❤️</a>
-            <% } %>
+                        <% } else { %>
+                          <!-- Guest: no review form, just redirect to register -->
+                          <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2">Review</a>
+                          <a href="/register" class="btn btn-pink2" title="Login to Favourite">❤️</a>
+                          <% } %>
+            </div>
+
+
+
+            <div class="h5-red">
+              <h5>Category:</h5>
+              <p>
+                <%= recipe.category %>
+              </p>
+
+              <h5>Description:</h5>
+              <p>
+                <%= recipe.recipeDescription %>
+              </p>
+
+              <h5>Ingredients:</h5>
+              <p>
+                <%= recipe.ingredients %>
+              </p>
+
+              <h5>Instructions:</h5>
+              <p>
+                <%= recipe.instructions %>
+              </p>
+            </div>
           </div>
 
-          <div class="h5-red">
-            <h5>Category:</h5>
-            <p><%= recipe.category %></p>
+          <!-- Right -->
+          <div class="col-md-6">
+            <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>"
+              style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;" />
 
-            <h5>Description:</h5>
-            <p><%= recipe.recipeDescription %></p>
+            <div class="h5-red mt-4">
+              <h5>Prep Time (Minutes):</h5>
+              <p>
+                <%= recipe.prep_time %>
+              </p>
 
-            <h5>Ingredients:</h5>
-            <p><%= recipe.ingredients %></p>
+              <h5>Cook Time (Minutes):</h5>
+              <p>
+                <%= recipe.cook_time %>
+              </p>
 
-            <h5>Instructions:</h5>
-            <p><%= recipe.instructions %></p>
-          </div>
-        </div>
-
-        <!-- Right -->
-        <div class="col-md-6">
-          <img src="/images/recipeImages/<%= recipe.recipeImage %>"
-               alt="<%= recipe.recipeTitle %>"
-               style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;" />
-
-          <div class="h5-red mt-4">
-            <h5>Prep Time (Minutes):</h5>
-            <p><%= recipe.prep_time %></p>
-
-            <h5>Cook Time (Minutes):</h5>
-            <p><%= recipe.cook_time %></p>
-
-            <h5>Servings:</h5>
-            <p><%= recipe.servings %></p>
+              <h5>Servings:</h5>
+              <p>
+                <%= recipe.servings %>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Example for recipe.ejs -->
-<h3>Reviews</h3>
-<% if (reviews && reviews.length > 0) { %>
-  <ul>
-    <% reviews.forEach(function(review) { %>
-      <li>
-        <strong><%= review.username %></strong>:
-        <%= review.rating %>/5 -
-        <%= review.comment %>
-        <!-- Link to single review page -->
-        <a href="/review/<%= review.reviewId %>" class="btn btn-sm btn-outline-secondary ms-2">View</a>
-      </li>
-    <% }) %>
-  </ul>
-<% } else { %>
-  <p>No reviews yet.</p>
-<% } %>
+    <!-- Example for recipe.ejs -->
+    <h3>Reviews</h3>
+    <% if (reviews && reviews.length> 0) { %>
+      <ul>
+        <% reviews.forEach(function(review) { %>
+          <li>
+            <strong>
+              <%= review.username %>
+            </strong>:
+            <%= review.rating %>/5 -
+              <%= review.comment %>
+                <!-- Link to single review page -->
+                <a href="/review/<%= review.reviewId %>" class="btn btn-sm btn-outline-secondary ms-2">View</a>
+          </li>
+          <% }) %>
+      </ul>
+      <% } else { %>
+        <p>No reviews yet.</p>
+        <% } %>
 
-<!-- Add review form -->
-<% if (user) { %>
-  <form id="review-form" action="/reviews/add" method="POST">
-    <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-    <label for="rating">Rating (1-5):</label>
-    <input type="number" name="rating" min="1" max="5" required>
-    <br>
-    <label for="comment">Comment:</label>
-    <textarea name="comment" required></textarea>
-    <br>
-    <button type="submit">Submit Review</button>
-  </form>
-<% } else { %>
-  <p>Please <a href="/login">login</a> to add a review.</p>
-<% } %>
-<a href="#review-form" class="btn btn-yellow2">Add Review</a>
+          <!-- Add review form -->
+          <% if (user && user.role !=='guest' ) { %>
+            <form id="review-form" action="/reviews/add" method="POST">
+              <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+              <label for="rating">Rating (1-5):</label>
+              <input type="number" name="rating" min="1" max="5" required>
+              <br>
+              <label for="comment">Comment:</label>
+              <textarea name="comment" required></textarea>
+              <br>
+              <button type="submit">Submit Review</button>
+            </form>
+            <% } else { %>
+              <p>Please <a href="/login">login</a> to add a review.</p>
+              <% } %>
 
-  <div class="container my-4">
-    <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
-  </div>
+                <% if (user && user.role !=='guest' ) { %>
+                  <a href="#review-form" class="btn btn-yellow2">Add Review</a>
+                  <% } %>
+
+
+                    <div class="container my-4">
+                      <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
+                    </div>
 </body>
+
 </html>

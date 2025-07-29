@@ -44,9 +44,11 @@
             <div style="text-align: center; width: 200px;">
                 <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
                     style="width: 200px; height: 200px; object-fit: cover;">
-                <p><a href="#"><b>
-                            <%= category.name %>
-                        </b></a></p>
+                <p>
+                  <a href="/<%= category.name.toLowerCase() %>List">
+                    <b><%= category.name %></b>
+                  </a>
+                </p>
             </div>
             <% }) %>
     </div>
