@@ -125,20 +125,21 @@
 
 
 <!-- Reviews Section -->
+<!-- Reviews Section -->
 <div class="container mt-5">
   <h3>Reviews</h3>
   <% if (reviews && reviews.length > 0) { %>
-    <ul>
+    <ul class="list-unstyled">
       <% reviews.forEach(function(review) { %>
-        <li>
+        <li class="mb-2">
           <strong><%= review.username %></strong>: <%= review.rating %>/5 - 
           <%= review.comment %>
 
           <% if (user && (user.role === 'admin' || user.id === review.userId)) { %>
-            <a href="/reviews/edit/<%= review.reviewId %>" class="btn btn-sm btn-warning ms-2">Edit</a>
+            <a href="/reviews/edit/<%= review.reviewId %>" class="ms-3 text-secondary text-decoration-none edit-link">Edit</a>
 
             <form action="/reviews/delete/<%= review.reviewId %>" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('Are you sure you want to delete this review?');">Delete</button>
+              <button type="submit" class="btn btn-link p-0 ms-2 text-danger text-decoration-none delete-link" onclick="return confirm('Are you sure you want to delete this review?');">Delete</button>
             </form>
           <% } %>
         </li>
@@ -148,55 +149,3 @@
     <p>No reviews yet.</p>
   <% } %>
 </div>
-
-
-  <% if (user && user.role !== 'guest') { %>
-    <div class="container text-center mt-4">
-      <button id="writeReviewBtn" class="btn btn-yellow2">Write a Review</button>
-    </div>
-
-    <div class="container mt-4" id="review-form" style="display: none;">
-      <form action="/reviews/add" method="POST">
-        <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-
-        <div class="mb-4">
-          <h5>Rating:</h5>
-          <div class="star-rating">
-            <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
-            <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
-            <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
-            <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
-            <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <h5>Comment:</h5>
-          <textarea class="form-control" name="comment" rows="4" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit Review</button>
-      </form>
-    </div>
-  <% } else { %>
-    <div class="container text-center mt-4">
-      <p>Please <a href="/login">login</a> to add a review.</p>
-    </div>
-  <% } %>
-
-  <div class="container my-4">
-    <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
-  </div>
-
-  <script>
-    const writeBtn = document.getElementById('writeReviewBtn');
-    const reviewForm = document.getElementById('review-form');
-    if (writeBtn && reviewForm) {
-      writeBtn.addEventListener('click', () => {
-        reviewForm.style.display = 'block';
-        writeBtn.style.display = 'none';
-      });
-    }
-  </script>
-</body>
-</html>
