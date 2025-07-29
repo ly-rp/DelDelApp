@@ -49,6 +49,7 @@
     <% } %>
   </div>
 
+  
   <div class="container mt-5">
     <h2 class="text-center mb-4">Leave a Review</h2>
 
@@ -56,6 +57,7 @@
       <div class="alert alert-warning mt-3">
         You must <a href="/register">register</a> or <a href="/login">log in</a> to leave a review.
       </div>
+      <!-- Rating -->
     <% } else { %>
       <form action="/submitReview" method="POST">
         <div class="mb-4">
@@ -74,11 +76,13 @@
           </div>
         </div>
 
+        <!-- Comments -->
         <div class="mb-3">
           <h5>Comments:</h5>
           <textarea class="form-control" name="comment" rows="5" placeholder="Write your thoughts here..."></textarea>
         </div>
 
+        <!-- Submit -->
         <button type="submit" class="btn btn-primary">Submit Review</button>
       </form>
     <% } %>
