@@ -45,7 +45,8 @@
         <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
           style="width: 200px; height: 200px; object-fit: cover;">
         <p>
-          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List"> <!--This from GPT, cuz it will show different route for side dishes cuz theres a space inbetween-->
+          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List"> 
+            <!--This from GPT, cuz if not  will show different route for sidedishesList cuz theres a space in-between-->
             <b>
               <%= category.name %>
             </b>
