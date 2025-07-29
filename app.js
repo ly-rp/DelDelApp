@@ -513,6 +513,18 @@ app.get('/soupsList', (req, res) => {
   });
 });
 
+// DISPLAYING DESSERTS LIST //
+app.get('/dessertsList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Desserts"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('dessertsList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
+
 
 //*****STARTING THE SERVER*****//
 const PORT = process.env.PORT || 3000;
