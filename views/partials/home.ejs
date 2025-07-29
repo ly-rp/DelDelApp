@@ -94,7 +94,7 @@
                     <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
                     <form action="/favourites/add" method="POST" style="display:inline;">
                       <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                      <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">🤍</button>
+                      <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</button>
                     </form>
 
 
@@ -108,7 +108,7 @@
                         <% } else { %>
                           <form action="/favourites/add" method="POST" style="display:inline;">
                             <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                            <button type="submit" class="btn btn-pink2 btn-sm" title="Add to favourite">🤍</button>
+                            <button type="submit" class="btn btn-pink2 btn-sm" title="Add to favourite">❤️</button>
                           </form>
                           <% } %>
                     

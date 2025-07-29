@@ -14,6 +14,7 @@
     <%- include('partials/navbar', { user: user }) %>
 
         <div class="container mt-4">
+            <h1 class="text-center mb-4 my-3" style="color: #801408">Recipes</h1>
             <div class="row">
                 <% recipes.forEach(recipe=> { %>
                     <div class="col-md-3 mb-4">
@@ -38,8 +39,7 @@
                                         <!-- Guests or no user: Review + heart linking to register -->
                                         <a href="/review/<%= recipe.recipeId %>"
                                             class="btn btn-yellow2 btn-sm">Review</a>
-                                        <a href="/login" class="btn btn-pink2 btn-sm"
-                                            title="Login to Favourite">❤️</a>
+                                        <a href="/login" class="btn btn-pink2 btn-sm" title="Login to Favourite">❤️</a>
 
                                         <% } else if (user.role==='admin' ) { %>
                                             <!-- Admin: Review, Edit, Delete -->
