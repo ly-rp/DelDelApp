@@ -23,9 +23,7 @@
       cursor: pointer;
       transition: color 0.2s;
     }
-    .star-rating input[type="radio"]:checked ~ label {
-      color: gold;
-    }
+    .star-rating input[type="radio"]:checked ~ label,
     .star-rating label:hover,
     .star-rating label:hover ~ label {
       color: gold;
@@ -109,9 +107,7 @@
             <br>
             <%= r.comment %>
             <br>
-            <small class="text-muted">
-              <%= new Date(r.created_at).toLocaleString() %>
-            </small>
+            <small class="text-muted"><%= new Date(r.created_at).toLocaleString() %></small>
           </li>
         <% }) %>
       </ul>
