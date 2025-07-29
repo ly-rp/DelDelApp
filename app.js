@@ -501,7 +501,7 @@ app.get('/recipesList', (req, res) => {
 
 // DISPLAYING GOOD SOUP LIST //
 app.get('/soupsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Soup"'; // Adjust column name if needed
+  const query = 'SELECT * FROM recipes WHERE category = "Soups"';
   db.query(query, (err, results) => {
     if (err) throw err;
     res.render('soupsList', {
@@ -510,7 +510,6 @@ app.get('/soupsList', (req, res) => {
     });
   });
 });
-
 
 
 //*****STARTING THE SERVER*****//
