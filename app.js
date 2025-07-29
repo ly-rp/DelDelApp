@@ -11,7 +11,7 @@ const app = express();
 //*****STORAGE SETUP FOR MULTER*****//
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/images');
+    cb(null, 'public/images/recipeImages');
   },
   filename: (req, file, cb) =>{
     cb(null, file.originalname);
@@ -173,7 +173,7 @@ app.post('/reviews/add', (req, res) => {
 });
 
 //*****FAVOURITES ROUTES*****//
-app.get('/favourites', (req, res) => {
+app.get('/favourite', (req, res) => {
     const query = `
         SELECT recipes.* FROM recipes
         JOIN favourites ON recipes.id = favourites.recipe_id
@@ -187,7 +187,7 @@ app.get('/favourites', (req, res) => {
     });
 });
 
-app.post('/favourites/add', (req, res) => {
+app.post('/favourite/add', (req, res) => {
     const recipeId = req.body.recipeId;
 
     db.query('INSERT INTO favourites (recipe_id) VALUES (?)', [recipeId], (err, result) => {
@@ -199,6 +199,36 @@ app.post('/favourites/add', (req, res) => {
     });
 });
 
+app.get('/favourite/:id', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    const recipeId = req.params.id;
+    const userId = req.session.user.id;
+
+    // Check if already favourited
+    const checkSql = "SELECT * FROM favourites WHERE userId = ? AND recipeId = ?";
+    db.query(checkSql, [userId, recipeId], (err, result) => {
+        if (err) return res.status(500).send("Database error");
+
+        if (result.length > 0) {
+            // Remove from favourites
+            const deleteSql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
+            db.query(deleteSql, [userId, recipeId], (err2) => {
+                if (err2) return res.status(500).send("Error removing favourite");
+                res.redirect('back'); // Go back to previous page
+            });
+        } else {
+            // Add to favourites
+            const insertSql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
+            db.query(insertSql, [userId, recipeId], (err3) => {
+                if (err3) return res.status(500).send("Error adding favourite");
+                res.redirect(`/recipe/${recipeId}`); // Go back to previous page
+            });
+        }
+    });
+});
 
 //*****CRUD OPERATIONS FOR RECIPES*****//
 // ADDING RECIPE ROUTE //
@@ -207,8 +237,8 @@ app.get('/addRecipe', (req, res) => {
 });
 
 
-app.post('/addRecipe',upload.single('image'), (req, res) => {
-    const {recipeTitle, recipeDescription} = req.body;
+app.post('/addRecipe',upload.single('recipeImage'), (req, res) => {
+    const {recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings} = req.body;
     let image;
     if (req.file) {
         image = req.file.filename;
@@ -216,13 +246,13 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png if none uploaded
     }
 
-    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (recipeTitle, recipeDescription, recipeImage) VALUES (?, ?, ?, ?)';
-    db.query(sql , [recipeTitle, recipeDescription, recipeImage], (error, results) => { 
+    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (recipeTitle, category, recipeDescription, ingredients, instructions, recipeImage, prep_time, cook_time, servings) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql , [recipeTitle, category, recipeDescription, ingredients, instructions, image, prep_time, cook_time, servings], (error, results) => { 
         if (error) {
             console.error("Error adding recipe:", error);
             res.status(500).send('Error adding recipe');
         } else {
-            res.redirect('/');
+            res.redirect('/recipes');
         }
     });
 });
@@ -412,28 +442,24 @@ app.get('/guest', (req, res) => {
 //*****DASHBOARDS*****//
 // Updated to include Food Categories - Le Ying
 app.get('/dashboard', checkAuthenticated, (req, res) => {
-    const categories = [
-    { name: 'Desserts', image: '/images/categories/desserts.jpg' },
-    { name: 'Soups', image: '/images/categories/soups.jpg' },
-    { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
-    { name: 'Salads', image: '/images/categories/salads.jpg' },
-    { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
-];
-res.render('dashboard', { user: req.session.user, categories });
-
-}); 
-
-app.get('/dashboard', (req, res) => {
   const user = req.session.user;
 
-  // Fetch categories (assuming you have a categories table)
   db.query('SELECT * FROM categories', (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error('Error fetching categories from DB, using default categories:', err);
+      // Fallback hardcoded categories if DB fails
+      const categories = [
+        { name: 'Desserts', image: '/images/categories/desserts.jpg' },
+        { name: 'Soups', image: '/images/categories/soups.jpg' },
+        { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
+        { name: 'Salads', image: '/images/categories/salads.jpg' },
+        { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
+      ];
+      return res.render('dashboard', { user, categories });
+    }
 
-    res.render('dashboard', {
-      user: user,
-      categories: results // <<== this is what you were missing
-    });
+    // Successfully fetched from DB
+    res.render('dashboard', { user, categories: results });
   });
 });
 

@@ -23,12 +23,6 @@
   <%- include('partials/home', { categories: categories }) %>
 
   <div class="container mt-5">
-    <h2>Recipes</h2>
-    <ul>
-      <% recipes.forEach(recipe => { %>
-        <li><%= recipe.recipeTitle %> - <%= recipe.recipeDescription %></li>
-      <% }) %>
-    </ul>
     <a href="/">Back to Welcome</a>
   </div>
 </body>
