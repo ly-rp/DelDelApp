@@ -112,29 +112,42 @@ app.get('/recipes', (req, res) => {
 //*****SINGLE RECIPE VIEW*****//
 app.get('/recipe/:id', (req, res) => {
     const recipeId = req.params.id;
+    const userId = req.session.user?.id || null;
 
+    // 1️⃣ Get recipe details
     db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, recipeResults) => {
         if (error) return res.status(500).send('Database error');
-        if (recipeResults.length === 0) {
-            return res.status(404).send('Recipe not found');
-        }
-        // Now get all reviews for this recipe
+        if (recipeResults.length === 0) return res.status(404).send('Recipe not found');
+
+        let recipe = recipeResults[0];
+
+        // 2️⃣ Get reviews
         db.query(
             'SELECT r.*, u.username FROM reviews r JOIN users u ON r.userId = u.id WHERE r.recipeId = ?',
             [recipeId],
             (err, reviewResults) => {
                 if (err) return res.status(500).send('Database error');
-                res.render('recipe', {
-                    recipe: recipeResults[0],
-                    reviews: reviewResults,
-                    user: req.session.user,
-                    isGuest: req.session.user?.role === 'guest',
-                    isAdmin: req.session.user?.role === 'admin'
-                });
+
+                // 3️⃣ If user logged in, check if favourited
+                if (userId) {
+                    db.query(
+                        'SELECT 1 FROM favourites WHERE userId = ? AND recipeId = ?',
+                        [userId, recipeId],
+                        (favErr, favResult) => {
+                            recipe.isFavourited = !favErr && favResult.length > 0;
+                            res.render('recipe', { recipe, reviews: reviewResults, user: req.session.user });
+                        }
+                    );
+                } else {
+                    // Guest user → No favourite status
+                    recipe.isFavourited = false;
+                    res.render('recipe', { recipe, reviews: reviewResults, user: req.session.user });
+                }
             }
         );
     });
 });
+
 
 app.get('/review/:id', (req, res) => {
     const reviewId = req.params.id;
@@ -207,36 +220,36 @@ app.post('/favourites/add', checkAuthenticated, (req, res) => {
     });
 });
 
-
 app.get('/favourites/:id', (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/login');
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  const recipeId = req.params.id;
+  const userId = req.session.user.id;
+
+  const checkSql = "SELECT * FROM favourites WHERE userId = ? AND recipeId = ?";
+  db.query(checkSql, [userId, recipeId], (err, result) => {
+    if (err) return res.status(500).send("Database error");
+
+    if (result.length > 0) {
+      // Remove from favourites
+      const deleteSql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
+      db.query(deleteSql, [userId, recipeId], (err2) => {
+        if (err2) return res.status(500).send("Error removing favourite");
+        // Redirect back to the recipe page here
+        res.redirect(`/recipe/${recipeId}`);
+      });
+    } else {
+      // Add to favourites
+      const insertSql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
+      db.query(insertSql, [userId, recipeId], (err3) => {
+        if (err3) return res.status(500).send("Error adding favourite");
+        // Redirect back to the recipe page here too
+        res.redirect(`/recipe/${recipeId}`);
+      });
     }
-
-    const recipeId = req.params.id;
-    const userId = req.session.user.id;
-
-    // Check if already favourited
-    const checkSql = "SELECT * FROM favourites WHERE userId = ? AND recipeId = ?";
-    db.query(checkSql, [userId, recipeId], (err, result) => {
-        if (err) return res.status(500).send("Database error");
-
-        if (result.length > 0) {
-            // Remove from favourites
-            const deleteSql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
-            db.query(deleteSql, [userId, recipeId], (err2) => {
-                if (err2) return res.status(500).send("Error removing favourite");
-                res.redirect('back'); // Go back to previous page
-            });
-        } else {
-            // Add to favourites
-            const insertSql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
-            db.query(insertSql, [userId, recipeId], (err3) => {
-                if (err3) return res.status(500).send("Error adding favourite");
-                res.redirect(`/recipe/${recipeId}`); // Go back to previous page
-            });
-        }
-    });
+  });
 });
 
 //*****CRUD OPERATIONS FOR RECIPES*****//
@@ -245,25 +258,46 @@ app.get('/addRecipe', (req, res) => {
     res.render('addRecipe', { user: req.session.user });
 });
 
+app.post('/addRecipe', upload.single('recipeImage'), (req, res) => {
+  const { recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings, favourite } = req.body;
+  let image = req.file ? req.file.filename : 'noImage.png';
 
-app.post('/addRecipe',upload.single('recipeImage'), (req, res) => {
-    const {recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings} = req.body;
-    let image;
-    if (req.file) {
-        image = req.file.filename;
-    } else {
-        image = 'noImage.png'; // Use noImage.png if none uploaded
+  const user = req.session.user; // Get user info
+  const userId = user?.id;
+
+  // If not logged in
+  if (!userId) {
+    return res.status(401).send('Please login to add a recipe');
+  }
+
+  const sql = `
+    INSERT INTO Team34C237_gradecutgo.recipes 
+    (recipeTitle, category, recipeDescription, ingredients, instructions, recipeImage, prep_time, cook_time, servings, ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [recipeTitle, category, recipeDescription, ingredients, instructions, image, prep_time, cook_time, servings, userId], (error, results) => {
+    if (error) {
+      console.error("Error adding recipe:", error);
+      return res.status(500).send('Error adding recipe');
     }
 
-    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (recipeTitle, category, recipeDescription, ingredients, instructions, recipeImage, prep_time, cook_time, servings) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql , [recipeTitle, category, recipeDescription, ingredients, instructions, image, prep_time, cook_time, servings], (error, results) => { 
-        if (error) {
-            console.error("Error adding recipe:", error);
-            res.status(500).send('Error adding recipe');
-        } else {
-            res.redirect('/recipes');
+    const newRecipeId = results.insertId;
+
+    // ✅ Only add to favourites if role is 'user' and checkbox is checked
+    if (user.role === 'user' && favourite === 'on') {
+      const favSql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
+      db.query(favSql, [userId, newRecipeId], (favError) => {
+        if (favError) {
+          console.error("Error adding favourite:", favError);
+          // Optionally ignore this error
         }
-    });
+        return res.redirect(`/recipe/${newRecipeId}`);
+      });
+    } else {
+      return res.redirect(`/recipe/${newRecipeId}`);
+    }
+  });
 });
 
 // EDITING RECIPE ROUTE //
