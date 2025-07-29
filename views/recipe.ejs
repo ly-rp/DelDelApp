@@ -132,12 +132,17 @@
     <ul class="list-unstyled">
       <% reviews.forEach(function(review) { %>
         <li class="mb-2">
-          <strong><%= review.username %></strong>: <%= review.rating %>/5 - 
-          <%= review.comment %>
+          <strong><%= review.username %></strong>:
+          <% for (let i = 1; i <= 5; i++) { %>
+            <% if (i <= review.rating) { %>
+              <span style="color: gold;">★</span>
+            <% } else { %>
+              <span style="color: #ccc;">★</span>
+            <% } %>
+          <% } %>
+          - <%= review.comment %>
 
           <% if (user && (user.role === 'admin' || user.id === review.userId)) { %>
-            <a href="/reviews/edit/<%= review.reviewId %>" class="ms-3 text-secondary text-decoration-none edit-link">Edit</a>
-
             <form action="/reviews/delete/<%= review.reviewId %>" method="POST" style="display:inline;">
               <button type="submit" class="btn btn-link p-0 ms-2 text-danger text-decoration-none delete-link" onclick="return confirm('Are you sure you want to delete this review?');">Delete</button>
             </form>
@@ -149,6 +154,7 @@
     <p>No reviews yet.</p>
   <% } %>
 </div>
+
 
 
   <% if (user && user.role !== 'guest') { %>

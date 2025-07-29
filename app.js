@@ -206,44 +206,22 @@ app.post('/reviews/add', (req, res) => {
   });
 });
 
-// Show the edit review form
-app.get('/reviews/edit/:reviewId', (req, res) => {
-  const reviewId = req.params.reviewId;
-  db.query('SELECT * FROM reviews WHERE reviewId = ?', [reviewId], (err, results) => {
-    if (err) {
-      return res.status(500).send('Database error');
-    }
-    if (results.length === 0) {
-      return res.status(404).send('Review not found');
-    }
-    // Check if user owns the review or is admin (optional, for security)
-    if (!req.session.user || (req.session.user.role !== 'admin' && req.session.user.id !== results[0].userId)) {
-      return res.status(403).send('Forbidden');
-    }
-    res.render('editReview', { review: results[0], user: req.session.user });
-  });
-});
-
-// Handle edit review form submission
-app.post('/reviews/edit/:reviewId', (req, res) => {
-  const reviewId = req.params.reviewId;
-  const { rating, comment, recipeId } = req.body;
-  db.query('UPDATE reviews SET rating = ?, comment = ? WHERE reviewId = ?', [rating, comment, reviewId], (err) => {
-    if (err) {
-      return res.status(500).send('Database error');
-    }
-    res.redirect('/recipe/' + recipeId);
-  });
-});
 
 // Handle delete review request
 app.post('/reviews/delete/:reviewId', (req, res) => {
   const reviewId = req.params.reviewId;
-  db.query('DELETE FROM reviews WHERE reviewId = ?', [reviewId], (err) => {
-    if (err) {
-      return res.status(500).send('Database error');
+  // First, get the recipeId for redirect
+  db.query('SELECT recipeId FROM reviews WHERE reviewId = ?', [reviewId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(500).send('Database error or review not found');
     }
-    res.redirect('back');
+    const recipeId = results[0].recipeId;
+    db.query('DELETE FROM reviews WHERE reviewId = ?', [reviewId], (err2) => {
+      if (err2) {
+        return res.status(500).send('Database error');
+      }
+      res.redirect('/recipe/' + recipeId);
+    });
   });
 });
 
