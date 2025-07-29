@@ -173,7 +173,7 @@ app.post('/reviews/add', (req, res) => {
 });
 
 //*****FAVOURITES ROUTES*****//
-app.get('/favourite', (req, res) => {
+app.get('/favourites', (req, res) => {
     const query = `
         SELECT recipes.* FROM recipes
         JOIN favourites ON recipes.id = favourites.recipe_id
@@ -187,7 +187,7 @@ app.get('/favourite', (req, res) => {
     });
 });
 
-app.post('/favourite/add', (req, res) => {
+app.post('/favourites/add', (req, res) => {
     const recipeId = req.body.recipeId;
 
     db.query('INSERT INTO favourites (recipe_id) VALUES (?)', [recipeId], (err, result) => {
@@ -199,7 +199,7 @@ app.post('/favourite/add', (req, res) => {
     });
 });
 
-app.get('/favourite/:id', (req, res) => {
+app.get('/favourites/:id', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }

@@ -34,7 +34,7 @@
 
                 <% if (user.role==='user' ) { %>
                   <!-- Heart for regular users -->
-                  <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2" title="Add to favourite">
+                  <a href="/favourites/<%= recipe.recipeId %>" class="btn btn-pink2" title="Add to favourite">
                     <% if (recipe.isFavourited) { %>❤️<% } else { %>🤍<% } %>
                   </a>
                   <% } %>
