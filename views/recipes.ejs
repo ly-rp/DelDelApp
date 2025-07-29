@@ -58,7 +58,7 @@
                                                 <!-- Logged-in user (role != guest or admin) -->
                                                 <a href="/review/<%= recipe.recipeId %>"
                                                     class="btn btn-yellow2 btn-sm">Review</a>
-                                                <a href="/favourite/<%= recipe.recipeId %>"
+                                                <a href="/favourites/<%= recipe.recipeId %>"
                                                     class="btn btn-pink2 btn-sm">❤️</a>
 
                                                 <% if (recipe.createdBy===user.id) { %>
