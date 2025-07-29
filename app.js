@@ -501,6 +501,7 @@ app.get('/recipesList', (req, res) => {
   });
 });
 
+//There like five categories so there should be five of these yesh.
 // DISPLAYING GOOD SOUP LIST //
 app.get('/soupsList', (req, res) => {
   const query = 'SELECT * FROM recipes WHERE category = "Soups"';
@@ -525,7 +526,41 @@ app.get('/dessertsList', (req, res) => {
   });
 });
 
+// DISPLAYING SIDE DISHES LIST //
+app.get('/sidedishesList', (req, res) => { //take not its plural for whoever gon need this part
+  const query = 'SELECT * FROM recipes WHERE category = "Side Dishes"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('sidedishesList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
 
+// DISPLAYING BREAKFAST LIST //
+app.get('/breakfastList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Breakfast"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('breakfastList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
+
+// DISPLAYING SALADS LIST //
+app.get('/saladsList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Salads"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('saladsList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
 //*****STARTING THE SERVER*****//
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`This server is running on 'http://localhost:${PORT}'`)); 
