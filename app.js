@@ -149,22 +149,42 @@ app.get('/recipe/:id', (req, res) => {
 });
 
 
+
 app.get('/review/:id', (req, res) => {
-    const reviewId = req.params.id;
+  const recipeId = req.params.id;
 
-    db.query('SELECT * FROM Team34C237_gradecutgo.reviews WHERE reviewId = ?', [reviewId], (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send('Server error');
-        }
+  const recipeSql = 'SELECT recipeTitle FROM recipes WHERE recipeId = ?';
+  db.query(recipeSql, [recipeId], (err1, recipeResults) => {
+    if (err1 || recipeResults.length === 0) {
+      return res.status(404).send('Recipe not found');
+    }
 
-        if (results.length > 0) {
-            res.render('review', { review: results[0], user: req.session.user });
-        } else {
-            res.status(404).send('Review not found');
-        }
+    const recipeTitle = recipeResults[0].recipeTitle;
+
+    const reviewSql = `
+      SELECT r.*, u.username
+      FROM reviews r
+      JOIN users u ON r.userId = u.id
+      WHERE r.recipeId = ?
+      ORDER BY r.created_at DESC
+    `;
+
+    db.query(reviewSql, [recipeId], (err2, reviews) => {
+      if (err2) {
+        return res.status(500).send('Error fetching reviews');
+      }
+
+      res.render('review', {
+        recipeId,
+        recipeTitle,
+        review: null, // Optional: change this if showing one review in detail
+        reviews,
+        user: req.session.user
+      });
     });
+  });
 });
+
 
 app.post('/reviews/add', (req, res) => {
   const { recipeId, rating, comment } = req.body;
