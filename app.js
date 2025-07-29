@@ -175,9 +175,9 @@ app.post('/reviews/add', (req, res) => {
 //*****FAVOURITES ROUTES*****//
 app.get('/favourite', (req, res) => {
     const query = `
-        SELECT recipes.* FROM recipes
-        JOIN favourites ON recipes.id = favourites.recipe_id
-    `;
+      SELECT r.* FROM Team34C237_gradecutgo.recipes r
+      JOIN favourites f ON r.recipeId = f.recipeId
+      WHERE f.userId = ?`;
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching favourites:', err);
