@@ -216,8 +216,8 @@ app.post('/addRecipe',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png if none uploaded
     }
 
-    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, description, image) VALUES (?, ?, ?, ?)';
-    db.query(sql , [recipeTitle, recipeDescription, image], (error, results) => { 
+    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (recipeTitle, recipeDescription, recipeImage) VALUES (?, ?, ?, ?)';
+    db.query(sql , [recipeTitle, recipeDescription, recipeImage], (error, results) => { 
         if (error) {
             console.error("Error adding recipe:", error);
             res.status(500).send('Error adding recipe');
@@ -254,7 +254,7 @@ app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png only if there is no current image
     }
 
-    const sql = 'UPDATE recipe SET recipeTitle = ?, recipeDescription = ?, image = ?, WHERE recipeId = ?';
+    const sql = 'UPDATE recipe SET recipeTitle = ?, recipeDescription = ?, reipceImage = ?, WHERE recipeId = ?';
 
     //Inserting the new recipe into the database
     db.query( sql, [recipeTitle, image, recipeDescription, recipeId], (error, results) => {
@@ -271,7 +271,7 @@ app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
 
 // DELETING RECIPE ROUTE //
 app.get('/deleterecipe/:id', (req, res) => {
-    const studentId = req.params.id;
+    const recipeId = req.params.id;
     const sql = 'DELETE FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
         if (error) {
