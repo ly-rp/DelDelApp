@@ -33,8 +33,6 @@
   </style>
 </head>
 
-
-
 <body>
   <%- include('partials/navbar') %>
 
@@ -55,10 +53,12 @@
     <% } %>
   </div>
 
-  <div class="container mt-5">
-    <h2 class="text-center mb-4">Recipe Review</h2>
+  <% if (user && user.role !== 'guest') { %>
+    <div class="container text-center mt-4">
+      <button id="writeReviewBtn" class="btn btn-outline-primary">Write a Review</button>
+    </div>
 
-    <% if (user && user.role !== 'guest') { %>
+    <div class="container mt-4" id="reviewForm" style="display: none;">
       <form action="/reviews/add" method="POST">
         <input type="hidden" name="recipeId" value="<%= recipeId %>">
 
@@ -66,10 +66,16 @@
         <div class="mb-4">
           <h5>Rating:</h5>
           <div class="star-rating">
-            <% for (let i = 5; i >= 1; i--) { %>
-              <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" />
-              <label for="star<%= i %>">★</label>
-            <% } %>
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5">★</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4">★</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3">★</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2">★</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1">★</label>
           </div>
         </div>
 
@@ -82,10 +88,12 @@
         <!-- Submit -->
         <button type="submit" class="btn btn-primary">Submit Review</button>
       </form>
-    <% } else { %>
+    </div>
+  <% } else { %>
+    <div class="container text-center mt-4">
       <p class="text-muted">You must be logged in to leave a review.</p>
-    <% } %>
-  </div>
+    </div>
+  <% } %>
 
   <div class="container mt-5">
     <hr>
@@ -102,16 +110,24 @@
             <%= r.comment %>
             <br>
             <small class="text-muted">
-              <% if (r.created_at && r.created_at.toLocaleString) { %>
-                <%= r.created_at.toLocaleString() %>
-              <% } else if (r.created_at) { %>
-                <%= r.created_at %>
-              <% } %>
+              <%= new Date(r.created_at).toLocaleString() %>
             </small>
           </li>
         <% }) %>
       </ul>
     <% } %>
   </div>
+
+  <script>
+    const writeBtn = document.getElementById('writeReviewBtn');
+    const reviewForm = document.getElementById('reviewForm');
+
+    if (writeBtn && reviewForm) {
+      writeBtn.addEventListener('click', () => {
+        reviewForm.style.display = 'block';
+        writeBtn.style.display = 'none';
+      });
+    }
+  </script>
 </body>
 </html>
