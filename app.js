@@ -150,6 +150,7 @@ app.get('/recipe/:id', (req, res) => {
 
 
 
+//****REVIEW****/
 app.get('/review/:id', (req, res) => {
   const recipeId = req.params.id;
 
@@ -202,6 +203,47 @@ app.post('/reviews/add', (req, res) => {
       return res.status(500).send('Error adding review');
     }
     res.redirect(`/recipe/${recipeId}`);
+  });
+});
+
+// Show the edit review form
+app.get('/reviews/edit/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+  db.query('SELECT * FROM reviews WHERE reviewId = ?', [reviewId], (err, results) => {
+    if (err) {
+      return res.status(500).send('Database error');
+    }
+    if (results.length === 0) {
+      return res.status(404).send('Review not found');
+    }
+    // Check if user owns the review or is admin (optional, for security)
+    if (!req.session.user || (req.session.user.role !== 'admin' && req.session.user.id !== results[0].userId)) {
+      return res.status(403).send('Forbidden');
+    }
+    res.render('editReview', { review: results[0], user: req.session.user });
+  });
+});
+
+// Handle edit review form submission
+app.post('/reviews/edit/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+  const { rating, comment, recipeId } = req.body;
+  db.query('UPDATE reviews SET rating = ?, comment = ? WHERE reviewId = ?', [rating, comment, reviewId], (err) => {
+    if (err) {
+      return res.status(500).send('Database error');
+    }
+    res.redirect('/recipe/' + recipeId);
+  });
+});
+
+// Handle delete review request
+app.post('/reviews/delete/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+  db.query('DELETE FROM reviews WHERE reviewId = ?', [reviewId], (err) => {
+    if (err) {
+      return res.status(500).send('Database error');
+    }
+    res.redirect('back');
   });
 });
 
