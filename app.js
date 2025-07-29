@@ -187,6 +187,7 @@ app.post('/reviews/add', (req, res) => {
 
 //*****FAVOURITES ROUTES*****//
 app.get('/favourites', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id; // use session-based user
     const sql = `
       SELECT r.recipeId, r.recipeTitle, r.recipeImage
       FROM favourites f
@@ -194,18 +195,16 @@ app.get('/favourites', checkAuthenticated, (req, res) => {
       WHERE f.userId = ?;
     `;
 
-    const userId = req.session.user.id; // ✅ use session-based user
-
     db.query(sql, [userId], (err, results) => {
         if (err) {
             console.error('Database error:', err);
-            return res.status(500).send("Database error");
+            return res.status(500).send("Error retrieving favourites");
         }
         res.render('favourites', { recipes: results, user: req.session.user });
     });
 });
 
-app.post('/favourites/remove/:recipeId', (req, res) => {
+app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
     const userId = req.session.user?.id;
     const recipeId = req.params.recipeId;
 
