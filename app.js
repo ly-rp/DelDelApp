@@ -173,24 +173,32 @@ app.post('/reviews/add', (req, res) => {
 });
 
 //*****FAVOURITES ROUTES*****//
-app.get('/favourites', (req, res) => {
-    const query = `
-      SELECT r.* FROM Team34C237_gradecutgo.recipes r
-      JOIN favourites f ON r.recipeId = f.recipeId
-      WHERE f.userId = ?`;
-    db.query(query, (err, results) => {
+app.get('/favourites', checkAuthenticated, (req, res) => {
+    const sql = `
+      SELECT r.recipeId, r.recipeTitle, r.recipeImage
+      FROM favourites f
+      JOIN recipes r ON f.recipeId = r.recipeId
+      WHERE f.userId = ?;
+    `;
+
+    const userId = req.session.user.id; // ✅ use session-based user
+
+    db.query(sql, [userId], (err, results) => {
         if (err) {
-            console.error('Error fetching favourites:', err);
-            return res.status(500).send('Database error');
+            console.error('Database error:', err);
+            return res.status(500).send("Database error");
         }
-        res.render('favourites', { favourites: results });
+        res.render('favourites', { recipes: results, user: req.session.user });
     });
 });
 
-app.post('/favourites/add', (req, res) => {
-    const recipeId = req.body.recipeId;
 
-    db.query('INSERT INTO favourites (recipe_id) VALUES (?)', [recipeId], (err, result) => {
+app.post('/favourites/add', checkAuthenticated, (req, res) => {
+    const recipeId = req.body.recipeId;
+    const userId = req.session.user.id;
+
+    const sql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
+    db.query(sql, [userId, recipeId], (err, result) => {
         if (err) {
             console.error('Error adding to favourites:', err);
             return res.status(500).send('Failed to add favourite');
@@ -198,6 +206,7 @@ app.post('/favourites/add', (req, res) => {
         res.redirect('/favourites');
     });
 });
+
 
 app.get('/favourites/:id', (req, res) => {
     if (!req.session.user) {
