@@ -35,79 +35,48 @@
 <body>
   <%- include('partials/navbar') %>
 
-  <div class="container mt-4">
-    <h1>Review Details</h1>
+<h1>Review Details</h1>
 
-    <p><strong>Title:</strong> <%= review.title %></p>
-    <p><strong>Content:</strong> <%= review.content %></p>
-    <p><strong>Rating:</strong> <%= review.rating %>/5</p>
+<p><strong>Title:</strong> <%= review.title %></p>
+<p><strong>Content:</strong> <%= review.content %></p>
+<p><strong>Rating:</strong> <%= review.rating %>/5</p>
 
-    <% if (user) { %>
-      <p>Logged in as: <%= user.username %></p>
-    <% } else { %>
-      <p>You are viewing this as a guest.</p>
-    <% } %>
-  </div>
+<% if (user) { %>
+  <p>Logged in as: <%= user.username %></p>
+<% } else { %>
+  <p>You are viewing this as a guest.</p>
+<% } %>
 
-  
   <div class="container mt-5">
-    <h2 class="text-center mb-4">Leave a Review</h2>
+    <h2 class="text-center mb-4">Recipe Review</h2>
 
-    <% if (!user) { %>
-      <div class="alert alert-warning mt-3">
-        You must <a href="/register">register</a> or <a href="/login">log in</a> to leave a review.
+    <!-- Rating -->
+    <form action="/submitReview" method="POST">
+      <div class="mb-4">
+        <h5>Rating:</h5>
+        <div class="star-rating">
+          <input type="radio" id="star5" name="rating" value="5" />
+          <label for="star5">★</label>
+          <input type="radio" id="star4" name="rating" value="4" />
+          <label for="star4">★</label>
+          <input type="radio" id="star3" name="rating" value="3" />
+          <label for="star3">★</label>
+          <input type="radio" id="star2" name="rating" value="2" />
+          <label for="star2">★</label>
+          <input type="radio" id="star1" name="rating" value="1" />
+          <label for="star1">★</label>
+        </div>
       </div>
-      <!-- Rating -->
-    <% } else { %>
-      <form action="/submitReview" method="POST">
-        <div class="mb-4">
-          <h5>Rating:</h5>
-          <div class="star-rating">
-            <input type="radio" id="star5" name="rating" value="5" />
-            <label for="star5">★</label>
-            <input type="radio" id="star4" name="rating" value="4" />
-            <label for="star4">★</label>
-            <input type="radio" id="star3" name="rating" value="3" />
-            <label for="star3">★</label>
-            <input type="radio" id="star2" name="rating" value="2" />
-            <label for="star2">★</label>
-            <input type="radio" id="star1" name="rating" value="1" />
-            <label for="star1">★</label>
-          </div>
-        </div>
 
-        <!-- Comments -->
-        <div class="mb-3">
-          <h5>Comments:</h5>
-          <textarea class="form-control" name="comment" rows="5" placeholder="Write your thoughts here..."></textarea>
-        </div>
+      <!-- Comments -->
+      <div class="mb-3">
+        <h5>Comments:</h5>
+        <textarea class="form-control" name="comment" rows="5" placeholder="Write your thoughts here..."></textarea>
+      </div>
 
-        <!-- Submit -->
-        <button type="submit" class="btn btn-primary">Submit Review</button>
-      </form>
-    <% } %>
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
   </div>
-
-  <hr class="my-5" />
-
-  <div class="container">
-    <h3>All Reviews</h3>
-    <% if (reviews && reviews.length > 0) { %>
-      <ul class="list-group">
-        <% reviews.forEach(function(r) { %>
-          <li class="list-group-item">
-            <strong><%= r.username %></strong> rated it <strong><%= r.rating %>/5</strong>
-            <p><%= r.comment %></p>
-            <% if (user && user.role === 'admin') { %>
-              <a href="/reviews/<%= r._id %>/edit" class="btn btn-sm btn-secondary">Edit</a>
-            <% } %>
-          </li>
-        <% }) %>
-      </ul>
-    <% } else { %>
-      <p>No reviews yet.</p>
-    <% } %>
-  </div>
-
 </body>
 </html>

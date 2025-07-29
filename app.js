@@ -185,28 +185,6 @@ app.post('/reviews/add', (req, res) => {
   });
 });
 
-
-//****WHEN USER CLICKS REVIEW THEY SEE ALL REVIEWS BY PPL*****//
-app.get('/review', (req, res) => {
-  const sql = `
-    SELECT r.*, u.username 
-    FROM reviews r 
-    JOIN users u ON r.userId = u.id 
-    ORDER BY r.createdAt DESC
-  `;
-  db.query(sql, (error, results) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).send('Error retrieving reviews');
-    }
-    res.render('review', {
-      reviews: results,
-      user: req.session.user || null
-    });
-  });
-});
-
-
 //*****FAVOURITES ROUTES*****//
 app.get('/favourites', checkAuthenticated, (req, res) => {
     const userId = req.session.user.id; // use session-based user
