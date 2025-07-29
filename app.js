@@ -597,7 +597,7 @@ app.get('/dessertsList', (req, res) => {
 
 // DISPLAYING SIDE DISHES LIST //
 app.get('/sidedishesList', (req, res) => { //take not its plural for whoever gon need this part
-  const query = 'SELECT * FROM recipes WHERE category = "Side Dishes"';
+  const query = 'SELECT * FROM recipes WHERE category = "SideDishes"';
   db.query(query, (err, results) => {
     if (err) throw err;
     res.render('sidedishesList', {
