@@ -98,13 +98,13 @@ app.get('/recipes', (req, res) => {
 
     const user = req.session.user || null;
     const isAdmin = user?.role === 'admin';
-    const userId = user?.userId || null;
+    const userId = user?.id || null;
 
     res.render('recipes', {
       recipes: results,
-      user,
-      isAdmin,
-      userId
+      user: req.session.user,
+      isAdmin: isAdmin,
+      userId: userId
     });
   });
 });
@@ -128,6 +128,8 @@ app.get('/recipe/:id', (req, res) => {
                     recipe: recipeResults[0],
                     reviews: reviewResults,
                     user: req.session.user,
+                    isGuest: req.session.user?.role === 'guest',
+                    isAdmin: req.session.user?.role === 'admin'
                 });
             }
         );
@@ -201,7 +203,7 @@ app.post('/favourites/add', (req, res) => {
 //*****CRUD OPERATIONS FOR RECIPES*****//
 // ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
-    res.render('addRecipe', { user: req.session.user || null });
+    res.render('addRecipe', { user: req.session.user });
 });
 
 
