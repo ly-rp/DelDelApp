@@ -71,27 +71,54 @@
             <% } %>
           </div>
 
-          <div class="h5-red">
-            <h5>Category:</h5><p><%= recipe.category %></p>
-            <h5>Description:</h5><p><%= recipe.recipeDescription %></p>
-            <h5>Ingredients:</h5><p><%= recipe.ingredients %></p>
-            <h5>Instructions:</h5><p><%= recipe.instructions %></p>
+            <div class="h5-red">
+              <h5>Category:</h5>
+              <p>
+                <%= recipe.category %>
+              </p>
+
+              <h5>Description:</h5>
+              <p>
+                <%= recipe.recipeDescription %>
+              </p>
+
+              <h5>Ingredients:</h5>
+              <p>
+                <%= recipe.ingredients %>
+              </p>
+
+              <h5>Instructions:</h5>
+              <p>
+                <%= recipe.instructions %>
+              </p>
+            </div>
           </div>
-        </div>
 
-        <!-- Right -->
-        <div class="col-md-6">
-          <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>" style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;" />
+          <!-- Right -->
+          <div class="col-md-6">
+            <img src="/images/recipeImages/<%= recipe.recipeImage %>" alt="<%= recipe.recipeTitle %>"
+              style="width: 100%; height: 350px; object-fit: cover; border-radius: 10px;" />
 
-          <div class="h5-red mt-4">
-            <h5>Prep Time (Minutes):</h5><p><%= recipe.prep_time %></p>
-            <h5>Cook Time (Minutes):</h5><p><%= recipe.cook_time %></p>
-            <h5>Servings:</h5><p><%= recipe.servings %></p>
+            <div class="h5-red mt-4">
+              <h5>Prep Time (Minutes):</h5>
+              <p>
+                <%= recipe.prep_time %>
+              </p>
+
+              <h5>Cook Time (Minutes):</h5>
+              <p>
+                <%= recipe.cook_time %>
+              </p>
+
+              <h5>Servings:</h5>
+              <p>
+                <%= recipe.servings %>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
 <!-- Reviews Section -->
