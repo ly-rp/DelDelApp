@@ -25,7 +25,7 @@
                                 <div class="mt-auto d-flex justify-content-between align-items-center">
                                     <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-orange1">View Recipe</a>
 
-                                    <form action="/favourites/<%= recipe.recipeId %>" method="GET" style="margin: 0;">
+                                    <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="margin: 0;">
                                         <button 
                                             type="submit" 
                                             class="btn btn-danger btn-sm" 
