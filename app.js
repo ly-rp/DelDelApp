@@ -579,6 +579,13 @@ app.get('/login', (req, res) => {
     });
 });
 
+app.get('/forgot-password', (req, res) => {
+    res.render('forgot-password', {
+        messages: req.flash('success'),
+        errors: req.flash('error')
+    });
+});
+
 app.post('/login', (req,res) => {
     const{email, password} =req.body;
 
@@ -615,6 +622,33 @@ app.post('/login', (req,res) => {
         }
     });
 });
+
+app.post('/forgot-password', (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        req.flash('error', 'Please enter your registered email.');
+        return res.redirect('/forgot-password');
+    }
+
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error(err);
+            req.flash('error', 'Server error, please try again later.');
+            return res.redirect('/forgot-password');
+        }
+
+        if (results.length === 0) {
+            req.flash('error', 'No account found with that email.');
+            return res.redirect('/forgot-password');
+        }
+
+        req.flash('success', 'Password reset instructions have been sent to your email.');
+        res.redirect('/login');
+    });
+});
+
 
 // LOGGING OUT //
 app.get('/logout', (req, res) => {
