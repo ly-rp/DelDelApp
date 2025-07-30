@@ -46,7 +46,7 @@
           <!-- Buttons: Review, Favourite, Edit/Delete -->
           <div class="mb-3 d-flex gap-2">
             <% if (user && user.role !== 'guest') { %>
-              <a href="#review-form" class="btn btn-yellow2">Review</a>
+              <button type="button" class="btn btn-yellow2" onclick="scrollToReview()">Review</button>
 
               <% if (user.role === 'user') { %>
                 <!-- Favourite toggle -->
@@ -122,6 +122,25 @@
         </div>
       </div>
     </div>
+
+
+    
+<!-- Scroll to Reviews Section -->
+<script>
+  function scrollToReview() {
+    // Scroll to the review section
+    const section = document.getElementById('review-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+
+      // Simulate clicking the Write a Review button
+      const writeBtn = document.getElementById('writeReviewBtn');
+      if (writeBtn) {
+        writeBtn.click();
+      }
+    }
+  }
+</script>
 
 
 
