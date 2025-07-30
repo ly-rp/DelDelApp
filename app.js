@@ -64,6 +64,7 @@ const checkAuthenticated =(req, res, next) => {
     }
 };
 
+
 //AUTHENTICATION FOR ADMIN//
 const checkAdmin =(req, res, next) => {
     if (req.session.user?.role==='admin') {
@@ -73,6 +74,7 @@ const checkAdmin =(req, res, next) => {
         res.redirect('/dashboard');
     }
 }
+
 
 //*****WELCOME PAGE (PUBLIC)*****//
 app.get('/', (req, res) => {
@@ -85,6 +87,7 @@ app.get('/', (req, res) => {
         res.render('welcome', { recipe: results, user: req.session.user });
     });
 });
+
 
 app.get('/recipes', (req, res) => {
   const userId = req.session.user ? req.session.user.id : 0;
@@ -113,6 +116,7 @@ app.get('/recipes', (req, res) => {
     });
   });
 });
+
 
 //*****SINGLE RECIPE VIEW*****//
 app.get('/recipe/:id', (req, res) => {
@@ -154,7 +158,6 @@ app.get('/recipe/:id', (req, res) => {
 });
 
 
-
 //****REVIEW****//
 app.get('/review/:id', (req, res) => {
   const recipeId = req.params.id;
@@ -193,6 +196,7 @@ app.get('/review/:id', (req, res) => {
     });
   });
 });
+
 
 // Route: Handle POST request to add a new review
 app.post('/reviews/add', (req, res) => {
@@ -236,8 +240,6 @@ app.post('/reviews/delete/:reviewId', (req, res) => {
 });
 
 
-
-
 //*****FAVOURITES ROUTES*****//
 app.get('/favourites', checkAuthenticated, (req, res) => {
     const userId = req.session.user.id; // use session-based user
@@ -259,8 +261,6 @@ app.get('/favourites', checkAuthenticated, (req, res) => {
         res.render('favourites', { recipes: results, user: req.session.user });
     });
 });
-
-// Add to favourites (POST)
 
 // Add to favourites
 app.post('/favourites/add/:recipeId', checkAuthenticated, (req, res) => {
@@ -308,8 +308,6 @@ app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
         res.redirect('/favourites');
     });
 });
-
-
 
 app.get('/addRecipe', (req, res) => {
   res.render('addRecipe', { user: req.session.user });
@@ -396,6 +394,7 @@ app.post('/editRecipe/:recipeId',upload.single('image'), (req, res) => {
     });
 });
 
+// DELETING RECIPE ROUTE //
 app.post('/delete/:recipeId', (req, res) => {
     const recipeId = req.params.recipeId;
     const user = req.session.user;
@@ -415,8 +414,6 @@ app.post('/delete/:recipeId', (req, res) => {
         res.redirect('/recipes');
     });
 });
-
-
 
 // DELETING RECIPE ROUTE //
 app.get('/deleteRecipe/:id', (req, res) => {
@@ -509,6 +506,7 @@ const validateRegistration = (req, res, next) => {
     next();
 };
 
+// REGISTER ROUTE //
 app.get('/register', (req, res) => {
     res.render('register', {
         user: req.session.user || null,
@@ -569,7 +567,7 @@ app.post('/register', validateRegistration, (req, res) => {
 });
 
 
-//VALIDATING LOGGING IN//
+// VALIDATING LOGGING IN //
 app.get('/login', (req, res) => {
 
     res.render('login', {
@@ -616,8 +614,6 @@ app.post('/login', (req,res) => {
         }
     });
 });
-
-
 
 // FORGOT PASSWORD //
 app.get('/forgot-password', (req, res) => {
@@ -672,8 +668,6 @@ app.post('/forgot-password', (req, res) => {
   });
 });
 
-
-
 // LOGGING OUT //
 app.get('/logout', (req, res) => {
     req.session.destroy();
@@ -713,120 +707,13 @@ app.get('/home', (req, res) => {
   });
 });
 
-// ROUTE FOR GUEST ENTRY //
-app.get('/guest', (req, res) => {
-  req.session.user = { role: 'guest', username: 'Guest' };
-
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-
-  const foodCategories = [
-    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
-    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
-    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
-    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
-    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
-  ];
-
-  db.query(sql, (error, results) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).send('Error loading recipes');
-    }
-
-    res.render('guest', {
-      recipes: results,
-      categories: foodCategories,
-      user: req.session.user
-    });
-  });
-});
-
-
-//*****DASHBOARDS*****//
-// Updated to include Food Categories
-app.get('/dashboard', checkAuthenticated, (req, res) => {
-  const user = req.session.user;
-
-  db.query('SELECT * FROM categories', (err, results) => {
-    if (err) {
-      console.error('Error fetching categories from DB, using default categories:', err);
-      // Fallback hardcoded categories if DB fails
-      const categories = [
-        { name: 'Desserts', image: '/images/categories/desserts.jpg' },
-        { name: 'Soups', image: '/images/categories/soups.jpg' },
-        { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
-        { name: 'Salads', image: '/images/categories/salads.jpg' },
-        { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
-      ];
-      return res.render('dashboard', { user, categories });
-    }
-
-    // Successfully fetched from DB
-    res.render('dashboard', { user, categories: results });
-  });
-});
-
-
-//ADMIN DASHBOARD//
-app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-  db.query(sql, (error, results) => {
-    if (error) {
-      console.error('Database error:', error.message);
-      return res.status(500).send('Error retrieving recipes for admin');
-    }
-
-    res.render('admin', {
-      user: req.session.user,
-      recipes: results 
-    });
-  });
-});
-
-// USER DASHBOARD //
-// USER DASHBOARD //
-app.get('/user', checkAuthenticated, (req, res) => {
-    const userId = req.session.user.id;
-
-    // Food categories
-    const foodCategories = [
-        { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
-        { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
-        { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
-        { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
-        { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
-    ];
-
-    // Fetch recipes with isFavourited flag
-    const sql = `
-        SELECT r.*,
-          CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
-        FROM recipes r
-        LEFT JOIN favourites f
-          ON r.recipeId = f.recipeId AND f.userId = ?
-    `;
-
-    db.query(sql, [userId], (err, recipes) => {
-        if (err) {
-            console.error("Error fetching recipes:", err);
-            return res.status(500).send("Error loading recipes");
-        }
-
-        res.render('user', {
-            user: req.session.user,
-            recipes,
-            categories: foodCategories
-        });
-    });
-});
-
-//RATINGS AND COMMENTS ROUTES //
+// RATINGS AND COMMENTS ROUTES //
 app.get('/reviews', (req, res) => {
   res.render('reviews', { user: req.session.user });
 });
 
 // *****FOOD CATEGORIES AND THEIR LISTS***** //
-//There ought to be five categories by the end of this- Ele
+//There ought to be five categories by the end of this - Ele
 
 // DISPLAYING ALL RECIPES, THE MAIN LIST //
 app.get('/recipesList', (req, res) => {
@@ -846,7 +733,7 @@ app.get('/recipesList', (req, res) => {
 });
 
 
-// DISPLAYING GOOD SOUP LIST //
+// DISPLAYING SOUP LIST //
 app.get('/soupsList', (req, res) => {
   const user = req.session.user;
 
@@ -930,7 +817,7 @@ app.get('/saladsList', (req, res) => {
 });
 
 
-//*****SEARCH FUNCTIONALITY*****//
+// SEARCH FUNCTIONALITY //
 app.get('/search', (req, res) => {
   const searchQuery = req.query.q;
 
@@ -955,9 +842,86 @@ app.get('/search', (req, res) => {
   });
 });
 
+// ROUTE FOR GUEST ENTRY //
+app.get('/guest', (req, res) => {
+  req.session.user = { role: 'guest', username: 'Guest' };
 
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
 
+  const foodCategories = [
+    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+  ];
 
-//*****STARTING THE SERVER*****//
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error loading recipes');
+    }
+
+    res.render('guest', {
+      recipes: results,
+      categories: foodCategories,
+      user: req.session.user
+    });
+  });
+});
+
+// USER DASHBOARD //
+app.get('/user', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id;
+
+    // Food categories
+    const foodCategories = [
+        { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+        { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+        { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+        { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+        { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+    ];
+
+    // Fetch recipes with isFavourited flag
+    const sql = `
+        SELECT r.*,
+          CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
+        FROM recipes r
+        LEFT JOIN favourites f
+          ON r.recipeId = f.recipeId AND f.userId = ?
+    `;
+
+    db.query(sql, [userId], (err, recipes) => {
+        if (err) {
+            console.error("Error fetching recipes:", err);
+            return res.status(500).send("Error loading recipes");
+        }
+
+        res.render('user', {
+            user: req.session.user,
+            recipes,
+            categories: foodCategories
+        });
+    });
+});
+
+// ADMIN DASHBOARD //
+app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
+  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error('Database error:', error.message);
+      return res.status(500).send('Error retrieving recipes for admin');
+    }
+
+    res.render('admin', {
+      user: req.session.user,
+      recipes: results 
+    });
+  });
+});
+
+// STARTING THE SERVER //
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`This server is running on 'http://localhost:${PORT}'`)); 
