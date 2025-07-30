@@ -686,25 +686,40 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
 });
 
 // USER DASHBOARD //
+// USER DASHBOARD //
 app.get('/user', checkAuthenticated, (req, res) => {
-  const foodCategories = [
-    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
-    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
-    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
-    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
-    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
-  ];
+    const userId = req.session.user.id;
 
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+    // Food categories
+    const foodCategories = [
+        { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+        { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+        { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+        { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+        { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+    ];
 
-  db.query(sql, (err, recipes) => {
-    if (err) {
-      console.error('Error fetching recipes:', err);
-      return res.status(500).send('Internal Server Error');
-    }
+    // Fetch recipes with isFavourited flag
+    const sql = `
+        SELECT r.*,
+          CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
+        FROM recipes r
+        LEFT JOIN favourites f
+          ON r.recipeId = f.recipeId AND f.userId = ?
+    `;
 
-    res.render('user', { user: req.session.user, recipes, categories: foodCategories });
-  });
+    db.query(sql, [userId], (err, recipes) => {
+        if (err) {
+            console.error("Error fetching recipes:", err);
+            return res.status(500).send("Error loading recipes");
+        }
+
+        res.render('user', {
+            user: req.session.user,
+            recipes,
+            categories: foodCategories
+        });
+    });
 });
 
 //RATINGS AND COMMENTS ROUTES //
