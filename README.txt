@@ -4,14 +4,17 @@ The codes written are currently being shared across the team using both GitHub a
 
 Current progress in our VS Code project includes the following:
 
-The "views" folder contains the following EJS files:
+The "views" folder contains the following files:
 - welcome.ejs: The homepage which should have features to login, register or sign in as guest
 - login.ejs, register.ejs: User authentication
 - addRecipe.ejs: Where users can add new recipes
 - editRecipe.ejs: Where users can edit existing recipes
 - dashboard.ejs, admin.ejs, guest.ejs, user.ejs: Displays different role's dashboard contents. Still a work in progress. 
+- All EJS routes ending with 'Lists', recipes.ejs and myRecipes.ejs: Display of lists of the different recipes either fully or categorised by their food type (Breakfast, Side Dishes, Soups, Desserts, Salads)
+- favourites.ejs: A route that will show a registered user their favourited recipes
+- recipe.ejs: Display route of a singular recipe. 
 
-The "public" folder includes the "images" folders, but all images used as of now are still URL, so it is not used yet. 
+The "public" folder includes the "images" folder adn
 
 The "app.js" is included, and the Database connection is already coded in, but entire code is also still a work in progress. 
 
