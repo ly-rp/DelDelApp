@@ -34,6 +34,9 @@
             <a class="nav-link" href="/recipes">recipes</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/myRecipes">my recipes</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/logout">logout</a>
           </li>
         <% } else if (user.role === 'admin') { %>
@@ -48,12 +51,13 @@
 
       </ul>
 
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="search" aria-label="search">
+      <form class="d-flex" role="search" action="/search" method="GET">
+        <input class="form-control me-2" type="search" name="q" placeholder="search" aria-label="search" required>
         <button class="btn btn-outline-light" type="submit">
           <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search" style="width:20px; height:20px;">
         </button>
-      </form>
+      </form> 
+
     </div>
   </div>
 </nav>

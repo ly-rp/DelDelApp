@@ -5,8 +5,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const multer = require('multer');
 const path = require('path'); 
-
 const app = express();
+//guys don't change the order of these imports, it will break the app -ELe 
 
 //*****STORAGE SETUP FOR MULTER*****//
 const storage = multer.diskStorage({
@@ -49,7 +49,6 @@ app.use(session({
 }));
 
 app.use(flash());
-
 
 //*****SETTING UP EJS*****//
 app.set('view engine', 'ejs');
@@ -150,7 +149,7 @@ app.get('/recipe/:id', (req, res) => {
 
 
 
-//****REVIEW****/
+//****REVIEW****//
 app.get('/review/:id', (req, res) => {
   const recipeId = req.params.id;
 
@@ -188,8 +187,6 @@ app.get('/review/:id', (req, res) => {
     });
   });
 });
-
-
 
 // Route: Handle POST request to add a new review
 app.post('/reviews/add', (req, res) => {
@@ -598,8 +595,7 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
   });
 });
 
-
-
+// USER DASHBOARD //
 app.get('/user', checkAuthenticated, (req, res) => {
   const foodCategories = [
     { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
@@ -621,13 +617,14 @@ app.get('/user', checkAuthenticated, (req, res) => {
   });
 });
 
-
 //RATINGS AND COMMENTS ROUTES //
 app.get('/reviews', (req, res) => {
   res.render('reviews', { user: req.session.user });
 });
 
 // *****FOOD CATEGORIES AND THEIR LISTS***** //
+//There ought to be five categories by the end of this- Ele
+
 // DISPLAYING ALL RECIPES, THE MAIN LIST //
 app.get('/recipesList', (req, res) => {
   const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
@@ -645,7 +642,7 @@ app.get('/recipesList', (req, res) => {
   });
 });
 
-//There like five categories so there should be five of these yesh.
+
 // DISPLAYING GOOD SOUP LIST //
 app.get('/soupsList', (req, res) => {
   const query = 'SELECT * FROM recipes WHERE category = "Soups"';
@@ -705,6 +702,28 @@ app.get('/saladsList', (req, res) => {
     });
   });
 });
+
+//*****SEARCH FUNCTIONALITY*****//
+app.get('/search', (req, res) => {
+  const searchQuery = req.query.q;
+  const sql = 'SELECT * FROM recipes WHERE recipeTitle LIKE ? OR description LIKE ?';
+  const likeQuery = `%${searchQuery}%`;
+
+  db.query(sql, [likeQuery, likeQuery], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Database error');
+    }
+
+    res.render('searchResults', {
+      query: searchQuery,
+      recipes: results,
+      user: req.session.user // in case your layout/nav needs it
+    });
+  });
+});
+
+
 //*****STARTING THE SERVER*****//
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`This server is running on 'http://localhost:${PORT}'`)); 
