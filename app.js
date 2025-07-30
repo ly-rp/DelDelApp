@@ -865,13 +865,17 @@ app.get('/soupsList', (req, res) => {
 
 // DISPLAYING DESSERTS LIST //
 app.get('/dessertsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Desserts"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Desserts'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('dessertsList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('sdessertsList', { recipes: results, user });
   });
 });
 
