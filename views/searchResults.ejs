@@ -10,27 +10,40 @@
   <title>This the search bar...yay</title>
 </head>
 
-<%- include('partials/navbar') %>
+<body>
+  <!-- Navbar -->
+  <%- include('partials/navbar', { user: user }) %>
 
-<div class="container mt-4">
-  <h2>Search Results for "<%= query %>"</h2>
+  <div class="container mt-4">
+    <h2 class="text-center mb-4" style="color: #801408">Search Results for "<%= query %>"</h2>
 
-  <% if (recipes.length > 0) { %>
-    <div class="row">
-      <% recipes.forEach(recipe => { %>
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <img src="<%= recipe.recipImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>">
-            <div class="card-body">
-              <h5 class="card-title"><%= recipe.recipeTitle %></h5>
-              <p class="card-text"><%= recipe.recipeDescription.substring(0, 100) %>...</p>
-              <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-primary">View</a>
+    <% if (recipes.length > 0) { %>
+      <div class="row">
+        <% recipes.forEach(recipe => { %>
+          <div class="col-md-3 mb-4">
+            <div class="card"
+              style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 1000px;">
+              <a href="/recipe/<%= recipe.recipeId %>">
+                <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top"
+                  alt="<%= recipe.recipeTitle %>" />
+              </a>
+              <div class="card-body">
+                <h5 class="card-title" style="color: #801408">
+                  <a href="/recipe/<%= recipe.recipeId %>" style="text-decoration: none; color: inherit;">
+                    <%= recipe.recipeTitle %>
+                  </a>
+                </h5>
+                <p class="card-text"><%= recipe.recipeDescription.substring(0, 100) %>...</p>
+                <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm mt-2">View</a>
+              </div>
             </div>
           </div>
-        </div>
-      <% }) %>
-    </div>
-  <% } else { %>
-    <p>No recipes are found.</p>
-  <% } %>
-</div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="text-center">No recipes are found for "<%= query %>".</p>
+    <% } %>
+  </div>
+</body>
+
+</html>
