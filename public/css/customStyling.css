@@ -88,8 +88,14 @@
 }
 
 .btn-pink1 {
-  background-color: pink;
+  background-color: rgb(255, 155, 172);
   color: white;
+  border: none;
+}
+
+.btn-pink1:hover {
+    background-color: rgb(252, 128, 149);
+    color: white;
   border: none;
 }
 

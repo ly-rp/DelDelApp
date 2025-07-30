@@ -52,12 +52,12 @@
                 <!-- Favourite toggle -->
                 <% if (recipe.isFavourited) { %>
                   <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger" title="Remove from favourites">❤️</button>
+                    <button type="submit" class="btn btn-pink1" title="Remove from favourites">❤️</button>
                   </form>
                 <% } else { %>
                   <form action="/favourites/add" method="POST" style="display:inline;">
                     <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                    <button type="submit" class="btn btn-danger" title="Add to favourites">🤍</button>
+                    <button type="submit" class="btn btn-pink1" title="Add to favourites">🤍</button>
                   </form>
                 <% } %>
               <% } %>
@@ -70,7 +70,7 @@
             <% } else { %>
               <!-- Guest view -->
               <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2">Review</a>
-              <a href="/login" class="btn btn-pink2" title="Login to favourite">❤️</a>
+              <a href="/login" class="btn btn-pink1" title="Login to favourite">❤️</a>
             <% } %>
           </div>
 
