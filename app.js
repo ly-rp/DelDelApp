@@ -344,6 +344,44 @@ app.get('/deleteRecipe/:id', (req, res) => {
     });
 });
 
+// Show My Recipes
+app.get('/myRecipes', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id; // Current logged-in user
+
+    const sql = 'SELECT * FROM recipes WHERE creatorId = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user recipes:', err);
+            return res.status(500).send('Server error while retrieving your recipes');
+        }
+
+        res.render('myRecipes', {
+            user: req.session.user,
+            recipes: results
+        });
+    });
+});
+
+// Delete a recipe (only if the creator matches)
+app.post('/myRecipes/delete/:id', checkAuthenticated, (req, res) => {
+    const recipeId = req.params.id;
+    const userId = req.session.user.id;
+
+    const sql = 'DELETE FROM recipes WHERE recipeId = ? AND creatorId = ?';
+    db.query(sql, [recipeId, userId], (err, result) => {
+        if (err) {
+            console.error('Error deleting recipe:', err);
+            return res.status(500).send('Server error while deleting recipe');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(403).send('You are not allowed to delete this recipe');
+        }
+
+        res.redirect('/myRecipes');
+    });
+});
+
 //*****AUTHENTICATION ROUTES*****//
 // VALIDATING REGISTERATION //
 const validateRegistration = (req, res, next) => {
