@@ -108,40 +108,29 @@
   <% } %>
 
   <!-- Past Reviews Section -->
-<div class="container mt-5">
-  <hr>
-  <h3 class="mb-3">Past Reviews</h3>
+  <div class="container mt-5">
+    <hr>
+    <h3 class="mb-3">Past Reviews</h3>
 
-  <% if (reviews.length === 0) { %>
-    <!-- No Reviews Message -->
-    <p>No reviews yet. Be the first to write one!</p>
-  <% } else { %>
-    <!-- Styled Reviews List -->
-    <ul class="list-unstyled">
-      <% reviews.forEach(r => { %>
-        <li class="mb-3 p-3 border rounded shadow-sm bg-light">
-          <strong><%= r.username %></strong>:
-          
-          <!-- Star Rating -->
-          <% for (let i = 1; i <= 5; i++) { %>
-            <% if (i <= r.rating) { %>
-              <span style="color: gold;">★</span>
-            <% } else { %>
-              <span style="color: #ccc;">★</span>
-            <% } %>
-          <% } %>
-
-          <!-- Comment -->
-          <div class="mt-2"><%= r.comment %></div>
-
-          <!-- Timestamp -->
-          <small class="text-muted d-block mt-1"><%= new Date(r.created_at).toLocaleString() %></small>
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
-</div>
-
+    <% if (reviews.length === 0) { %>
+      <!-- No Reviews Message -->
+      <p>No reviews yet. Be the first to write one!</p>
+    <% } else { %>
+      <!-- Reviews List -->
+      <ul class="list-group">
+        <% reviews.forEach(r => { %>
+          <li class="list-group-item">
+            <!-- Review Details -->
+            <strong><%= r.username %></strong> - <%= r.rating %>/5
+            <br>
+            <%= r.comment %>
+            <br>
+            <small class="text-muted"><%= new Date(r.created_at).toLocaleString() %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
 
   <!-- JavaScript: Show Review Form on Button Click -->
   <script>
