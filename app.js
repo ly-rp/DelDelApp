@@ -87,7 +87,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/recipes', (req, res) => {
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
+  const sql = `
+    SELECT recipeId, recipeTitle, recipeImage, creatorId
+    FROM Team34C237_gradecutgo.recipes
+  `;
 
   db.query(sql, (error, results) => {
     if (error) {
@@ -96,14 +99,12 @@ app.get('/recipes', (req, res) => {
     }
 
     const user = req.session.user || null;
-    const isAdmin = user?.role === 'admin';
-    const userId = user?.id || null;
 
     res.render('recipes', {
       recipes: results,
-      user: req.session.user,
-      isAdmin: isAdmin,
-      userId: userId
+      user: user,
+      isAdmin: user?.role === 'admin',
+      userId: user?.id || null
     });
   });
 });
@@ -342,7 +343,7 @@ app.get('/editRecipe/:id', (req, res) => {
     });
 });
 
-app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
+app.post('/editRecipe/:recipeId',upload.single('image'), (req, res) => {
     const recipeId = req.params.id;
     const { recipeTitle, recipeDescription} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
@@ -366,6 +367,28 @@ app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
         }
     });
 });
+
+app.post('/delete/:recipeId', (req, res) => {
+    const recipeId = req.params.recipeId;
+    const user = req.session.user;
+
+    if (!user) return res.redirect('/login');
+
+    // Allow only admin or owner
+    const sql = `
+        DELETE FROM recipes 
+        WHERE recipeId = ? AND (creatorId = ? OR ? = 'admin')
+    `;
+    db.query(sql, [recipeId, user.id, user.role], (err) => {
+        if (err) {
+            console.error("Error deleting recipe:", err);
+            return res.status(500).send("Error deleting recipe");
+        }
+        res.redirect('/recipes');
+    });
+});
+
+
 
 // DELETING RECIPE ROUTE //
 app.get('/deleteRecipe/:id', (req, res) => {
