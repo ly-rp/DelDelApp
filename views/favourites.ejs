@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/customStyling.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/customStyling.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Your Favourites</title>
+    <title>Your Favourites | DelDel</title>
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!-- Navbar -->
     <%- include('partials/navbar', { user: user }) %>
 
     <div class="container mt-4">
-      <h1 class="text-center mb-4 my-3" style="color: #801408">Your Favourites</h1>
-        <div class="row">
-            <% if (recipes.length > 0) { %>
-                <% recipes.forEach(recipe => { %>
-                    <div class="col-md-3 mb-4 d-flex align-items-stretch">
-                        <div class="card w-100">
-                            <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top" alt="Recipe Image" />
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title"><%= recipe.recipeTitle %></h5>
-                                <div class="mt-auto d-flex gap-2">
-                                    <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-orange1 btn-sm">View Recipe</a>
+        <h1 class="text-center mb-4 my-3" style="color: #801408;">Your Favourites</h1>
 
+        <% if (recipes.length > 0) { %>
+            <div class="row">
+                <% recipes.forEach(recipe => { %>
+                    <div class="col-md-3 mb-4">
+                        <div class="card"
+                            style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 1000px;">
+                            <a href="/recipe/<%= recipe.recipeId %>">
+                                <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>" />
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title" style="color: #801408;">
+                                    <a href="/recipe/<%= recipe.recipeId %>" style="text-decoration: none; color: inherit;">
+                                        <%= recipe.recipeTitle %>
+                                    </a>
+                                </h5>
+
+                                <div class="d-flex gap-2 mt-2">
+                                    <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">View Recipe</a>
                                     <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="margin: 0;">
                                         <button 
                                             type="submit" 
@@ -39,10 +47,10 @@
                         </div>
                     </div>
                 <% }) %>
-            <% } else { %>
-                <p>You have no favourites yet.</p>
-            <% } %>
-        </div>
+            </div>
+        <% } else { %>
+            <p class="text-center">You have no favourites yet.</p>
+        <% } %>
 
         <a href="/user" class="btn btn-red1 my-3">Back to Home</a>
     </div>
