@@ -793,7 +793,7 @@ app.get('/dessertsList', (req, res) => {
 
   db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('sdessertsList', { recipes: results, user });
+    res.render('dessertsList', { recipes: results, user });
   });
 });
 
@@ -826,7 +826,7 @@ app.get('/breakfastList', (req, res) => {
 
   db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('beakfastList', { recipes: results, user });
+    res.render('breakfastList', { recipes: results, user });
   });
 });
 
