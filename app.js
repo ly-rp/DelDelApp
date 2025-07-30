@@ -124,21 +124,21 @@ app.get('/recipe/:id', (req, res) => {
     const recipeId = req.params.id;
     const userId = req.session.user?.id || null;
 
-    // 1️⃣ Get recipe details
+    // Get recipe details
     db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, recipeResults) => {
         if (error) return res.status(500).send('Database error');
         if (recipeResults.length === 0) return res.status(404).send('Recipe not found');
 
         let recipe = recipeResults[0];
 
-        // 2️⃣ Get reviews
+        // Get reviews
         db.query(
             'SELECT r.*, u.username FROM reviews r JOIN users u ON r.userId = u.id WHERE r.recipeId = ?',
             [recipeId],
             (err, reviewResults) => {
                 if (err) return res.status(500).send('Database error');
 
-                // 3️⃣ If user logged in, check if favourited
+                // If user logged in, check if favourited
                 if (userId) {
                     db.query(
                         'SELECT 1 FROM favourites WHERE userId = ? AND recipeId = ?',
