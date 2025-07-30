@@ -520,6 +520,25 @@ app.get('/register', (req, res) => {
 app.post('/register', validateRegistration, (req, res) => {
     const { username, email, password, contact, role } = req.body;
 
+    const passwordErrors = [];
+
+    // Password validation
+    if (password.length < 6) {
+        passwordErrors.push("Password must be at least 6 characters.");
+    }
+    if (!/[A-Z]/.test(password)) {
+        passwordErrors.push("Password must contain at least one uppercase letter.");
+    }
+    if (!/\d/.test(password)) {
+        passwordErrors.push("Password must contain at least one number.");
+    }
+
+    if (passwordErrors.length > 0) {
+        req.flash('error', passwordErrors);
+        req.flash('formData', req.body);
+        return res.redirect('/register');
+    }
+
     const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
     db.query(checkEmailSql, [email], (err, results) => {
         if (err) {

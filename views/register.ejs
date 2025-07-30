@@ -117,5 +117,28 @@
     window.onload = togglePasskeyField;
   </script>
 
+  <!-- Script: Password Validation -->
+  <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const password = document.getElementById('password').value;
+      const errors = [];
+
+      if (password.length < 6) {
+        errors.push("Password must be at least 6 characters.");
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push("Password must contain at least one uppercase letter.");
+      }
+      if (!/\d/.test(password)) {
+        errors.push("Password must contain at least one number.");
+      }
+
+      if (errors.length > 0) {
+        e.preventDefault();
+        alert(errors.join("\n"));
+      }
+    });
+  </script>
+
 </body>
 </html>
