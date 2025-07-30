@@ -45,7 +45,7 @@
         <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
           style="width: 200px; height: 200px; object-fit: cover;">
         <p>
-          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List"> 
+          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List">
             <!--This from GPT, cuz if not  will show different route for sidedishesList cuz theres a space in-between-->
             <b>
               <%= category.name %>
@@ -90,35 +90,29 @@
                   </form>
 
                   <% } else if (user.role==='user' ) { %>
-                    <!-- Logged-in user (role != guest or admin) -->
                     <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                    <form action="/favourites/add" method="POST" style="display:inline;">
-                      <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                      <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</button>
-                    </form>
 
-
-                    <% } else if (user.role==='user' ) { %>
-                      <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                    
-                      <% if (recipe.isFavourited) { %>
-                        <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                          <button type="submit" class="btn btn-danger btn-sm" title="Remove favourite">❤️</button>
+                    <% if (recipe.isFavourited) { %>
+                      <!-- Show Remove button if already favourited -->
+                      <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Remove from favourites">💔</button>
+                      </form>
+                      <% } else { %>
+                        <!-- Show Add button if not favourited -->
+                        <form action="/favourites/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">❤️</button>
                         </form>
-                        <% } else { %>
-                          <form action="/favourites/add" method="POST" style="display:inline;">
-                            <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
-                            <button type="submit" class="btn btn-pink2 btn-sm" title="Add to favourite">❤️</button>
-                          </form>
-                          <% } %>
-                    
-                            <% if (recipe.createdBy===user.id) { %>
-                              <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
-                              <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                              </form>
+                        <% } %>
+
+                          <% if (recipe.createdBy===user.id) { %>
+                            <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                              <button class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                            <% } %>
                               <% } %>
-                                <% } %>
+
 
             </div>
           </div>

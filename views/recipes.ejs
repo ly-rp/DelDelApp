@@ -45,7 +45,18 @@
                                 <% } else { %>
                                     <!-- Logged in users -->
                                     <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                                    <a href="/favourites/<%= recipe.recipeId %>" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</a>
+
+                                    <% if (recipe.isFavourited) { %>
+                                        <!-- Show heartbreak button if already favourited -->
+                                        <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-pink1 btn-sm" title="Remove from favourites">💔</button>
+                                        </form>
+                                    <% } else { %>
+                                        <!-- Show heart button if not favourited -->
+                                        <form action="/favourites/add/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">❤️</button>
+                                        </form>
+                                    <% } %>
 
                                     <% if (user.role === 'admin' || recipe.creatorId === user.id) { %>
                                         <!-- Show edit/delete only for admin or recipe owner -->

@@ -243,6 +243,9 @@ app.get('/favourites', checkAuthenticated, (req, res) => {
       WHERE f.userId = ?;
     `;
 
+    const message = req.session.message;
+    req.session.message = null; // clear after showing
+
     db.query(sql, [userId], (err, results) => {
         if (err) {
             console.error('Database error:', err);
@@ -265,6 +268,101 @@ app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
             return res.status(500).send("Error removing favourite");
         }
         return res.redirect('/favourites');
+    });
+});
+
+// Add to favourites (POST)
+app.post('/favourites/:recipeId', (req, res) => {
+    const userId = req.session.user?.id;
+    const recipeId = req.params.recipeId;
+
+    if (!userId) {
+        return res.redirect('/login');
+    }
+
+    // Prevent duplicate favourites
+    const checkSql = "SELECT * FROM favourites WHERE userId = ? AND recipeId = ?";
+    db.query(checkSql, [userId, recipeId], (err, rows) => {
+        if (err) {
+            console.error("Error checking favourite:", err);
+            req.session.message = "Error adding favourite.";
+            return res.redirect('/favourites');
+        }
+
+        if (rows.length > 0) {
+            req.session.message = "Recipe is already in your favourites!";
+            return res.redirect('/favourites');
+        }
+
+        const insertSql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
+        db.query(insertSql, [userId, recipeId], (err) => {
+            if (err) {
+                console.error("Error adding favourite:", err);
+                req.session.message = "Error adding favourite.";
+                return res.redirect('/favourites');
+            }
+            req.session.message = "Recipe added to favourites!";
+            res.redirect('/favourites');
+        });
+    });
+});
+
+
+// Remove from favourites (POST)
+app.post('/favourites/remove/:recipeId', (req, res) => {
+    const userId = req.session.user?.id;
+    const recipeId = req.params.recipeId;
+
+    if (!userId) {
+        return res.redirect('/login');
+    }
+
+    const deleteSql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
+    db.query(deleteSql, [userId, recipeId], (err) => {
+        if (err) {
+            console.error("Error removing favourite:", err);
+            req.session.message = "Error removing favourite.";
+            return res.redirect('/favourites');
+        }
+        req.session.message = "Recipe removed from favourites!";
+        res.redirect('/favourites');
+    });
+});
+
+
+// Add to favourites
+app.post('/favourites/add/:recipeId', (req, res) => {
+    if (!req.session.user) return res.redirect('/login');
+
+    const userId = req.session.user.id;
+    const recipeId = req.params.recipeId;
+
+    const sql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
+    db.query(sql, [userId, recipeId], (err) => {
+        if (err) {
+            console.error("Error adding favourite:", err);
+            return res.status(500).send("Error adding favourite");
+        }
+        req.session.message = "Recipe added to favourites!";
+        res.redirect('/favourites');
+    });
+});
+
+// Remove from favourites
+app.post('/favourites/remove/:recipeId', (req, res) => {
+    if (!req.session.user) return res.redirect('/login');
+
+    const userId = req.session.user.id;
+    const recipeId = req.params.recipeId;
+
+    const sql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
+    db.query(sql, [userId, recipeId], (err) => {
+        if (err) {
+            console.error("Error removing favourite:", err);
+            return res.status(500).send("Error removing favourite");
+        }
+        req.session.message = "Recipe removed from favourites!";
+        res.redirect('/favourites');
     });
 });
 
@@ -344,8 +442,8 @@ app.get('/editRecipe/:id', (req, res) => {
 });
 
 app.post('/editRecipe/:recipeId',upload.single('image'), (req, res) => {
-    const recipeId = req.params.id;
-    const { recipeTitle, recipeDescription} = req.body;
+    const recipeId = req.params.id || req.body.recipeId; // Use recipeId from params or body}
+    const { recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
     if (req.file) { // if new image is uploaded
         image = req.file.filename; // set image to be new image filename
@@ -353,10 +451,10 @@ app.post('/editRecipe/:recipeId',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png only if there is no current image
     }
 
-    const sql = 'UPDATE Team34C237_gradecutgo.recipes SET recipeTitle = ?, recipeDescription = ?, recipeImage = ? WHERE recipeId = ?';
+    const sql = 'UPDATE Team34C237_gradecutgo.recipes SET recipeTitle = ?, category = ?, recipeDescription = ?, ingredients = ?, instructions = ?, prep_time = ?, cook_time = ?, servings = ?, recipeImage = ? WHERE recipeId = ?';
 
     //Inserting the new recipe into the database
-    db.query( sql, [recipeTitle, recipeDescription, image, recipeId], (error, results) => {
+    db.query( sql, [recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings, image, recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
             console.error("Error updating recipe:", error);
@@ -416,10 +514,16 @@ app.get('/deleteRecipe/:id', (req, res) => {
 
 // Show My Recipes
 app.get('/myRecipes', checkAuthenticated, (req, res) => {
-    const userId = req.session.user.id; // Current logged-in user
+    const userId = req.session.user.id;
 
-    const sql = 'SELECT * FROM recipes WHERE creatorId = ?';
-    db.query(sql, [userId], (err, results) => {
+    const sql = `
+        SELECT r.*,
+               CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
+        FROM recipes r
+        LEFT JOIN favourites f ON r.recipeId = f.recipeId AND f.userId = ?
+        WHERE r.creatorId = ?`;
+
+    db.query(sql, [userId, userId], (err, results) => {
         if (err) {
             console.error('Error fetching user recipes:', err);
             return res.status(500).send('Server error while retrieving your recipes');
