@@ -18,6 +18,7 @@ The "views" folder contains the following files:
 - review.ejs:
 - searchResults.ejs: The search bar of the navbar that implements search filtering
 - forgot-password.ejs: The forgot password page where users can change their password with security questions
+- admin.ejs: admin page where admin delete, edit items
 
 
 The "public" folder includes the "images" folder adn
