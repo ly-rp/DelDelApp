@@ -7,20 +7,25 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <%- include('partials/navbar') %> 
+    <% if (typeof include === 'function') { %>
+        <%- include('partials/navbar') %>
+    <% } %>
 
     <div class="container-fluid">
         <!-- Header Section -->
         <header class="d-flex justify-content-between align-items-center mt-5">
             <h1 class="text-primary">Recipe Admin Dashboard</h1>
-            <p>Welcome, <%= user.username %> (<%= user.role %>)</p>
+            <p>
+                Welcome, 
+                <%= user ? user.username : "Admin" %> 
+                (<%= user ? user.role : "admin" %>)
+            </p>
             <a href="/logout" class="btn btn-danger">Logout</a>
         </header>
 
         <!-- Navigation Section -->
         <nav class="nav nav-pills mt-4">
             <a class="nav-link active" href="/admin/recipes">All Recipes</a>
-            <a class="nav-link" href="/admin/add">Add Recipe</a>
             <a class="nav-link" href="/admin/users">Manage Users</a>
         </nav>
 
@@ -29,7 +34,7 @@
             <h2>Manage Recipes</h2>
             <p>Below is a list of all recipes. You can edit or delete them as needed.</p>
 
-            <!-- Debug: Output one recipe object to inspect structure (remove later) -->
+            <!-- Debug: Check recipe field names -->
             <% if (recipes.length > 0) { %>
                 <pre><%= JSON.stringify(recipes[0], null, 2) %></pre>
             <% } %>
@@ -48,7 +53,7 @@
                     <% recipes.forEach(function(recipe, index) { %>
                         <tr>
                             <th scope="row"><%= index + 1 %></th>
-                            <td><%= recipe.recipeTitle %></td> <!-- Update based on actual DB field -->
+                            <td><%= recipe.recipeTitle %></td> <!-- Adjust this if needed -->
                             <td><%= recipe.category %></td>
                             <td>
                                 <a href="/admin/edit/<%= recipe.id %>" class="btn btn-warning btn-sm">Edit</a>
