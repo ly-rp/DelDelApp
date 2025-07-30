@@ -1,35 +1,5 @@
-<!--Added guest login thing-->
 <!-- Register Page for Delectable Delights -->
-<!-- Supports User, Admin (with passkey), and Guest access -->
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/customStyling.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <title>Register - DelDel</title>
-</head>
-<body>
-  <!-- Navbar -->
-  <%- include('partials/navbar') %>
-
-  <!-- Main Container -->
-  <div class="container mt-5">
-    <h1 class="text-center">Register for Delectable Delights</h1>
-
-    <!-- Show Flash Errors -->
-    <% if (errors && errors.length > 0) { %>
-      <div class="alert alert-danger">
-        <% errors.forEach(error => { %>
-          <p><%= error %></p>
-        <% }); %>
-      </div>
-    <% } %>
-
-    <!-- Show Flash Success Messages --><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -37,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/customStyling.css" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <title>Reset Password - DelDel</title>
+  <title>Register - DelDel</title>
 </head>
 <body>
 
@@ -46,7 +16,7 @@
 
   <!-- Main Container -->
   <div class="container mt-5">
-    <h1 class="text-center">Reset Your Password</h1>
+    <h1 class="text-center">Register for Delectable Delights</h1>
 
     <!-- Flash Error Messages -->
     <% if (errors && errors.length > 0) { %>
@@ -66,93 +36,34 @@
       </div>
     <% } %>
 
-    <!-- Reset Password Form -->
-    <form action="/forgot-password" method="POST" class="mt-4 w-50 mx-auto">
-      
-      <!-- Email Input -->
-      <div class="mb-3">
-        <label for="email" class="form-label">Registered Email:</label>
-        <input type="email" name="email" id="email" class="form-control" required placeholder="you@example.com">
-      </div>
-
-      <!-- New Password Input -->
-      <div class="mb-3">
-        <label for="newPassword" class="form-label">New Password (min 6 characters):</label>
-        <input type="password" name="newPassword" id="newPassword" class="form-control" required placeholder="At least 6 characters, 1 uppercase letter, 1 number">
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary w-100">Reset Password</button>
-    </form>
-
-    <!-- Back to Login -->
-    <p class="text-center mt-4">
-      Remembered your password? <a href="/login">Login here</a>
-    </p>
-  </div>
-
-  <!-- JS: Password Validation -->
-  <script>
-    document.querySelector('form').addEventListener('submit', function (e) {
-      const password = document.getElementById('newPassword').value;
-      const errors = [];
-
-      if (password.length < 6) {
-        errors.push("Password must be at least 6 characters.");
-      }
-      if (!/[A-Z]/.test(password)) {
-        errors.push("Password must contain at least one uppercase letter.");
-      }
-      if (!/\d/.test(password)) {
-        errors.push("Password must contain at least one number.");
-      }
-
-      if (errors.length > 0) {
-        e.preventDefault();
-        alert(errors.join("\n"));
-      }
-    });
-  </script>
-
-</body>
-</html>
-
-    <% if (messages && messages.length > 0) { %>
-      <div class="alert alert-success">
-        <% messages.forEach(msg => { %>
-          <p><%= msg %></p>
-        <% }); %>
-      </div>
-    <% } %>
-
     <!-- Registration Form -->
     <form action="/register" method="POST" class="mt-4">
-      
-      <!-- Username Input -->
+
+      <!-- Username -->
       <div class="mb-3">
         <label for="username" class="form-label">Username:</label>
         <input type="text" name="username" id="username" class="form-control" required>
       </div>
 
-      <!-- Email Input -->
+      <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Email:</label>
         <input type="email" name="email" id="email" class="form-control" required>
       </div>
 
-      <!-- Password Input -->
+      <!-- Password -->
       <div class="mb-3">
         <label for="password" class="form-label">Password (min 6 characters):</label>
         <input type="password" name="password" id="password" class="form-control" required>
       </div>
 
-      <!-- Contact Number Input -->
+      <!-- Contact Number -->
       <div class="mb-3">
         <label for="contact" class="form-label">Contact Number:</label>
         <input type="text" name="contact" id="contact" class="form-control" required pattern="\d{8,10}" title="Enter a valid contact number">
       </div>
 
-      <!-- Role Selection Dropdown -->
+      <!-- Role Selection -->
       <div class="mb-3">
         <label for="role" class="form-label">Register as:</label>
         <select name="role" id="role" class="form-select" required onchange="togglePasskeyField()">
@@ -162,23 +73,26 @@
         </select>
       </div>
 
-      <!-- Admin Passkey Field (shown only when admin is selected) -->
+      <!-- Admin Passkey (conditional) -->
       <div class="mb-3" id="adminPasskeyDiv" style="display: none;">
         <label for="adminPasskey" class="form-label">Admin Verification:</label>
         <input type="password" name="adminPasskey" id="adminPasskey" class="form-control" placeholder="Enter passkey">
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">Register</button>
+      <button type="submit" class="btn btn-primary w-100">Register</button>
     </form>
 
-    <!-- Login Redirect -->
-    <p class="mt-3">Already have an account? <a href="/login">Login here</a></p>
+    <!-- Navigation Links -->
+    <p class="mt-3 text-center">
+      Already have an account? <a href="/login">Login here</a>
+    </p>
 
     <hr>
 
-    <!-- Guest Access Link -->
-    <p class="mt-3">Or <a href="/guest">Continue as Guest</a></p>
+    <p class="mt-3 text-center">
+      Or <a href="/guest">Continue as Guest</a>
+    </p>
   </div>
 
   <!-- Script: Show/Hide Admin Passkey Field -->
@@ -188,19 +102,17 @@
       const passkeyDiv = document.getElementById('adminPasskeyDiv');
       const passkeyInput = document.getElementById('adminPasskey');
 
-      // If 'Admin' is selected, show passkey field
       if (roleSelect.value === 'admin') {
         passkeyDiv.style.display = 'block';
         passkeyInput.required = true;
       } else {
-        // Otherwise, hide it and clear its value
         passkeyDiv.style.display = 'none';
         passkeyInput.required = false;
         passkeyInput.value = '';
       }
     }
 
-    // Ensure correct visibility on page load 
+    // Run on page load
     window.onload = togglePasskeyField;
   </script>
 
