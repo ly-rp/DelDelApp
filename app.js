@@ -628,26 +628,27 @@ app.get('/forgot-password', (req, res) => {
   });
 });
 
-// Handle forgot password form submission
+// Handle forgot password form submission with security question verification
 app.post('/forgot-password', (req, res) => {
-  const { email, newPassword } = req.body;
+  const { email, newPassword, securityQ1, securityQ2, securityQ3 } = req.body;
 
-  // Basic validations
-  if (!email || !newPassword) {
+  // Check required fields
+  if (!email || !newPassword || !securityQ1 || !securityQ2 || !securityQ3) {
     req.flash('error', 'All fields are required.');
     return res.redirect('/forgot-password');
   }
 
-  if (newPassword.length < 6) {
-    req.flash('error', 'Password must be at least 6 characters.');
+  // Password basic check
+  if (newPassword.length < 6 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+    req.flash('error', 'Password must be at least 6 characters, include an uppercase letter and a number.');
     return res.redirect('/forgot-password');
   }
 
-  // Check if email exists
-  const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
-  db.query(checkEmailSql, [email], (err, results) => {
+  // Check if user with email exists
+  const findUserSql = 'SELECT * FROM users WHERE email = ?';
+  db.query(findUserSql, [email], (err, results) => {
     if (err) {
-      console.error('Error checking email:', err);
+      console.error('Database error while checking email:', err);
       req.flash('error', 'Server error.');
       return res.redirect('/forgot-password');
     }
@@ -657,16 +658,28 @@ app.post('/forgot-password', (req, res) => {
       return res.redirect('/forgot-password');
     }
 
-    // Update password (hash with SHA1 as in your current setup)
-    const updateSql = 'UPDATE users SET password = SHA1(?) WHERE email = ?';
-    db.query(updateSql, [newPassword, email], (err) => {
+    const user = results[0];
+
+    // Check if all 3 security answers match (case-insensitive comparison)
+    const matchQ1 = user.securityQ1.toLowerCase() === securityQ1.trim().toLowerCase();
+    const matchQ2 = user.securityQ2.toLowerCase() === securityQ2.trim().toLowerCase();
+    const matchQ3 = user.securityQ3.toLowerCase() === securityQ3.trim().toLowerCase();
+
+    if (!matchQ1 || !matchQ2 || !matchQ3) {
+      req.flash('error', 'Security question answers do not match.');
+      return res.redirect('/forgot-password');
+    }
+
+    // All good, update password (SHA1 hash)
+    const updatePasswordSql = 'UPDATE users SET password = SHA1(?) WHERE email = ?';
+    db.query(updatePasswordSql, [newPassword, email], (err) => {
       if (err) {
         console.error('Error updating password:', err);
-        req.flash('error', 'Failed to reset password. Please try again.');
+        req.flash('error', 'Could not update password.');
         return res.redirect('/forgot-password');
       }
 
-      req.flash('success', 'Password reset successful! Please login.');
+      req.flash('success', 'Password reset successful! You may now login.');
       res.redirect('/login');
     });
   });
