@@ -55,7 +55,7 @@
                     <button type="submit" class="btn btn-pink1" title="Remove from favourites">❤️</button>
                   </form>
                 <% } else { %>
-                  <form action="/favourites/add" method="POST" style="display:inline;">
+                  <form action="/favourites/add/<%= recipe.recipeId %>" method="POST" style="display:inline;">
                     <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
                     <button type="submit" class="btn btn-pink1" title="Add to favourites">🤍</button>
                   </form>
