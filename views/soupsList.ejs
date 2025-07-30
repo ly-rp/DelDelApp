@@ -11,13 +11,13 @@
 </head>
 
 <body>
-  <!-- Pass user to navbar -->
+  <!-- Navbar -->
   <%- include('partials/navbar', { user: user }) %>
 
   <div class="container mt-4">
     <h2 class="text-center mb-4">🍲 Soup Recipes</h2>
 
-    <!-- Use shared recipeCards partial -->
+    <!-- Shared Cards -->
     <%- include('partials/recipeCards', { recipes: recipes, user: user }) %>
   </div>
 </body>
