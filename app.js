@@ -410,7 +410,7 @@ app.get('/guest', (req, res) => {
 
 
 //*****DASHBOARDS*****//
-// Updated to include Food Categories - Le Ying
+// Updated to include Food Categories
 app.get('/dashboard', checkAuthenticated, (req, res) => {
     const categories = [
     { name: 'Desserts', image: '/images/categories/desserts.jpg' },
