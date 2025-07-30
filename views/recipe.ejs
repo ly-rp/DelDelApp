@@ -162,9 +162,11 @@
 <!-- Review Form (Only for logged-in non-guests) -->
 <% if (user && user.role !== 'guest') { %>
   <!-- Write Review Button -->
-  <div class="container text-center mt-4">
+  <div class="container text-center my-4 d-flex justify-content-center gap-3" id="'review-section">
     <button id="writeReviewBtn" class="btn btn-outline-primary">Write a Review</button>
+    <a href="/recipes" class="btn btn-outline-danger">Back to All Recipes</a>
   </div>
+
 
   <!-- Hidden Review Form -->
   <div class="container mt-4" id="reviewForm" style="display: none;">
