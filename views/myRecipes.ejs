@@ -40,6 +40,8 @@
 
                             <div class="d-flex gap-2 mt-2">
                                 <!-- Users can only delete their own recipes -->
+                                <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
+                                <a href="/favourites/<%= recipe.recipeId %>" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</a>
                                 <a href="/editRecipe/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
                                 <form action="/myRecipes/delete/<%= recipe.recipeId %>" method="POST"
                                     style="display:inline;">

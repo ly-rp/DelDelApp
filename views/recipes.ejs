@@ -39,7 +39,7 @@
                                         <!-- Guests or no user: Review + heart linking to register -->
                                         <a href="/review/<%= recipe.recipeId %>"
                                             class="btn btn-yellow2 btn-sm">Review</a>
-                                        <a href="/login" class="btn btn-pink2 btn-sm" title="Login to Favourite">❤️</a>
+                                        <a href="/login" class="btn btn-pink1 btn-sm" title="Login to Favourite">❤️</a>
 
                                         <% } else if (user.role==='admin' ) { %>
                                             <!-- Admin: Review, Edit, Delete -->
@@ -58,7 +58,7 @@
                                                 <a href="/review/<%= recipe.recipeId %>"
                                                     class="btn btn-yellow2 btn-sm">Review</a>
                                                 <a href="/favourites/<%= recipe.recipeId %>"
-                                                    class="btn btn-pink2 btn-sm">❤️</a>
+                                                    class="btn btn-pink1 btn-sm">❤️</a>
 
                                                 <% if (recipe.createdBy===user.id) { %>
                                                     <a href="/edit/<%= recipe.recipeId %>"
