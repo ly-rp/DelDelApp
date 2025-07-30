@@ -260,32 +260,13 @@ app.get('/favourites', checkAuthenticated, (req, res) => {
     });
 });
 
-app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
-    const userId = req.session.user?.id;
-    const recipeId = req.params.recipeId;
-
-    if (!userId) return res.redirect('/login');
-
-    const sql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
-    db.query(sql, [userId, recipeId], (err) => {
-        if (err) {
-            console.error("Error removing favourite:", err);
-            return res.status(500).send("Error removing favourite");
-        }
-        return res.redirect('/favourites');
-    });
-});
-
 // Add to favourites (POST)
-app.post('/favourites/:recipeId', (req, res) => {
-    const userId = req.session.user?.id;
+
+// Add to favourites
+app.post('/favourites/add/:recipeId', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id;
     const recipeId = req.params.recipeId;
 
-    if (!userId) {
-        return res.redirect('/login');
-    }
-
-    // Prevent duplicate favourites
     const checkSql = "SELECT * FROM favourites WHERE userId = ? AND recipeId = ?";
     db.query(checkSql, [userId, recipeId], (err, rows) => {
         if (err) {
@@ -312,51 +293,8 @@ app.post('/favourites/:recipeId', (req, res) => {
     });
 });
 
-
-// Remove from favourites (POST)
-app.post('/favourites/remove/:recipeId', (req, res) => {
-    const userId = req.session.user?.id;
-    const recipeId = req.params.recipeId;
-
-    if (!userId) {
-        return res.redirect('/login');
-    }
-
-    const deleteSql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
-    db.query(deleteSql, [userId, recipeId], (err) => {
-        if (err) {
-            console.error("Error removing favourite:", err);
-            req.session.message = "Error removing favourite.";
-            return res.redirect('/favourites');
-        }
-        req.session.message = "Recipe removed from favourites!";
-        res.redirect('/favourites');
-    });
-});
-
-
-// Add to favourites
-app.post('/favourites/add/:recipeId', (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
-
-    const userId = req.session.user.id;
-    const recipeId = req.params.recipeId;
-
-    const sql = "INSERT IGNORE INTO favourites (userId, recipeId) VALUES (?, ?)";
-    db.query(sql, [userId, recipeId], (err) => {
-        if (err) {
-            console.error("Error adding favourite:", err);
-            return res.status(500).send("Error adding favourite");
-        }
-        req.session.message = "Recipe added to favourites!";
-        res.redirect('/favourites');
-    });
-});
-
 // Remove from favourites
-app.post('/favourites/remove/:recipeId', (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
-
+app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
     const userId = req.session.user.id;
     const recipeId = req.params.recipeId;
 
@@ -372,19 +310,6 @@ app.post('/favourites/remove/:recipeId', (req, res) => {
 });
 
 
-app.post('/favourites/add', checkAuthenticated, (req, res) => {
-    const recipeId = req.body.recipeId;
-    const userId = req.session.user.id;
-
-    const sql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
-    db.query(sql, [userId, recipeId], (err, result) => {
-        if (err) {
-            console.error('Error adding to favourites:', err);
-            return res.status(500).send('Failed to add favourite');
-        }
-        res.redirect('/favourites');
-    });
-});
 
 app.get('/addRecipe', (req, res) => {
   res.render('addRecipe', { user: req.session.user });
