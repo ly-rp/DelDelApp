@@ -518,16 +518,37 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', validateRegistration, (req, res) => {
-    const { username, email, password, contact, role } = req.body; // remove address, add role
-    const sql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
-    db.query(sql, [username, email, password, contact, role], (err) => {
+    const { username, email, password, contact, role } = req.body;
+
+    const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
+    db.query(checkEmailSql, [email], (err, results) => {
         if (err) {
-            throw err;
+            console.error("Error checking email:", err);
+            req.flash('error', 'Server error.');
+            return res.redirect('/register');
         }
-        req.flash('success', 'Registration successful! Please log in.');
-        res.redirect('/login');
+
+        if (results.length > 0) {
+            req.flash('error', 'This email is already registered.');
+            req.flash('formData', req.body);
+            return res.redirect('/register');
+        }
+
+        // If email doesn't exist, proceed to insert
+        const insertSql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
+        db.query(insertSql, [username, email, password, contact, role], (err) => {
+            if (err) {
+                console.error("Error inserting user:", err);
+                req.flash('error', 'Registration failed. Please try again.');
+                return res.redirect('/register');
+            }
+
+            req.flash('success', 'Registration successful! Please log in.');
+            res.redirect('/login');
+        });
     });
 });
+
 
 //VALIDATING LOGGING IN//
 app.get('/login', (req, res) => {
