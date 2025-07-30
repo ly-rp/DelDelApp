@@ -115,16 +115,18 @@
     color: white;
 }
 
-.btn-outline-pink {
-  color: #ff66b2;
-  border: 1px solid #ff66b2;
-  background-color: white;
+.btn-maroon {
+  color: #801408;
+  font-weight: bold;
+  border: 1px solid #801408;
+  background-color: #fffaec;
 }
 
-.btn-outline-pink:hover {
-  color: #ff66b2;
-  border: 1px solid #ff66b2;
-  background-color: #ffcbe3;
+.btn-maroon:hover {
+  color: #801408;
+  font-weight: bold;
+  border: 1px solid #801408;
+  background-color: #fffaec;
 }
 
 .btn-brown {
