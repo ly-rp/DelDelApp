@@ -353,8 +353,8 @@ app.post('/addRecipe', upload.single('recipeImage'), (req, res) => {
 });
 
 // EDITING RECIPE ROUTE //
-app.get('/editRecipe/:id', (req, res) => {
-    const recipeId = req.params.id;
+app.get('/editRecipe/:recipeId', (req, res) => {
+    const recipeId = req.params.recipeId;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
         if (error) {
@@ -464,8 +464,8 @@ app.get('/myRecipes', checkAuthenticated, (req, res) => {
 });
 
 // Delete a recipe (only if the creator matches)
-app.post('/myRecipes/delete/:id', checkAuthenticated, (req, res) => {
-    const recipeId = req.params.id;
+app.post('/myRecipes/delete/:recipeId', checkAuthenticated, (req, res) => {
+    const recipeId = req.params.recipeId;
     const userId = req.session.user.id;
 
     const sql = 'DELETE FROM recipes WHERE recipeId = ? AND creatorId = ?';
@@ -727,24 +727,6 @@ app.get('/reviews', (req, res) => {
 
 // *****FOOD CATEGORIES AND THEIR LISTS***** //
 //There ought to be five categories by the end of this - Ele
-
-// DISPLAYING ALL RECIPES, THE MAIN LIST //
-app.get('/recipesList', (req, res) => {
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-
-  db.query(sql, (error, results) => {
-    if (error) {
-      console.error("Database error:", error.message);
-      return res.status(500).send('Error retrieving recipes');
-    }
-
-    res.render('recipesList', {
-      recipes: results,
-      user: req.session.user
-    });
-  });
-});
-
 
 // DISPLAYING SOUP LIST //
 app.get('/soupsList', (req, res) => {
