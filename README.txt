@@ -5,14 +5,19 @@ The codes written are currently being shared across the team using both GitHub a
 Current progress in our VS Code project includes the following:
 
 The "views" folder contains the following files:
+- /partials: navbar.ejs, home.ejs, recipeCards.ejs ()
 - welcome.ejs: The homepage which should have features to login, register or sign in as guest
-- login.ejs, register.ejs: User authentication
+- register.ejs:
+- login.ejs, register.ejs, forgot-password.ejs: User authentication
+- guest.ejs, user.ejs, admin.ejs: 
 - addRecipe.ejs: Where users can add new recipes
 - editRecipe.ejs: Where users can edit existing recipes
-- dashboard.ejs, admin.ejs, guest.ejs, user.ejs: Displays different role's dashboard contents. Still a work in progress. 
 - All EJS routes ending with 'Lists', recipes.ejs and myRecipes.ejs: Display of lists of the different recipes either fully or categorised by their food type (Breakfast, Side Dishes, Soups, Desserts, Salads)
-- favourites.ejs: A route that will show a registered user their favourited recipes
 - recipe.ejs: Display route of a singular recipe. 
+- favourites.ejs: A route that will show a registered user their favourited recipes
+- review.ejs:
+- searchResults.ejs: The search bar of the navbar that implements search filtering
+
 
 The "public" folder includes the "images" folder adn
 
