@@ -579,12 +579,6 @@ app.get('/login', (req, res) => {
     });
 });
 
-app.get('/forgot-password', (req, res) => {
-    res.render('forgot-password', {
-        messages: req.flash('success'),
-        errors: req.flash('error')
-    });
-});
 
 app.post('/login', (req,res) => {
     const{email, password} =req.body;
@@ -623,31 +617,61 @@ app.post('/login', (req,res) => {
     });
 });
 
-app.post('/forgot-password', (req, res) => {
-    const { email } = req.body;
 
-    if (!email) {
-        req.flash('error', 'Please enter your registered email.');
-        return res.redirect('/forgot-password');
+
+// FORGOT PASSWORD //
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', {
+    user: req.session.user || null,
+    errors: req.flash('error'),
+    messages: req.flash('success'),
+  });
+});
+
+// Handle forgot password form submission
+app.post('/forgot-password', (req, res) => {
+  const { email, newPassword } = req.body;
+
+  // Basic validations
+  if (!email || !newPassword) {
+    req.flash('error', 'All fields are required.');
+    return res.redirect('/forgot-password');
+  }
+
+  if (newPassword.length < 6) {
+    req.flash('error', 'Password must be at least 6 characters.');
+    return res.redirect('/forgot-password');
+  }
+
+  // Check if email exists
+  const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
+  db.query(checkEmailSql, [email], (err, results) => {
+    if (err) {
+      console.error('Error checking email:', err);
+      req.flash('error', 'Server error.');
+      return res.redirect('/forgot-password');
     }
 
-    const sql = 'SELECT * FROM users WHERE email = ?';
-    db.query(sql, [email], (err, results) => {
-        if (err) {
-            console.error(err);
-            req.flash('error', 'Server error, please try again later.');
-            return res.redirect('/forgot-password');
-        }
+    if (results.length === 0) {
+      req.flash('error', 'No user found with that email.');
+      return res.redirect('/forgot-password');
+    }
 
-        if (results.length === 0) {
-            req.flash('error', 'No account found with that email.');
-            return res.redirect('/forgot-password');
-        }
+    // Update password (hash with SHA1 as in your current setup)
+    const updateSql = 'UPDATE users SET password = SHA1(?) WHERE email = ?';
+    db.query(updateSql, [newPassword, email], (err) => {
+      if (err) {
+        console.error('Error updating password:', err);
+        req.flash('error', 'Failed to reset password. Please try again.');
+        return res.redirect('/forgot-password');
+      }
 
-        req.flash('success', 'Password reset instructions have been sent to your email.');
-        res.redirect('/login');
+      req.flash('success', 'Password reset successful! Please login.');
+      res.redirect('/login');
     });
+  });
 });
+
 
 
 // LOGGING OUT //
