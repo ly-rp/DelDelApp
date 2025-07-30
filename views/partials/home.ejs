@@ -41,3 +41,27 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+
+<!-- Food Categories -->
+<div class="container my-5" style="text-align: center;">
+  <h1 style="color: #941507"><b>Food Categories</b></h1>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 20px;">
+    <% categories.forEach(category=> { %>
+      <div style="text-align: center; width: 200px;">
+        <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
+          style="width: 200px; height: 200px; object-fit: cover;">
+        <p>
+          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List">
+            <!--This from GPT, cuz if not  will show different route for sidedishesList cuz theres a space in-between-->
+            <b>
+              <%= category.name %>
+            </b>
+          </a>
+        </p>
+      </div>
+      <% }) %>
+  </div>
+</div>
+
+<%- include('recipeCards', { recipes: recipes, user: user }) %>
