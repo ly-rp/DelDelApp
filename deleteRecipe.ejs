@@ -17,16 +17,16 @@
         <!-- Confirmation Message Section -->
         <div class="alert alert-warning">
             <h3>Are you sure you want to delete the following recipe?</h3>
-            <p><strong>Recipe Name:</strong> <%= recipeTitle %></p>
-            <p><strong>Category:</strong> <%= category %></p>
-            <p><strong>Description:</strong> <%= recipeDescription %></p>
+            <p><strong>Recipe Name:</strong> <%= recipe.recipeTitle %></p>
+            <p><strong>Category:</strong> <%= recipe.category %></p>
+            <p><strong>Description:</strong> <%= recipe.recipeDescription %></p>
         </div>
 
         <!-- Delete Confirmation Form -->
-        <form action="/admin/delete/<%= recipe.id %>" method="POST">
+        <form action="/admin/delete/<%= recipe.recipeId %>" method="POST">
             <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                <a href="/admin/recipes" class="btn btn-secondary">Cancel</a>
+                <a href="/deleteRecipes/admin" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

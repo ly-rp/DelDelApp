@@ -740,7 +740,7 @@ app.get('/search', (req, res) => {
   db.query(sql, [likeQuery, likeQuery], (err, results) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Database error, search function is not working: ' + err.message);
+      return res.status(500).send('Database error: ' + err.message);
     }
 
     res.render('searchResults', {
@@ -750,6 +750,7 @@ app.get('/search', (req, res) => {
     });
   });
 });
+
 
 
 

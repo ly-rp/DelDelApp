@@ -23,7 +23,7 @@
             <img src="<%= recipe.recipImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>">
             <div class="card-body">
               <h5 class="card-title"><%= recipe.recipeTitle %></h5>
-              <p class="card-text"><%= recipe.description.substring(0, 100) %>...</p>
+              <p class="card-text"><%= recipe.recipeDescription.substring(0, 100) %>...</p>
               <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-primary">View</a>
             </div>
           </div>
