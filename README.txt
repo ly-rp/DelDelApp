@@ -17,5 +17,9 @@ The "app.js" is included, and the Database connection is already coded in, but e
 
 Enhancements we wish to include into the app are:
 - Guest users, a role that can only see recipes and cannot leave ratings nor upload recipes 
-- Dark mode and Light mode 
-- Favoriting of recipes for Registered Users
+- User Profiles for Registered Users
+- Favouriting of recipes for Registered Users
+- Working GIF in Welcome Page 
+- Aesthetic CSS makeover
+- Ability to see your own recipes in the My Recipes Page
+- 
