@@ -880,40 +880,55 @@ app.get('/dessertsList', (req, res) => {
 });
 
 // DISPLAYING SIDE DISHES LIST //
-app.get('/sidedishesList', (req, res) => { //take not its plural for whoever gon need this part
-  const query = 'SELECT * FROM recipes WHERE category = "Side Dishes"';
-  db.query(query, (err, results) => {
+app.get('/sidedishesList', (req, res) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Side Dishes'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('sidedishesList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('sidedishesList', { recipes: results, user });
   });
 });
+
 
 // DISPLAYING BREAKFAST LIST //
 app.get('/breakfastList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Breakfast"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Breakfast'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('breakfastList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('beakfastList', { recipes: results, user });
   });
 });
 
+
 // DISPLAYING SALADS LIST //
 app.get('/saladsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Salads"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Salads'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('saladsList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('saladsList', { recipes: results, user });
   });
 });
+
 
 //*****SEARCH FUNCTIONALITY*****//
 app.get('/search', (req, res) => {
