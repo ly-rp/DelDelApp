@@ -149,41 +149,91 @@ app.get('/recipe/:id', (req, res) => {
 });
 
 
+
+//****REVIEW****/
 app.get('/review/:id', (req, res) => {
-    const reviewId = req.params.id;
+  const recipeId = req.params.id;
 
-    db.query('SELECT * FROM Team34C237_gradecutgo.reviews WHERE reviewId = ?', [reviewId], (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send('Server error');
-        }
+  // Step 1: Query to get the recipe title (to show on the review page)
+  const recipeSql = 'SELECT recipeTitle FROM recipes WHERE recipeId = ?';
+  db.query(recipeSql, [recipeId], (err1, recipeResults) => {
 
-        if (results.length > 0) {
-            res.render('review', { review: results[0], user: req.session.user });
-        } else {
-            res.status(404).send('Review not found');
-        }
+    // If recipe not found or there's an error, return 404
+    if (err1 || recipeResults.length === 0) {
+      return res.status(404).send('Recipe not found');
+    }
+    // Extract the title of the recipe
+    const recipeTitle = recipeResults[0].recipeTitle;
+    // Step 2: Query to get all reviews for that recipe (joined with usernames)
+    const reviewSql = `
+      SELECT r.*, u.username
+      FROM reviews r
+      JOIN users u ON r.userId = u.id
+      WHERE r.recipeId = ?
+      ORDER BY r.created_at DESC
+    `;
+    db.query(reviewSql, [recipeId], (err2, reviews) => {
+      // If query fails, send a 500 Internal Server Error
+      if (err2) {
+        return res.status(500).send('Error fetching reviews');
+      }
+      // Step 3: Render the review.ejs page with necessary data
+      res.render('review', {
+        recipeId,           // Pass recipe ID to the view
+        recipeTitle,        // Recipe name for the page header
+        review: null,       // Optional: used if showing a single review (currently unused)
+        reviews,            // All reviews for that recipe
+        user: req.session.user  // Logged-in user info (used for permissions like delete)
+      });
     });
+  });
 });
 
+
+
+// Route: Handle POST request to add a new review
 app.post('/reviews/add', (req, res) => {
   const { recipeId, rating, comment } = req.body;
-  const userId = req.session.user?.id;  // get logged-in user id
+  // Get the currently logged-in user's ID from session (if available)
+  const userId = req.session.user?.id;
 
+  // If user is not logged in, redirect to login page with flash message
   if (!userId) {
     req.flash('error', 'You must be logged in to add a review.');
     return res.redirect('/login');
   }
-
+  // SQL query to insert new review into the database
   const sql = 'INSERT INTO reviews (recipeId, userId, rating, comment) VALUES (?, ?, ?, ?)';
   db.query(sql, [recipeId, userId, rating, comment], (error, results) => {
     if (error) {
-      console.error(error);
-      return res.status(500).send('Error adding review');
+      console.error(error);  
+      return res.status(500).send('Error adding review');  // Send error response
     }
     res.redirect(`/recipe/${recipeId}`);
   });
 });
+
+
+// Handle delete review request
+app.post('/reviews/delete/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+  // First, get the recipeId for redirect
+  db.query('SELECT recipeId FROM reviews WHERE reviewId = ?', [reviewId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(500).send('Database error or review not found');
+    }
+    const recipeId = results[0].recipeId;
+    db.query('DELETE FROM reviews WHERE reviewId = ?', [reviewId], (err2) => {
+      if (err2) {
+        return res.status(500).send('Database error');
+      }
+      res.redirect('/recipe/' + recipeId);
+    });
+  });
+});
+
+
+
 
 //*****FAVOURITES ROUTES*****//
 app.get('/favourites', checkAuthenticated, (req, res) => {
