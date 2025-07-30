@@ -39,23 +39,27 @@
                             </div>
 
                             <div class="d-flex gap-2 mt-2">
+                                <!-- Review button -->
                                 <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
 
+                                <!-- Favourite / Unfavourite buttons -->
                                 <% if (recipe.isFavourited) { %>
                                     <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                        <button type="submit" class="btn btn-pink1 btn-sm" onclick="return confirm('Remove this recipe from your favourites?');">
-                                            ❤️ Remove
-                                        </button>
+                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Remove from favourites">💔</button>
                                     </form>
                                 <% } else { %>
-                                    <form action="/favourites/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</button>
+                                    <form action="/favourites/add/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">❤️</button>
                                     </form>
                                 <% } %>
 
+                                <!-- Edit button -->
                                 <a href="/editRecipe/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
+
+                                <!-- Delete button -->
                                 <form action="/myRecipes/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this recipe?')">Delete</button>
+                                    <button class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this recipe?')">Delete</button>
                                 </form>
                             </div>
                         </div>
