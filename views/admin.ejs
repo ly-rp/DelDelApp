@@ -26,7 +26,6 @@
         <!-- Navigation Section -->
         <nav class="nav nav-pills mt-4">
             <a class="nav-link active" href="/admin/recipes">All Recipes</a>
-            <a class="nav-link" href="/admin/add">Add Recipe</a>
             <a class="nav-link" href="/admin/users">Manage Users</a>
         </nav>
 
@@ -35,7 +34,7 @@
             <h2>Manage Recipes</h2>
             <p>Below is a list of all recipes. You can edit or delete them as needed.</p>
 
-            <!-- Optional Debug: remove in production -->
+            <!-- Debug: Check recipe field names -->
             <% if (recipes.length > 0) { %>
                 <pre><%= JSON.stringify(recipes[0], null, 2) %></pre>
             <% } %>
@@ -54,7 +53,7 @@
                     <% recipes.forEach(function(recipe, index) { %>
                         <tr>
                             <th scope="row"><%= index + 1 %></th>
-                            <td><%= recipe.name %></td> <!-- Updated field name -->
+                            <td><%= recipe.recipeTitle %></td> <!-- Adjust this if needed -->
                             <td><%= recipe.category %></td>
                             <td>
                                 <a href="/admin/edit/<%= recipe.id %>" class="btn btn-warning btn-sm">Edit</a>
