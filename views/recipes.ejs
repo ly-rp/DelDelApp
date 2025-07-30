@@ -45,8 +45,9 @@
                                 <% } else { %>
                                     <!-- Logged in users -->
                                     <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                                    <a href="/favourites/<%= recipe.recipeId %>" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</a>
-
+                                    <form action="/favourites/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</button>
+                                    </form>
                                     <% if (user.role === 'admin' || recipe.creatorId === user.id) { %>
                                         <!-- Show edit/delete only for admin or recipe owner -->
                                         <a href="/editRecipe/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>

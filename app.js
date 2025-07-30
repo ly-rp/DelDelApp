@@ -268,6 +268,46 @@ app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
     });
 });
 
+// Add to favourites (POST)
+app.post('/favourites/:recipeId', (req, res) => {
+  const userId = req.session.user?.id;
+  const recipeId = req.params.recipeId;
+
+  if (!userId) {
+    return res.redirect('/login');
+  }
+
+  const sql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
+
+  db.query(sql, [userId, recipeId], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error adding favourite');
+    }
+    res.redirect('/favourites'); // Go back to the page where user came from
+  });
+});
+
+// Remove from favourites (POST)
+app.post('/favourites/remove/:recipeId', (req, res) => {
+  const userId = req.session.user?.id;
+  const recipeId = req.params.recipeId;
+
+  if (!userId) {
+    return res.redirect('/login');
+  }
+
+  const sql = 'DELETE FROM favourites WHERE userId = ? AND recipeId = ?';
+
+  db.query(sql, [userId, recipeId], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error removing favourite');
+    }
+    res.redirect('/favourites'); // Go back to the previous page
+  });
+});
+
 
 app.post('/favourites/add', checkAuthenticated, (req, res) => {
     const recipeId = req.body.recipeId;
@@ -416,20 +456,21 @@ app.get('/deleteRecipe/:id', (req, res) => {
 
 // Show My Recipes
 app.get('/myRecipes', checkAuthenticated, (req, res) => {
-    const userId = req.session.user.id; // Current logged-in user
+  const userId = req.session.user.id;
 
-    const sql = 'SELECT * FROM recipes WHERE creatorId = ?';
-    db.query(sql, [userId], (err, results) => {
-        if (err) {
-            console.error('Error fetching user recipes:', err);
-            return res.status(500).send('Server error while retrieving your recipes');
-        }
+  const sql = 'SELECT * FROM recipes WHERE creatorId = ?';
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Error fetching user recipes:', err);
+      return res.status(500).send('Server error while retrieving your recipes');
+    }
 
-        res.render('myRecipes', {
-            user: req.session.user,
-            recipes: results
-        });
+    // Just pass recipes directly, no extra processing
+    res.render('myRecipes', {
+      user: req.session.user,
+      recipes: results
     });
+  });
 });
 
 // Delete a recipe (only if the creator matches)
