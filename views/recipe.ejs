@@ -159,60 +159,88 @@
   <% } %>
 </div>
 
-<!-- Review Form Section (Only for Logged-In Users Except Guests) -->
-<% if (user && user.role !== 'guest') { %>
-  <div class="container text-center mt-4">
-    <button id="writeReviewBtn" class="btn btn-yellow2">Write a Review</button>
-  </div>
+ <!-- Review Form (Only for logged-in non-guests) -->
+  <% if (user && user.role !== 'guest') { %>
+    <!-- Write Review Button -->
+    <div class="container text-center mt-4">
+      <button id="writeReviewBtn" class="btn btn-outline-primary">Write a Review</button>
+    </div>
 
-  <div class="container mt-4" id="review-form" style="display: none;">
-    <form action="/reviews/add" method="POST">
-      <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+    <!-- Hidden Review Form -->
+    <div class="container mt-4" id="reviewForm" style="display: none;">
+      <form action="/reviews/add" method="POST">
+        <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
 
-      <!-- Star Rating Input -->
-      <div class="mb-4">
-        <h5>Rating:</h5>
-        <div class="star-rating">
-          <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
-          <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
-          <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
-          <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
-          <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
+        <!-- Star Rating -->
+        <div class="mb-4">
+          <h5>Rating:</h5>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5">★</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4">★</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3">★</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2">★</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1">★</label>
+          </div>
         </div>
-      </div>
 
-      <!-- Comment Textarea -->
-      <div class="mb-3">
-        <h5>Comment:</h5>
-        <textarea class="form-control" name="comment" rows="4" required></textarea>
-      </div>
+        <!-- Comment Box -->
+        <div class="mb-3">
+          <h5>Comments:</h5>
+          <textarea class="form-control" name="comment" rows="5" placeholder="Write your thoughts here..." required></textarea>
+        </div>
 
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">Submit Review</button>
-    </form>
+        <!-- Submit Review Button -->
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+      </form>
+    </div>
+  <% } else { %>
+    <!-- Guest View Notice -->
+    <div class="container text-center mt-4">
+      <p class="text-muted">You must be logged in to leave a review.</p>
+    </div>
+  <% } %>
+
+  <!-- Past Reviews Section -->
+  <div class="container mt-5">
+    <hr />
+    <h3 class="mb-3">Past Reviews</h3>
+
+    <% if (!reviews || reviews.length === 0) { %>
+      <!-- No Reviews Message -->
+      <p>No reviews yet. Be the first to write one!</p>
+    <% } else { %>
+      <!-- Reviews List -->
+      <ul class="list-group">
+        <% reviews.forEach(r => { %>
+          <li class="list-group-item">
+            <!-- Review Details -->
+            <strong><%= r.username %></strong> - <%= r.rating %>/5
+            <br />
+            <%= r.comment %>
+            <br />
+            <small class="text-muted"><%= new Date(r.created_at).toLocaleString() %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
   </div>
-<% } else { %>
-  <!-- Prompt to Login -->
-  <div class="container text-center mt-4">
-    <p>Please <a href="/login">login</a> to add a review.</p>
-  </div>
-<% } %>
 
-<!-- Back to Recipes Button -->
-<div class="container my-4">
-  <a href="/recipes" class="btn btn-red1">Back to All Recipes</a>
-</div>
+  <!-- JavaScript: Show Review Form on Button Click -->
+  <script>
+    const writeBtn = document.getElementById('writeReviewBtn');
+    const reviewForm = document.getElementById('reviewForm');
 
-<!-- Review Form Toggle Script -->
-<script>
-  const writeReviewBtn = document.getElementById('writeReviewBtn');
-  const reviewForm = document.getElementById('review-form');
-  if (writeReviewBtn && reviewForm) {
-    writeReviewBtn.addEventListener('click', () => {
-      reviewForm.style.display = 'block';
-      writeReviewBtn.style.display = 'none';
-    });
-  }
-</script>
+    if (writeBtn && reviewForm) {
+      writeBtn.addEventListener('click', () => {
+        reviewForm.style.display = 'block';
+        writeBtn.style.display = 'none';
+      });
+    }
+  </script>
 </body>
 </html>
