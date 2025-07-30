@@ -343,7 +343,7 @@ app.get('/editRecipe/:id', (req, res) => {
     });
 });
 
-app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
+app.post('/editRecipe/:recipeId',upload.single('image'), (req, res) => {
     const recipeId = req.params.id;
     const { recipeTitle, recipeDescription} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
