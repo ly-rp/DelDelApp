@@ -1,82 +1,129 @@
 <div id="carouselExampleCaptions" class="carousel slide">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="https://i.pinimg.com/1200x/ce/7d/2e/ce7d2ee0b36d520ea5bc9735907e38cc.jpg" class="d-block w-100"
-                style="height: 450px; object-fit: cover;" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>First slide label</h5>
-                <p>Some representative placeholder content for the first slide.</p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/oriental_vegetable_99308_16x9.jpg"
-                class="d-block w-100" style="height: 450px; object-fit: cover;" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Second slide label</h5>
-                <p>Some representative placeholder content for the second slide.</p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="https://thecozyapron.com/wp-content/uploads/2019/05/twice-baked-potatoes_thecozyapron_1.jpg"
-                class="d-block w-100" style="height: 450px; object-fit: cover;" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Third slide label</h5>
-                <p>Some representative placeholder content for the third slide.</p>
-            </div>
-        </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://i.pinimg.com/1200x/ce/7d/2e/ce7d2ee0b36d520ea5bc9735907e38cc.jpg" class="d-block w-100"
+        style="height: 450px; object-fit: cover;" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>First slide label</h5>
+        <p>Some representative placeholder content for the first slide.</p>
+      </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
+    <div class="carousel-item">
+      <img src="https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/oriental_vegetable_99308_16x9.jpg"
+        class="d-block w-100" style="height: 450px; object-fit: cover;" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Second slide label</h5>
+        <p>Some representative placeholder content for the second slide.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="https://thecozyapron.com/wp-content/uploads/2019/05/twice-baked-potatoes_thecozyapron_1.jpg"
+        class="d-block w-100" style="height: 450px; object-fit: cover;" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Third slide label</h5>
+        <p>Some representative placeholder content for the third slide.</p>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
 
-<!-- Refactored UPDATE - Le Ying -->
+<!-- Food Categories -->
 <div class="container my-5" style="text-align: center;">
-    <h1><b>Food Categories</b></h1>
+  <h1><b>Food Categories</b></h1>
 
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 20px;">
-        <% categories.forEach(category=> { %>
-            <div style="text-align: center; width: 200px;">
-                <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
-                    style="width: 200px; height: 200px; object-fit: cover;">
-                <p>
-                  <a href="/<%= category.name.toLowerCase() %>List">
-                    <b><%= category.name %></b>
-                  </a>
-                </p>
-            </div>
-            <% }) %>
-    </div>
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 20px;">
+    <% categories.forEach(category=> { %>
+      <div style="text-align: center; width: 200px;">
+        <img src="<%= category.image %>" class="rounded-circle" alt="<%= category.name %>"
+          style="width: 200px; height: 200px; object-fit: cover;">
+        <p>
+          <a href="/<%= category.name.toLowerCase().replace(/\s/g, '') %>List"> 
+            <!--This from GPT, cuz if not  will show different route for sidedishesList cuz theres a space in-between-->
+            <b>
+              <%= category.name %>
+            </b>
+          </a>
+        </p>
+      </div>
+      <% }) %>
+  </div>
 </div>
 
 <div class="container mt-4">
   <div class="row">
-    <% recipes.forEach(recipe => { %>
+    <% recipes.forEach(recipe=> { %>
       <div class="col-md-3 mb-4">
-        <div class="card">
-          <img src="<%= recipe.recipeImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>">
+        <div class="card"
+          style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 1000px;">
+          <a href="/recipe/<%= recipe.recipeId %>">
+            <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top"
+              alt="<%= recipe.recipeTitle %>">
+          </a>
           <div class="card-body">
             <div class="d-flex justify-content-between">
-              <h5 class="card-title"><%= recipe.title %></h5>
+              <h5 class="card-title" style="color: #801408">
+                <a href="/recipe/<%= recipe.recipeId %>" style="text-decoration: none; color: inherit;">
+                  <%= recipe.recipeTitle %>
+                </a>
+              </h5>
+            </div>
+            <div class="d-flex gap-2 mt-2">
+              <% if (!user || user.role==='guest' ) { %>
+                <!-- Guests or no user: Review + heart linking to register -->
+                <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
+                <a href="/login" class="btn btn-pink2 btn-sm" title="Login to Favourite">❤️</a>
 
-              <% if (user && user.role === 'user') { %>
-                <a href="#" style="text-decoration: none;">💗</a>
-              <% } else { %>
-                <button class="btn btn-sm btn-secondary" disabled title="Login to favorite">💗</button>
-              <% } %>
+                <% } else if (user.role==='admin' ) { %>
+                  <!-- Admin: Review, Edit, Delete -->
+                  <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
+                  <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
+                  <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                  </form>
+
+                  <% } else if (user.role==='user' ) { %>
+                    <!-- Logged-in user (role != guest or admin) -->
+                    <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
+                    <form action="/favourites/add" method="POST" style="display:inline;">
+                      <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+                      <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourite">❤️</button>
+                    </form>
+
+
+                    <% } else if (user.role==='user' ) { %>
+                      <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
+                    
+                      <% if (recipe.isFavourited) { %>
+                        <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-danger btn-sm" title="Remove favourite">❤️</button>
+                        </form>
+                        <% } else { %>
+                          <form action="/favourites/add" method="POST" style="display:inline;">
+                            <input type="hidden" name="recipeId" value="<%= recipe.recipeId %>">
+                            <button type="submit" class="btn btn-pink2 btn-sm" title="Add to favourite">❤️</button>
+                          </form>
+                          <% } %>
+                    
+                            <% if (recipe.createdBy===user.id) { %>
+                              <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
+                              <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                              </form>
+                              <% } %>
+                                <% } %>
 
             </div>
-            <p class="card-text"><%= recipe.description %></p>
-            <a href="#" class="btn btn-yellow">Rate</a>
-            <a href="#" class="btn btn-orange">Review</a>
           </div>
         </div>
       </div>
-    <% }) %>
+      <% }) %>
   </div>
 </div>

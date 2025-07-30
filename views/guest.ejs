@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,18 +17,9 @@
 
 <body>
   
-    <!-- Include dynamic navbar (with guest logic) -->
+  <!-- Include dynamic navbar (with guest logic) -->
   <%- include('partials/navbar') %>
   <%- include('partials/home', { categories: categories }) %>
 
-  <div class="container mt-5">
-    <h2>Recipes</h2>
-    <ul>
-      <% recipes.forEach(recipe => { %>
-        <li><%= recipe.recipeTitle %> - <%= recipe.recipeDescription %></li>
-      <% }) %>
-    </ul>
-    <a href="/">Back to Welcome</a>
-  </div>
 </body>
 </html>

@@ -11,7 +11,7 @@ const app = express();
 //*****STORAGE SETUP FOR MULTER*****//
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/images');
+    cb(null, 'public/images/recipeImages');
   },
   filename: (req, file, cb) =>{
     cb(null, file.originalname);
@@ -112,85 +112,171 @@ app.get('/recipes', (req, res) => {
 //*****SINGLE RECIPE VIEW*****//
 app.get('/recipe/:id', (req, res) => {
     const recipeId = req.params.id;
+    const userId = req.session.user?.id || null;
 
+    // 1️⃣ Get recipe details
     db.query('SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?', [recipeId], (error, recipeResults) => {
         if (error) return res.status(500).send('Database error');
-        if (recipeResults.length === 0) {
-            return res.status(404).send('Recipe not found');
-        }
-        // Now get all reviews for this recipe
+        if (recipeResults.length === 0) return res.status(404).send('Recipe not found');
+
+        let recipe = recipeResults[0];
+
+        // 2️⃣ Get reviews
         db.query(
             'SELECT r.*, u.username FROM reviews r JOIN users u ON r.userId = u.id WHERE r.recipeId = ?',
             [recipeId],
             (err, reviewResults) => {
                 if (err) return res.status(500).send('Database error');
-                res.render('recipe', {
-                    recipe: recipeResults[0],
-                    reviews: reviewResults,
-                    user: req.session.user,
-                    isGuest: req.session.user?.role === 'guest',
-                    isAdmin: req.session.user?.role === 'admin'
-                });
+
+                // 3️⃣ If user logged in, check if favourited
+                if (userId) {
+                    db.query(
+                        'SELECT 1 FROM favourites WHERE userId = ? AND recipeId = ?',
+                        [userId, recipeId],
+                        (favErr, favResult) => {
+                            recipe.isFavourited = !favErr && favResult.length > 0;
+                            res.render('recipe', { recipe, reviews: reviewResults, user: req.session.user });
+                        }
+                    );
+                } else {
+                    // Guest user → No favourite status
+                    recipe.isFavourited = false;
+                    res.render('recipe', { recipe, reviews: reviewResults, user: req.session.user });
+                }
             }
         );
     });
 });
 
+
+
+//****REVIEW****/
 app.get('/review/:id', (req, res) => {
-    const reviewId = req.params.id;
+  const recipeId = req.params.id;
 
-    db.query('SELECT * FROM Team34C237_gradecutgo.reviews WHERE reviewId = ?', [reviewId], (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send('Server error');
-        }
+  // Step 1: Query to get the recipe title (to show on the review page)
+  const recipeSql = 'SELECT recipeTitle FROM recipes WHERE recipeId = ?';
+  db.query(recipeSql, [recipeId], (err1, recipeResults) => {
 
-        if (results.length > 0) {
-            res.render('review', { review: results[0], user: req.session.user });
-        } else {
-            res.status(404).send('Review not found');
-        }
+    // If recipe not found or there's an error, return 404
+    if (err1 || recipeResults.length === 0) {
+      return res.status(404).send('Recipe not found');
+    }
+    // Extract the title of the recipe
+    const recipeTitle = recipeResults[0].recipeTitle;
+    // Step 2: Query to get all reviews for that recipe (joined with usernames)
+    const reviewSql = `
+      SELECT r.*, u.username
+      FROM reviews r
+      JOIN users u ON r.userId = u.id
+      WHERE r.recipeId = ?
+      ORDER BY r.created_at DESC
+    `;
+    db.query(reviewSql, [recipeId], (err2, reviews) => {
+      // If query fails, send a 500 Internal Server Error
+      if (err2) {
+        return res.status(500).send('Error fetching reviews');
+      }
+      // Step 3: Render the review.ejs page with necessary data
+      res.render('review', {
+        recipeId,           // Pass recipe ID to the view
+        recipeTitle,        // Recipe name for the page header
+        review: null,       // Optional: used if showing a single review (currently unused)
+        reviews,            // All reviews for that recipe
+        user: req.session.user  // Logged-in user info (used for permissions like delete)
+      });
     });
+  });
 });
 
+
+
+// Route: Handle POST request to add a new review
 app.post('/reviews/add', (req, res) => {
   const { recipeId, rating, comment } = req.body;
-  const userId = req.session.user?.id;  // get logged-in user id
+  // Get the currently logged-in user's ID from session (if available)
+  const userId = req.session.user?.id;
 
+  // If user is not logged in, redirect to login page with flash message
   if (!userId) {
     req.flash('error', 'You must be logged in to add a review.');
     return res.redirect('/login');
   }
-
+  // SQL query to insert new review into the database
   const sql = 'INSERT INTO reviews (recipeId, userId, rating, comment) VALUES (?, ?, ?, ?)';
   db.query(sql, [recipeId, userId, rating, comment], (error, results) => {
     if (error) {
-      console.error(error);
-      return res.status(500).send('Error adding review');
+      console.error(error);  
+      return res.status(500).send('Error adding review');  // Send error response
     }
     res.redirect(`/recipe/${recipeId}`);
   });
 });
 
+
+// Handle delete review request
+app.post('/reviews/delete/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+  // First, get the recipeId for redirect
+  db.query('SELECT recipeId FROM reviews WHERE reviewId = ?', [reviewId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(500).send('Database error or review not found');
+    }
+    const recipeId = results[0].recipeId;
+    db.query('DELETE FROM reviews WHERE reviewId = ?', [reviewId], (err2) => {
+      if (err2) {
+        return res.status(500).send('Database error');
+      }
+      res.redirect('/recipe/' + recipeId);
+    });
+  });
+});
+
+
+
+
 //*****FAVOURITES ROUTES*****//
-app.get('/favourites', (req, res) => {
-    const query = `
-        SELECT recipes.* FROM recipes
-        JOIN favourites ON recipes.id = favourites.recipe_id
+app.get('/favourites', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id; // use session-based user
+    const sql = `
+      SELECT r.recipeId, r.recipeTitle, r.recipeImage
+      FROM favourites f
+      JOIN recipes r ON f.recipeId = r.recipeId
+      WHERE f.userId = ?;
     `;
-    db.query(query, (err, results) => {
+
+    db.query(sql, [userId], (err, results) => {
         if (err) {
-            console.error('Error fetching favourites:', err);
-            return res.status(500).send('Database error');
+            console.error('Database error:', err);
+            return res.status(500).send("Error retrieving favourites");
         }
-        res.render('favourites', { favourites: results });
+        res.render('favourites', { recipes: results, user: req.session.user });
     });
 });
 
-app.post('/favourites/add', (req, res) => {
-    const recipeId = req.body.recipeId;
+app.post('/favourites/remove/:recipeId', checkAuthenticated, (req, res) => {
+    const userId = req.session.user?.id;
+    const recipeId = req.params.recipeId;
 
-    db.query('INSERT INTO favourites (recipe_id) VALUES (?)', [recipeId], (err, result) => {
+    if (!userId) return res.redirect('/login');
+
+    const sql = "DELETE FROM favourites WHERE userId = ? AND recipeId = ?";
+    db.query(sql, [userId, recipeId], (err) => {
+        if (err) {
+            console.error("Error removing favourite:", err);
+            return res.status(500).send("Error removing favourite");
+        }
+        return res.redirect('/favourites');
+    });
+});
+
+
+app.post('/favourites/add', checkAuthenticated, (req, res) => {
+    const recipeId = req.body.recipeId;
+    const userId = req.session.user.id;
+
+    const sql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
+    db.query(sql, [userId, recipeId], (err, result) => {
         if (err) {
             console.error('Error adding to favourites:', err);
             return res.status(500).send('Failed to add favourite');
@@ -199,36 +285,51 @@ app.post('/favourites/add', (req, res) => {
     });
 });
 
-
-//*****CRUD OPERATIONS FOR RECIPES*****//
-// ADDING RECIPE ROUTE //
 app.get('/addRecipe', (req, res) => {
-    res.render('addRecipe', { user: req.session.user });
+  res.render('addRecipe', { user: req.session.user });
 });
 
+app.post('/addRecipe', upload.single('recipeImage'), (req, res) => {
+  const { recipeTitle, category, recipeDescription, ingredients, instructions, prep_time, cook_time, servings, favourite } = req.body;
+  const user = req.session.user;
+  const userId = user?.id;
 
-app.post('/addRecipe',upload.single('image'), (req, res) => {
-    const {recipeTitle, recipeDescription} = req.body;
-    let image;
-    if (req.file) {
-        image = req.file.filename;
-    } else {
-        image = 'noImage.png'; // Use noImage.png if none uploaded
+  if (!userId) return res.status(401).send('Please login to add a recipe');
+
+  let image = req.file ? req.file.filename : 'noImage.png';
+
+  const sql = `
+    INSERT INTO Team34C237_gradecutgo.recipes 
+    (recipeTitle, category, recipeDescription, ingredients, instructions, recipeImage, prep_time, cook_time, servings, creatorId) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [recipeTitle, category, recipeDescription, ingredients, instructions, image, prep_time, cook_time, servings, userId], (error, results) => {
+    if (error) {
+      console.error("Error adding recipe:", error);
+      return res.status(500).send('Error adding recipe');
     }
 
-    const sql = 'INSERT INTO Team34C237_gradecutgo.recipes (name, description, image) VALUES (?, ?, ?, ?)';
-    db.query(sql , [recipeTitle, recipeDescription, image], (error, results) => { 
-        if (error) {
-            console.error("Error adding recipe:", error);
-            res.status(500).send('Error adding recipe');
-        } else {
-            res.redirect('/');
+    const newRecipeId = results.insertId;
+
+    // If user checked favourite and role is 'user', add favourite
+    if (user.role === 'user' && favourite === 'on') {
+      const favSql = 'INSERT INTO favourites (userId, recipeId) VALUES (?, ?)';
+      db.query(favSql, [userId, newRecipeId], (favError) => {
+        if (favError) {
+          console.error("Error adding favourite:", favError);
+          // Ignore fav error, still redirect
         }
-    });
+        return res.redirect(`/recipe/${newRecipeId}`);
+      });
+    } else {
+      return res.redirect(`/recipe/${newRecipeId}`);
+    }
+  });
 });
 
 // EDITING RECIPE ROUTE //
-app.get('/editRecipe/:Id', (req, res) => {
+app.get('/editRecipe/:id', (req, res) => {
     const recipeId = req.params.id;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
@@ -237,14 +338,14 @@ app.get('/editRecipe/:Id', (req, res) => {
             return res.status(500).send('Error retrieving recipe for editing');
         }
         if (results.length > 0) {
-            res.render('editRecipe', { recipe: results[0] });
+            res.render('editRecipe', { recipe: results[0], user: req.session.user });
         } else {
             res.status(404).send('This recipe cannot be found');
         }
     });
 });
 
-app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
+app.post('/editRecipe/:id',upload.single('image'), (req, res) => {
     const recipeId = req.params.id;
     const { recipeTitle, recipeDescription} = req.body;
     let image = req.body.currentImage; // retrieve current image filename
@@ -254,33 +355,80 @@ app.post('/editRecipe/:Id',upload.single('image'), (req, res) => {
         image = 'noImage.png'; // Use noImage.png only if there is no current image
     }
 
-    const sql = 'UPDATE recipe SET recipeTitle = ?, recipeDescription = ?, image = ?, WHERE recipeId = ?';
+    const sql = 'UPDATE Team34C237_gradecutgo.recipes SET recipeTitle = ?, recipeDescription = ?, recipeImage = ? WHERE recipeId = ?';
 
     //Inserting the new recipe into the database
-    db.query( sql, [recipeTitle, image, recipeDescription, recipeId], (error, results) => {
+    db.query( sql, [recipeTitle, recipeDescription, image, recipeId], (error, results) => {
         if (error) {
             //Handle any error that occurs during the database operation
             console.error("Error updating recipe:", error);
             res.status(500).send('Error updating recipe');
         } else {
-            //Send a success response
-            res.redirect('/');
+            // Redirect after successful update - send user back to recipe page or dashboard
+            res.redirect(`/recipe/${recipeId}`);
         }
     });
 });
 
 // DELETING RECIPE ROUTE //
-app.get('/deleterecipe/:id', (req, res) => {
-    const studentId = req.params.id;
+app.get('/deleteRecipe/:id', (req, res) => {
+    const recipeId = req.params.id;
+    const user = req.session.user;
+
     const sql = 'DELETE FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
         if (error) {
-            //Handle any error that occurs during the database operation
             console.error("Error deleting recipe:", error);
-            res.status(500).send('Error deleting recipe');
+            return res.status(500).send('Error deleting recipe');
+        }
+
+        // Redirect based on user role
+        if (user?.role === 'admin') {
+            res.redirect('/admin');
+        } else if (user?.role === 'user') {
+            res.redirect('/user');
         } else {
+            // fallback to home or login if guest or no user
             res.redirect('/');
         }
+    });
+});
+
+// Show My Recipes
+app.get('/myRecipes', checkAuthenticated, (req, res) => {
+    const userId = req.session.user.id; // Current logged-in user
+
+    const sql = 'SELECT * FROM recipes WHERE creatorId = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user recipes:', err);
+            return res.status(500).send('Server error while retrieving your recipes');
+        }
+
+        res.render('myRecipes', {
+            user: req.session.user,
+            recipes: results
+        });
+    });
+});
+
+// Delete a recipe (only if the creator matches)
+app.post('/myRecipes/delete/:id', checkAuthenticated, (req, res) => {
+    const recipeId = req.params.id;
+    const userId = req.session.user.id;
+
+    const sql = 'DELETE FROM recipes WHERE recipeId = ? AND creatorId = ?';
+    db.query(sql, [recipeId, userId], (err, result) => {
+        if (err) {
+            console.error('Error deleting recipe:', err);
+            return res.status(500).send('Server error while deleting recipe');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(403).send('You are not allowed to delete this recipe');
+        }
+
+        res.redirect('/myRecipes');
     });
 });
 
@@ -412,28 +560,24 @@ app.get('/guest', (req, res) => {
 //*****DASHBOARDS*****//
 // Updated to include Food Categories
 app.get('/dashboard', checkAuthenticated, (req, res) => {
-    const categories = [
-    { name: 'Desserts', image: '/images/categories/desserts.jpg' },
-    { name: 'Soups', image: '/images/categories/soups.jpg' },
-    { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
-    { name: 'Salads', image: '/images/categories/salads.jpg' },
-    { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
-];
-res.render('dashboard', { user: req.session.user, categories });
-
-}); 
-
-app.get('/dashboard', (req, res) => {
   const user = req.session.user;
 
-  // Fetch categories (assuming you have a categories table)
   db.query('SELECT * FROM categories', (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error('Error fetching categories from DB, using default categories:', err);
+      // Fallback hardcoded categories if DB fails
+      const categories = [
+        { name: 'Desserts', image: '/images/categories/desserts.jpg' },
+        { name: 'Soups', image: '/images/categories/soups.jpg' },
+        { name: 'Breakfast', image: '/images/categories/breakfast.jpg' },
+        { name: 'Salads', image: '/images/categories/salads.jpg' },
+        { name: 'Side Dishes', image: '/images/categories/side_dishes.jpg' }
+      ];
+      return res.render('dashboard', { user, categories });
+    }
 
-    res.render('dashboard', {
-      user: user,
-      categories: results // <<== this is what you were missing
-    });
+    // Successfully fetched from DB
+    res.render('dashboard', { user, categories: results });
   });
 });
 
@@ -501,6 +645,7 @@ app.get('/recipesList', (req, res) => {
   });
 });
 
+//There like five categories so there should be five of these yesh.
 // DISPLAYING GOOD SOUP LIST //
 app.get('/soupsList', (req, res) => {
   const query = 'SELECT * FROM recipes WHERE category = "Soups"';
@@ -525,7 +670,41 @@ app.get('/dessertsList', (req, res) => {
   });
 });
 
+// DISPLAYING SIDE DISHES LIST //
+app.get('/sidedishesList', (req, res) => { //take not its plural for whoever gon need this part
+  const query = 'SELECT * FROM recipes WHERE category = "Side Dishes"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('sidedishesList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
 
+// DISPLAYING BREAKFAST LIST //
+app.get('/breakfastList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Breakfast"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('breakfastList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
+
+// DISPLAYING SALADS LIST //
+app.get('/saladsList', (req, res) => {
+  const query = 'SELECT * FROM recipes WHERE category = "Salads"';
+  db.query(query, (err, results) => {
+    if (err) throw err;
+    res.render('saladsList', {
+      recipes: results,
+      user: req.session.user
+    });
+  });
+});
 //*****STARTING THE SERVER*****//
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`This server is running on 'http://localhost:${PORT}'`)); 
