@@ -3,7 +3,6 @@
     <a class="navbar-brand" href="<%= user && user.role === 'admin' ? '/admin' : user && user.role === 'user' ? '/user' : '/guest' %>">
       <img src="/images/deldel_folder/DelDel_Icon.png" alt="DelDel Logo" style="margin-left: 10px;" height="20px">
     </a>
-
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -23,7 +22,6 @@
           <li class="nav-item">
             <a class="nav-link" href="/recipes">recipes</a>
           </li>
-
         <% } else if (user.role === 'user') { %>
           <!-- Logged-in User Links -->
           <li class="nav-item">
@@ -38,40 +36,27 @@
           <li class="nav-item">
             <a class="nav-link" href="/myRecipes">my recipes</a>
           </li>
-
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
         <% } else if (user.role === 'admin') { %>
           <!-- Admin Links -->
           <li class="nav-item">
             <a class="nav-link" href="/recipes">recipes</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
         <% } %>
 
       </ul>
 
-      <!-- Search Form -->
-      <form class="d-flex me-3" role="search" action="/search" method="GET">
+      <form class="d-flex" role="search" action="/search" method="GET">
         <input class="form-control me-2" type="search" name="q" placeholder="search" aria-label="search" required>
         <button class="btn btn-outline-light" type="submit">
           <img src="https://i.postimg.cc/DfG0YzG1/Square-Icon-1-removebg-preview.png" alt="Search" style="width:20px; height:20px;">
         </button>
-      </form>
-
-      <% if (user && user.role !== 'guest') { %>
-        <!-- Profile Circle Dropdown -->
-        <div class="dropdown">
-          <button class="btn btn-light rounded-circle dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px; padding: 0;">
-            <i class="bi bi-person-circle fs-4"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="profileDropdown" style="min-width: 250px;">
-            <li><strong>Username:</strong> <%= user.username %></li>
-            <li><strong>Email:</strong> <%= user.email %></li>
-            <li><strong>Contact:</strong> <%= user.contact %></li>
-            <li><strong>Register As:</strong> <%= user.role %></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
-          </ul>
-        </div>
-      <% } %>
+      </form> 
 
     </div>
   </div>
