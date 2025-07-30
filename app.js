@@ -518,16 +518,56 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', validateRegistration, (req, res) => {
-    const { username, email, password, contact, role } = req.body; // remove address, add role
-    const sql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
-    db.query(sql, [username, email, password, contact, role], (err) => {
+    const { username, email, password, contact, role } = req.body;
+
+    const passwordErrors = [];
+
+    // Password validation
+    if (password.length < 6) {
+        passwordErrors.push("Password must be at least 6 characters.");
+    }
+    if (!/[A-Z]/.test(password)) {
+        passwordErrors.push("Password must contain at least one uppercase letter.");
+    }
+    if (!/\d/.test(password)) {
+        passwordErrors.push("Password must contain at least one number.");
+    }
+
+    if (passwordErrors.length > 0) {
+        req.flash('error', passwordErrors);
+        req.flash('formData', req.body);
+        return res.redirect('/register');
+    }
+
+    const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
+    db.query(checkEmailSql, [email], (err, results) => {
         if (err) {
-            throw err;
+            console.error("Error checking email:", err);
+            req.flash('error', 'Server error.');
+            return res.redirect('/register');
         }
-        req.flash('success', 'Registration successful! Please log in.');
-        res.redirect('/login');
+
+        if (results.length > 0) {
+            req.flash('error', 'This email is already registered.');
+            req.flash('formData', req.body);
+            return res.redirect('/register');
+        }
+
+        // If email doesn't exist, proceed to insert
+        const insertSql = 'INSERT INTO users (username, email, password, contact, role) VALUES (?, ?, SHA1(?), ?, ?)';
+        db.query(insertSql, [username, email, password, contact, role], (err) => {
+            if (err) {
+                console.error("Error inserting user:", err);
+                req.flash('error', 'Registration failed. Please try again.');
+                return res.redirect('/register');
+            }
+
+            req.flash('success', 'Registration successful! Please log in.');
+            res.redirect('/login');
+        });
     });
 });
+
 
 //VALIDATING LOGGING IN//
 app.get('/login', (req, res) => {
@@ -538,6 +578,7 @@ app.get('/login', (req, res) => {
         errors: req.flash('error') //Retrieve error messages
     });
 });
+
 
 app.post('/login', (req,res) => {
     const{email, password} =req.body;
@@ -575,6 +616,63 @@ app.post('/login', (req,res) => {
         }
     });
 });
+
+
+
+// FORGOT PASSWORD //
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', {
+    user: req.session.user || null,
+    errors: req.flash('error'),
+    messages: req.flash('success'),
+  });
+});
+
+// Handle forgot password form submission
+app.post('/forgot-password', (req, res) => {
+  const { email, newPassword } = req.body;
+
+  // Basic validations
+  if (!email || !newPassword) {
+    req.flash('error', 'All fields are required.');
+    return res.redirect('/forgot-password');
+  }
+
+  if (newPassword.length < 6) {
+    req.flash('error', 'Password must be at least 6 characters.');
+    return res.redirect('/forgot-password');
+  }
+
+  // Check if email exists
+  const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
+  db.query(checkEmailSql, [email], (err, results) => {
+    if (err) {
+      console.error('Error checking email:', err);
+      req.flash('error', 'Server error.');
+      return res.redirect('/forgot-password');
+    }
+
+    if (results.length === 0) {
+      req.flash('error', 'No user found with that email.');
+      return res.redirect('/forgot-password');
+    }
+
+    // Update password (hash with SHA1 as in your current setup)
+    const updateSql = 'UPDATE users SET password = SHA1(?) WHERE email = ?';
+    db.query(updateSql, [newPassword, email], (err) => {
+      if (err) {
+        console.error('Error updating password:', err);
+        req.flash('error', 'Failed to reset password. Please try again.');
+        return res.redirect('/forgot-password');
+      }
+
+      req.flash('success', 'Password reset successful! Please login.');
+      res.redirect('/login');
+    });
+  });
+});
+
+
 
 // LOGGING OUT //
 app.get('/logout', (req, res) => {
@@ -750,63 +848,87 @@ app.get('/recipesList', (req, res) => {
 
 // DISPLAYING GOOD SOUP LIST //
 app.get('/soupsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Soups"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Soups'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('soupsList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('soupsList', { recipes: results, user });
   });
 });
 
+
 // DISPLAYING DESSERTS LIST //
 app.get('/dessertsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Desserts"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Desserts'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('dessertsList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('sdessertsList', { recipes: results, user });
   });
 });
 
 // DISPLAYING SIDE DISHES LIST //
-app.get('/sidedishesList', (req, res) => { //take not its plural for whoever gon need this part
-  const query = 'SELECT * FROM recipes WHERE category = "Side Dishes"';
-  db.query(query, (err, results) => {
+app.get('/sidedishesList', (req, res) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Side Dishes'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('sidedishesList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('sidedishesList', { recipes: results, user });
   });
 });
+
 
 // DISPLAYING BREAKFAST LIST //
 app.get('/breakfastList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Breakfast"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Breakfast'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('breakfastList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('beakfastList', { recipes: results, user });
   });
 });
 
+
 // DISPLAYING SALADS LIST //
 app.get('/saladsList', (req, res) => {
-  const query = 'SELECT * FROM recipes WHERE category = "Salads"';
-  db.query(query, (err, results) => {
+  const user = req.session.user;
+
+  const query = `SELECT r.*, 
+    EXISTS (
+      SELECT 1 FROM favourites f WHERE f.recipeId = r.recipeId AND f.userId = ?
+    ) AS isFavourited 
+    FROM recipes r WHERE r.category = 'Salads'`;
+
+  db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('saladsList', {
-      recipes: results,
-      user: req.session.user
-    });
+    res.render('saladsList', { recipes: results, user });
   });
 });
+
 
 //*****SEARCH FUNCTIONALITY*****//
 app.get('/search', (req, res) => {
