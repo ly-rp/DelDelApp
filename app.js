@@ -706,22 +706,28 @@ app.get('/saladsList', (req, res) => {
 //*****SEARCH FUNCTIONALITY*****//
 app.get('/search', (req, res) => {
   const searchQuery = req.query.q;
-  const sql = 'SELECT * FROM recipes WHERE recipeTitle LIKE ? OR description LIKE ?';
+
+  if (!searchQuery) {
+    return res.send('No search query provided.');
+  }
+
+  const sql = 'SELECT * FROM recipes WHERE recipeTitle LIKE ? OR recipeDescription LIKE ?';
   const likeQuery = `%${searchQuery}%`;
 
   db.query(sql, [likeQuery, likeQuery], (err, results) => {
     if (err) {
-      console.error(err);
-      return res.status(500).send('Database error');
+      console.error('Database error:', err);
+      return res.status(500).send('Database error, search function is not working: ' + err.message);
     }
 
     res.render('searchResults', {
       query: searchQuery,
       recipes: results,
-      user: req.session.user // in case your layout/nav needs it
+      user: req.session.user
     });
   });
 });
+
 
 
 //*****STARTING THE SERVER*****//
