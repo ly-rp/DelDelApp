@@ -8,6 +8,7 @@
 </head>
 <body>
     <%- include('partials/navbar') %> 
+
     <div class="container-fluid">
         <!-- Header Section -->
         <header class="d-flex justify-content-between align-items-center mt-5">
@@ -28,25 +29,32 @@
             <h2>Manage Recipes</h2>
             <p>Below is a list of all recipes. You can edit or delete them as needed.</p>
 
+            <!-- Debug: Output one recipe object to inspect structure (remove later) -->
+            <% if (recipes.length > 0) { %>
+                <pre><%= JSON.stringify(recipes[0], null, 2) %></pre>
+            <% } %>
+
             <!-- Recipe Table -->
-            <table class="table table-striped">
-                <thead>
+            <table class="table table-bordered table-hover table-sm text-center">
+                <thead class="thead-dark">
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Recipe Name</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Actions</th>
+                        <th>#</th>
+                        <th>Recipe Name</th>
+                        <th>Category</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% recipes.forEach(function(recipe, index) { %>
                         <tr>
                             <th scope="row"><%= index + 1 %></th>
-                            <td><%= recipe.name %></td>
+                            <td><%= recipe.recipeTitle %></td> <!-- Update based on actual DB field -->
                             <td><%= recipe.category %></td>
                             <td>
                                 <a href="/admin/edit/<%= recipe.id %>" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="/admin/delete/<%= recipe.id %>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this recipe?')">Delete</a>
+                                <form action="/admin/delete/<%= recipe.id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this recipe?')">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     <% }); %>
@@ -56,7 +64,7 @@
 
         <!-- Footer Section -->
         <footer class="mt-5">
-            <p>&copy; DelDelApp.</p>
+            <p class="text-center">&copy; DelDelApp</p>
         </footer>
     </div>
 
