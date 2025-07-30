@@ -15,7 +15,7 @@
     <div class="container mt-4">
         <h1 class="text-center mb-4 my-3" style="color: #801408;">Your Favourites</h1>
 
-        <!-- ✅ Success Message Display -->
+        <!-- Success Message Display -->
         <% if (typeof message !== 'undefined' && message) { %>
             <div class="alert alert-success text-center">
                 <%= message %>
@@ -40,13 +40,16 @@
 
                                 <div class="d-flex gap-2 mt-2">
                                     <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">View Recipe</a>
+
+                                    <!-- Red heart remove button -->
                                     <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="margin: 0;">
                                         <button 
                                             type="submit" 
                                             class="btn btn-pink1 btn-sm" 
                                             onclick="return confirm('Remove this recipe from your favourites?');"
+                                            title="Remove from favourites"
                                         >
-                                            Remove ❤️
+                                            ❤️ Remove
                                         </button>
                                     </form>
                                 </div>

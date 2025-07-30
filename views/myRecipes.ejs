@@ -45,11 +45,11 @@
                                 <!-- Favourite / Unfavourite buttons -->
                                 <% if (recipe.isFavourited) { %>
                                     <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Remove from favourites">💔</button>
+                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Remove from favourites">❤️</button>
                                     </form>
                                 <% } else { %>
                                     <form action="/favourites/add/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">❤️</button>
+                                        <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">🤍</button>
                                     </form>
                                 <% } %>
 

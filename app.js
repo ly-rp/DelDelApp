@@ -87,12 +87,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/recipes', (req, res) => {
+  const userId = req.session.user ? req.session.user.id : 0;
+
   const sql = `
-    SELECT recipeId, recipeTitle, recipeImage, creatorId
-    FROM Team34C237_gradecutgo.recipes
+    SELECT r.recipeId, r.recipeTitle, r.recipeImage, r.creatorId,
+           CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
+    FROM Team34C237_gradecutgo.recipes r
+    LEFT JOIN favourites f 
+      ON r.recipeId = f.recipeId AND f.userId = ?
   `;
 
-  db.query(sql, (error, results) => {
+  db.query(sql, [userId], (error, results) => {
     if (error) {
       console.error("Database error:", error.message);
       return res.status(500).send('Error retrieving recipes');
@@ -337,7 +342,7 @@ app.post('/favourites/add/:recipeId', (req, res) => {
     const userId = req.session.user.id;
     const recipeId = req.params.recipeId;
 
-    const sql = "INSERT INTO favourites (userId, recipeId) VALUES (?, ?)";
+    const sql = "INSERT IGNORE INTO favourites (userId, recipeId) VALUES (?, ?)";
     db.query(sql, [userId, recipeId], (err) => {
         if (err) {
             console.error("Error adding favourite:", err);
@@ -650,6 +655,39 @@ app.post('/login', (req,res) => {
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
+});
+
+app.get('/home', (req, res) => {
+  const userId = req.session.user ? req.session.user.id : 0;
+
+  const foodCategories = [
+    { name: 'Desserts', image: '/images/foodCategories/desserts.jpg' },
+    { name: 'Soups', image: '/images/foodCategories/soups.jpg' },
+    { name: 'Breakfast', image: '/images/foodCategories/breakfast.jpg' },
+    { name: 'Salads', image: '/images/foodCategories/salads.jpg' },
+    { name: 'Side Dishes', image: '/images/foodCategories/side_dishes.jpg' }
+  ];
+
+  const sql = `
+    SELECT r.recipeId, r.recipeTitle, r.recipeImage, r.creatorId,
+           CASE WHEN f.recipeId IS NOT NULL THEN 1 ELSE 0 END AS isFavourited
+    FROM Team34C237_gradecutgo.recipes r
+    LEFT JOIN favourites f 
+      ON r.recipeId = f.recipeId AND f.userId = ?
+  `;
+
+  db.query(sql, [userId], (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error loading recipes');
+    }
+
+    res.render('home', {
+      recipes: results,
+      categories: foodCategories,
+      user: req.session.user
+    });
+  });
 });
 
 // ROUTE FOR GUEST ENTRY //
