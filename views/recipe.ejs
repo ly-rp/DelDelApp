@@ -124,7 +124,7 @@
     </div>
 
 
-    
+
 <!-- Scroll to Reviews Section -->
 <script>
   function scrollToReview() {
@@ -181,7 +181,7 @@
 <!-- Review Form (Only for logged-in non-guests) -->
 <% if (user && user.role !== 'guest') { %>
   <!-- Write Review Button -->
-  <div class="container text-center my-4 d-flex justify-content-center gap-3" id="'review-section">
+  <div class="container text-center my-4 d-flex justify-content-center gap-3" id="review-section">
     <button id="writeReviewBtn" class="btn btn-outline-primary">Write a Review</button>
     <a href="/recipes" class="btn btn-outline-danger">Back to All Recipes</a>
   </div>
@@ -226,6 +226,7 @@
   </div>
 <% } %>
 
+
 <!-- JavaScript: Show Review Form on Button Click -->
 <script>
   const writeBtn = document.getElementById('writeReviewBtn');
@@ -237,4 +238,17 @@
       writeBtn.style.display = 'none';
     });
   }
+
+  function scrollToReview() {
+    const section = document.getElementById('review-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+
+      const writeBtn = document.getElementById('writeReviewBtn');
+      if (writeBtn) {
+        writeBtn.click();
+      }
+    }
+  }
 </script>
+
