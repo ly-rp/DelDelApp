@@ -30,12 +30,12 @@
                                 <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
 
                                 <% if (recipe.isFavourited) { %>
-                                    <!-- Show heartbreak button if already favourited -->
+                                    <!-- Show red heart button if already favourited -->
                                     <form action="/favourites/remove/<%= recipe.recipeId %>" method="POST" style="display:inline;">
                                         <button type="submit" class="btn btn-pink1 btn-sm" title="Remove from favourites">❤️</button>
                                     </form>
                                 <% } else { %>
-                                    <!-- Show heart button if not favourited -->
+                                    <!-- Show white heart button if not favourited -->
                                     <form action="/favourites/add/<%= recipe.recipeId %>" method="POST" style="display:inline;">
                                         <button type="submit" class="btn btn-pink1 btn-sm" title="Add to favourites">🤍</button>
                                     </form>
