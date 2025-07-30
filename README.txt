@@ -17,6 +17,8 @@ The "views" folder contains the following files:
 - favourites.ejs: A route that will show a registered user their favourited recipes
 - review.ejs:
 - searchResults.ejs: The search bar of the navbar that implements search filtering
+- forgot-password.ejs: The forgot password page where users can change their password with security questions
+- admin.ejs: admin page where admin delete, edit items
 
 
 The "public" folder includes the "images" folder adn
@@ -30,4 +32,4 @@ Enhancements we wish to include into the app are:
 - Working GIF in Welcome Page 
 - Aesthetic CSS makeover
 - Ability to see your own recipes in the My Recipes Page
-- 
+- Forget password
