@@ -6,6 +6,7 @@ const flash = require('connect-flash');
 const multer = require('multer');
 const path = require('path'); 
 const app = express();
+const bcrypt = require('bcrypt'); // this what gpt said to use for pw hashing
 //guys don't change the order of these imports, it will break the app -ELe 
 
 //*****STORAGE SETUP FOR MULTER*****//
@@ -353,8 +354,8 @@ app.post('/addRecipe', upload.single('recipeImage'), (req, res) => {
 });
 
 // EDITING RECIPE ROUTE //
-app.get('/editRecipe/:id', (req, res) => {
-    const recipeId = req.params.id;
+app.get('/editRecipe/:recipeId', (req, res) => {
+    const recipeId = req.params.recipeId;
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
     db.query(sql, [recipeId], (error, results) => {
         if (error) {
@@ -464,8 +465,8 @@ app.get('/myRecipes', checkAuthenticated, (req, res) => {
 });
 
 // Delete a recipe (only if the creator matches)
-app.post('/myRecipes/delete/:id', checkAuthenticated, (req, res) => {
-    const recipeId = req.params.id;
+app.post('/myRecipes/delete/:recipeId', checkAuthenticated, (req, res) => {
+    const recipeId = req.params.recipeId;
     const userId = req.session.user.id;
 
     const sql = 'DELETE FROM recipes WHERE recipeId = ? AND creatorId = ?';
@@ -616,70 +617,87 @@ app.post('/login', (req,res) => {
 });
 
 // FORGOT PASSWORD //
-app.get('/forgot-password', (req, res) => {
-  res.render('forgot-password', {
-    user: req.session.user || null,
-    errors: req.flash('error'),
-    messages: req.flash('success'),
-  });
-});
-
-// Handle forgot password form submission with security question verification
 app.post('/forgot-password', (req, res) => {
-  const { email, newPassword, securityQ1, securityQ2, securityQ3 } = req.body;
+  const { email, securityQ1, securityQ2, securityQ3, newPassword } = req.body;
 
-  // Check required fields
-  if (!email || !newPassword || !securityQ1 || !securityQ2 || !securityQ3) {
-    req.flash('error', 'All fields are required.');
-    return res.redirect('/forgot-password');
-  }
+  const errors = [];
+  const messages = [];
 
-  // Password basic check
-  if (newPassword.length < 6 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
-    req.flash('error', 'Password must be at least 6 characters, include an uppercase letter and a number.');
-    return res.redirect('/forgot-password');
-  }
-
-  // Check if user with email exists
-  const findUserSql = 'SELECT * FROM users WHERE email = ?';
-  db.query(findUserSql, [email], (err, results) => {
+  const query = 'SELECT * FROM user WHERE email = ?';
+  db.query(query, [email], (err, results) => {
     if (err) {
-      console.error('Database error while checking email:', err);
-      req.flash('error', 'Server error.');
-      return res.redirect('/forgot-password');
-    }
-
-    if (results.length === 0) {
-      req.flash('error', 'No user found with that email.');
-      return res.redirect('/forgot-password');
+      console.error(err);
+      return res.render('forgot-password', {
+        user: null, 
+        errors: ['Database error. Please try again later.'],
+        messages: []
+      });
     }
 
     const user = results[0];
 
-    // Check if all 3 security answers match (case-insensitive comparison)
-    const matchQ1 = user.securityQ1.toLowerCase() === securityQ1.trim().toLowerCase();
-    const matchQ2 = user.securityQ2.toLowerCase() === securityQ2.trim().toLowerCase();
-    const matchQ3 = user.securityQ3.toLowerCase() === securityQ3.trim().toLowerCase();
-
-    if (!matchQ1 || !matchQ2 || !matchQ3) {
-      req.flash('error', 'Security question answers do not match.');
-      return res.redirect('/forgot-password');
+    if (!user) {
+      return res.render('forgot-password', {
+        errors: ['No account found with that email.'],
+        messages: []
+      });
     }
 
-    // All good, update password (SHA1 hash)
-    const updatePasswordSql = 'UPDATE users SET password = SHA1(?) WHERE email = ?';
-    db.query(updatePasswordSql, [newPassword, email], (err) => {
+    const matchQ1 = user.securityQ1?.toLowerCase().trim() === securityQ1.toLowerCase().trim();
+    const matchQ2 = user.securityQ2?.toLowerCase().trim() === securityQ2.toLowerCase().trim();
+    const matchQ3 = user.securityQ3?.toLowerCase().trim() === securityQ3.toLowerCase().trim();
+
+    if (!matchQ1 || !matchQ2 || !matchQ3) {
+      return res.render('forgot-password', {
+        errors: ['Security answers do not match.'],
+        messages: []
+      });
+    }
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.render('forgot-password', {
+        errors: ['Password must be at least 6 characters, include 1 uppercase letter and 1 number.'],
+        messages: []
+      });
+    }
+
+    bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
       if (err) {
-        console.error('Error updating password:', err);
-        req.flash('error', 'Could not update password.');
-        return res.redirect('/forgot-password');
+        console.error(err);
+        return res.render('forgot-password', {
+          errors: ['Error hashing password. Try again later.'],
+          messages: []
+        });
       }
 
-      req.flash('success', 'Password reset successful! You may now login.');
-      res.redirect('/login');
+      const updateQuery = 'UPDATE user SET password = ? WHERE email = ?';
+      db.query(updateQuery, [hashedPassword, email], (err2) => {
+        if (err2) {
+          console.error(err2);
+          return res.render('forgot-password', {
+            errors: ['Could not update password. Try again.'],
+            messages: []
+          });
+        }
+
+        return res.render('forgot-password', {
+          errors: [],
+          messages: ['Password has been reset successfully!']
+        });
+      });
     });
   });
 });
+
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', {
+    user: null,
+    errors: [],
+    messages: []
+  });
+});
+
 
 // LOGGING OUT //
 app.get('/logout', (req, res) => {
@@ -728,24 +746,6 @@ app.get('/reviews', (req, res) => {
 // *****FOOD CATEGORIES AND THEIR LISTS***** //
 //There ought to be five categories by the end of this - Ele
 
-// DISPLAYING ALL RECIPES, THE MAIN LIST //
-app.get('/recipesList', (req, res) => {
-  const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes';
-
-  db.query(sql, (error, results) => {
-    if (error) {
-      console.error("Database error:", error.message);
-      return res.status(500).send('Error retrieving recipes');
-    }
-
-    res.render('recipesList', {
-      recipes: results,
-      user: req.session.user
-    });
-  });
-});
-
-
 // DISPLAYING SOUP LIST //
 app.get('/soupsList', (req, res) => {
   const user = req.session.user;
@@ -775,7 +775,7 @@ app.get('/dessertsList', (req, res) => {
 
   db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('sdessertsList', { recipes: results, user });
+    res.render('dessertsList', { recipes: results, user });
   });
 });
 
@@ -808,7 +808,7 @@ app.get('/breakfastList', (req, res) => {
 
   db.query(query, [user?.id || 0], (err, results) => {
     if (err) throw err;
-    res.render('beakfastList', { recipes: results, user });
+    res.render('breakfastList', { recipes: results, user });
   });
 });
 
