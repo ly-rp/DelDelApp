@@ -712,13 +712,13 @@ app.get('/search', (req, res) => {
   db.query(sql, [likeQuery, likeQuery], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).send('Database error');
+      return res.status(500).send(`Database error, you can't search this.`);
     }
 
     res.render('searchResults', {
       query: searchQuery,
       recipes: results,
-      user: req.session.user // in case your layout/nav needs it
+      user: req.session.user
     });
   });
 });

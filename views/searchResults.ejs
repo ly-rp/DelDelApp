@@ -20,11 +20,11 @@
       <% recipes.forEach(recipe => { %>
         <div class="col-md-4 mb-3">
           <div class="card">
-            <img src="<%= recipe.imagePath %>" class="card-img-top" alt="<%= recipe.recipeTitle %>">
+            <img src="<%= recipe.recipImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>">
             <div class="card-body">
               <h5 class="card-title"><%= recipe.recipeTitle %></h5>
               <p class="card-text"><%= recipe.description.substring(0, 100) %>...</p>
-              <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View</a>
+              <a href="/recipe/<%= recipe.recipeId %>" class="btn btn-primary">View</a>
             </div>
           </div>
         </div>
