@@ -11,60 +11,16 @@
 </head>
 
 <body>
+  <!-- Navbar -->
   <%- include('partials/navbar') %>
 
   <div class="container mt-4">
     <h2 class="text-center mb-4">🥗 Salad Recipes</h2>
 
-    <div class="row">
-      <% recipes.forEach(recipe => { %>
-        <div class="col-md-3 mb-4">
-          <div class="card" style="background-color: #fffaec; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-            <a href="/recipe/<%= recipe.recipeId %>">
-              <img src="/images/recipeImages/<%= recipe.recipeImage %>" class="card-img-top" alt="<%= recipe.recipeTitle %>" />
-            </a>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <h5 class="card-title" style="color: #801408">
-                  <a href="/recipe/<%= recipe.recipeId %>" style="text-decoration: none; color: inherit;">
-                    <%= recipe.recipeTitle %>
-                  </a>
-                </h5>
-                <% if (user && user.role !== 'guest') { %>
-                  <a href="/favourite/<%= recipe.recipeId %>" style="text-decoration: none;" title="Add to favourite">❤️</a>
-                <% } %>
-              </div>
-
-              <div class="d-flex gap-2 mt-2">
-                <% if (!user || user.role === 'guest') { %>
-                  <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                  <a href="/register" class="btn btn-pink2 btn-sm" title="Login to Favourite">❤️</a>
-                <% } else if (user.role === 'admin') { %>
-                  <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                  <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
-                  <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                  </form>
-                <% } else { %>
-                  <a href="/rate/<%= recipe.recipeId %>" class="btn btn-orange3 btn-sm">Rate</a>
-                  <a href="/review/<%= recipe.recipeId %>" class="btn btn-yellow2 btn-sm">Review</a>
-                  <a href="/favourite/<%= recipe.recipeId %>" class="btn btn-pink2 btn-sm">❤️</a>
-
-                  <% if (recipe.createdBy === user.id) { %>
-                    <a href="/edit/<%= recipe.recipeId %>" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="/delete/<%= recipe.recipeId %>" method="POST" style="display:inline;">
-                      <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
-                  <% } %>
-                <% } %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% }); %>
-    </div>
+    <!-- Shared Cards -->
+    <%- include('partials/recipeCards', { recipes: recipes, user: user }) %>
   </div>
-</body>
 
+</body>
 </html>
 
