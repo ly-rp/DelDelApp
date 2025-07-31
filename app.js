@@ -355,8 +355,12 @@ app.post('/addRecipe', upload.single('recipeImage'), (req, res) => {
 
 // EDITING RECIPE ROUTE //
 app.get('/editRecipe/:recipeId', (req, res) => {
+// Sets up a route to serve the edit page for a specific recipe using its recipeId //
     const recipeId = req.params.recipeId;
+    // Extracts the recipeId from the URL parameters //
     const sql = 'SELECT * FROM Team34C237_gradecutgo.recipes WHERE recipeId = ?';
+    // SQL query to get the full recipe info from the database //
+
     db.query(sql, [recipeId], (error, results) => {
         if (error) {
             console.error('Database query error:', error.message);
