@@ -102,19 +102,19 @@
      </div>
   </div>
   <script>
-    const fileInput = document.getElementById('recipeImage');
-    const previewImg = document.getElementById('imagePreview');
-    const placeholder = document.getElementById('placeholderText');
-    fileInput.addEventListener('change', function (event) {
-      const [file] = event.target.files;
-      if (file) {
-        previewImg.src = URL.createObjectURL(file);
-        previewImg.style.display = 'block';
-        placeholder.style.display = 'none';
+    const fileInput = document.getElementById('recipeImage'); // Gets <input type="file" id="recipeImage"> element where the user selects an image
+    const previewImg = document.getElementById('imagePreview'); // Gets <img id="imagePreview"> element that shows the preview of the selected image
+    const placeholder = document.getElementById('placeholderText'); // Gets the placeholder text element shown when no image is selected
+    fileInput.addEventListener('change', function (event) { // Listens for a change event when a user selects a file
+      const [file] = event.target.files; // Gets the first selected file from the file input
+      if (file) { // If image file is selected
+        previewImg.src = URL.createObjectURL(file); // Generates temp URL to display the file locally
+        previewImg.style.display = 'block'; // Shows the Preview Image 
+        placeholder.style.display = 'none'; // Hides placeholder text: "Image Preview"
       } else {
-        previewImg.src = '';
-        previewImg.style.display = 'none';
-        placeholder.style.display = 'block';
+        previewImg.src = ''; // If no file is selected
+        previewImg.style.display = 'none'; // Clears Image Preview
+        placeholder.style.display = 'block'; // Shows placeholder text again
       }
     });
   </script>
